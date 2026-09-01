@@ -6,7 +6,7 @@ Self-Evaluating RAG System
 
 ## Current Milestone
 
-### Feature 2 — PDF Document Ingestion
+### Feature 3 — Document Chunking
 
 Status: **Completed**
 
@@ -26,7 +26,7 @@ Status: **Completed**
 #### Feature 2 — PDF Document Ingestion
 
 - Learned how to open PDFs using PyMuPDF.
-- Created `document_ingestion.py` for the reusable ingestion logic.
+- Created `document_ingestion.py` for reusable ingestion logic.
 - Implemented page-by-page PDF text extraction using `page.get_text()`.
 - Added basic text formatting by replacing newlines with spaces and stripping surrounding whitespace.
 - Implemented handling for pages with no extractable text by skipping them.
@@ -41,15 +41,80 @@ Status: **Completed**
   - PDF page 13 → `xiii`
   - PDF page 14 → `1`
   - PDF page 308 → `298`
-
 - Verified the extracted document structure and metadata.
 
-## Current Knowledge Source
+#### Feature 3 — Document Chunking
 
-```text
-knowledge_base/
-└── artificial_intelligence_technology.pdf
-```
+- Created `document_chunking.py` for the document chunking pipeline.
+- Implemented heading detection for chapter and section headings.
+- Grouped paragraphs under their corresponding headings.
+- Used a hierarchical chunking strategy:
+
+  **Heading → Paragraph → Sentence → Word**
+
+- Used `BAAI/bge-base-en-v1.5` tokenizer for actual token counting.
+- Set the maximum chunk size to **350 tokenizer tokens**.
+- Chunks do not use overlap in the current version.
+- Content from different headings is never intentionally mixed.
+- PDF page boundaries do not force a new chunk when the same heading continues across pages.
+- Paragraphs are the primary unit for creating chunks.
+- If a paragraph is larger than 350 tokens, it is split into sentences.
+- If an individual sentence is larger than 350 tokens, word-level splitting is used as a fallback.
+- The word-level fallback was retained for robustness even though the current PDF had no sentences larger than 350 tokens.
+- Preserved the heading associated with every final chunk.
+- Preserved the source and page-label information in final chunk metadata.
+- Final chunk representation:
+
+```python
+{
+    "text": "...",
+    "heading": "...",
+    "token_count": 280,
+    "metadata": {
+        "source": "knowledge_base/artificial_intelligence_technology.pdf",
+        "pages": [
+            {"page_label": "1"},
+            {"page_label": "2"}
+        ]
+    }
+}
+
+### Chunking Validation
+
+The final chunking pipeline was validated using the complete PDF.
+
+Validation results:
+
+- Total final chunks: **467**
+- Minimum token count: **7**
+- Maximum token count: **350**
+- Average token count: **253.57**
+- Chunks over 350 tokens: **0**
+- Chunks with empty text: **0**
+- Chunks without heading: **0**
+- Chunks with missing metadata: **0**
+
+Therefore, all final chunks satisfy the configured maximum token limit of 350 tokens.
+
+### Additional Chunking Validation
+
+The following checks were also performed:
+
+- Heading detection was manually tested against real chapter and section headings.
+- False heading detection for section number `3.0` was fixed by requiring the first section number after the decimal to begin from `1-9`.
+- Heading boundaries were inspected across the generated chunks.
+- Multi-page content under the same heading was verified.
+- **9 paragraphs** were found to be larger than 350 tokens.
+- **0 sentences** were larger than 350 tokens.
+- Word-level fallback therefore was not required for the current PDF, but remains implemented as a robustness mechanism.
+
+### PDF Artifacts
+
+Some PDF extraction artifacts were observed, including table-of-contents text and running headers/footers.
+
+These artifacts were reviewed and intentionally left unchanged because they do not currently prevent the chunking pipeline from working correctly.
+
+No additional PDF preprocessing is planned at this stage.
 
 ## Current Project Structure
 
@@ -57,59 +122,37 @@ knowledge_base/
 self_evaluating_rag/
 ├── knowledge_base/
 │   └── artificial_intelligence_technology.pdf
+├── document_ingestion.py
+├── document_chunking.py
+├── setup_knowledge_base.py
+├── main.ipynb
 ├── LEARNING_CONTEXT.md
 ├── PROJECT_STATE.md
-├── main.ipynb
-├── setup_knowledge_base.py
-└── document_ingestion.py
-```
+└── .gitignore
 
-## Document Representation
+## Chunking Strategy
 
-Each successfully extracted page is currently represented as:
+The current chunking strategy is hierarchical:
 
-```text
-{
-    "text": "...",
-    "metadata": {
-        "source": "...",
-        "pdf_page": ...,
-        "page_label": "..."
-    }
-}
-```
+**Heading → Paragraph → Sentence → Word**
 
-## Metadata Design
+The strategy follows this priority:
 
-- `source` identifies the original document.
-- `pdf_page` identifies the physical page position inside the PDF.
-- `page_label` preserves the page label defined by the PDF itself.
-- Both `pdf_page` and `page_label` are preserved because PDF page indexing and printed/document page numbering can differ.
+1. Keep content under the same heading together.
+2. Use paragraphs as the primary chunking unit.
+3. If a paragraph exceeds 350 tokens, split it into sentences.
+4. If a sentence exceeds 350 tokens, split it into words.
+5. Keep every final chunk at or below 350 tokenizer tokens.
+6. No overlap is used in the current version.
 
-## Validation
-
-Current PDF:
-
-- Total PDF pages: **308**
-- Extracted page-level documents: **308**
-- Empty pages skipped: **0** for the current PDF
-- PyMuPDF extraction verified successfully.
-- Metadata verified successfully.
+The current version intentionally uses no overlap so that retrieval quality can be evaluated before introducing additional complexity.
 
 ## Status
 
-Feature 1 — Knowledge Base Setup: **Completed**
+- Feature 1 — Knowledge Base Setup: **Completed**
+- Feature 2 — PDF Document Ingestion: **Completed**
+- Feature 3 — Document Chunking: **Completed**
 
-Feature 2 — PDF Document Ingestion: **Completed**
+## Next Milestone
 
-### Next Milestone
-
-Feature 3 — Document Chunking
-
-Next session:
-
-- Learn why chunking is required in RAG.
-- Decide the chunking strategy.
-- Determine appropriate chunk size and overlap.
-- Chunk the page-level documents while preserving metadata.
-- Test the resulting chunks.
+### Feature 4 — Embeddings
