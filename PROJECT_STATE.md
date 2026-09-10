@@ -63,6 +63,11 @@ Status: **Completed**
 - The word-level fallback was retained for robustness even though the current PDF had no sentences larger than 350 tokens.
 - Preserved the heading associated with every final chunk.
 - Preserved the source and page-label information in final chunk metadata.
+- Refactored the chunking pipeline so PDF processing and chunk generation occur through a reusable function.
+- Added `if __name__ == "__main__":` to prevent chunk generation from running automatically when the module is imported.
+- Added JSON persistence for the final chunks.
+- Saved the 467 final chunks to `data/chunks.json`.
+- The embedding pipeline will consume the saved chunks instead of re-running the chunking pipeline.
 - Final chunk representation:
 
 ```python
@@ -122,6 +127,8 @@ No additional PDF preprocessing is planned at this stage.
 self_evaluating_rag/
 ├── knowledge_base/
 │   └── artificial_intelligence_technology.pdf
+├── data/
+│   └── chunks.json
 ├── document_ingestion.py
 ├── document_chunking.py
 ├── setup_knowledge_base.py

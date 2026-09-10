@@ -1,10 +1,8 @@
-# Mine code 
 import re
-
 import io
+import json
 
 from contextlib import redirect_stdout
-
 from transformers import AutoTokenizer
 
 from document_ingestion import open_and_read_pdf
@@ -36,18 +34,11 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 
-with redirect_stdout(io.StringIO()):
-    pages_and_texts = open_and_read_pdf(
-        "knowledge_base/artificial_intelligence_technology.pdf"
-    )
-
-
 def create_chunks(pages_and_texts, chunk_size=350):
 
     chunks = []
 
     current_heading = None
-
     current_paragraphs = []
 
     for page in pages_and_texts:
@@ -64,7 +55,6 @@ def create_chunks(pages_and_texts, chunk_size=350):
                     })
 
                 current_heading = paragraph
-
                 current_paragraphs = []
 
             else:
@@ -84,10 +74,8 @@ def create_chunks(pages_and_texts, chunk_size=350):
     return chunks
 
 
-chunk = create_chunks(pages_and_texts)
-
-
 def count_tokens(text):
+
     return len(
         tokenizer.backend_tokenizer.encode(
             text,
@@ -95,20 +83,29 @@ def count_tokens(text):
         ).ids
     )
 
+
 def split_into_sentences(text):
+
     return re.split(r'(?<=[.!?])\s+', text)
 
+
 def split_into_words(text):
+
     return text.split()
 
+
 def build_paragraph_chunks(heading_data, chunk_size=350):
+
     chunks = []
+
     current_text = []
     current_token_count = 0
     current_pages = []
+
     source = None
 
     for paragraph in heading_data["paragraphs"]:
+
         paragraph_text = paragraph["text"]
         paragraph_metadata = paragraph["metadata"]
 
@@ -123,12 +120,16 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
         paragraph_token = count_tokens(paragraph_text)
 
         if paragraph_token <= chunk_size:
+
             if current_token_count + paragraph_token <= chunk_size:
+
                 current_text.append(paragraph_text)
                 current_token_count += paragraph_token
 
             else:
+
                 if current_text:
+
                     chunks.append({
                         "text": "\n\n".join(current_text),
                         "heading": heading_data["heading"],
@@ -147,18 +148,24 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
                 current_pages = [page_label]
 
         else:
+
             sentences = split_into_sentences(paragraph_text)
 
             for sentence in sentences:
+
                 sentence_token = count_tokens(sentence)
 
                 if sentence_token <= chunk_size:
+
                     if current_token_count + sentence_token <= chunk_size:
+
                         current_text.append(sentence)
                         current_token_count += sentence_token
 
                     else:
+
                         if current_text:
+
                             chunks.append({
                                 "text": "\n\n".join(current_text),
                                 "heading": heading_data["heading"],
@@ -177,17 +184,22 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
                         current_pages = [page_label]
 
                 else:
+
                     words = split_into_words(sentence)
 
                     for word in words:
+
                         word_token = count_tokens(word)
 
                         if current_token_count + word_token <= chunk_size:
+
                             current_text.append(word)
                             current_token_count += word_token
 
                         else:
+
                             if current_text:
+
                                 chunks.append({
                                     "text": " ".join(current_text),
                                     "heading": heading_data["heading"],
@@ -206,6 +218,7 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
                             current_pages = [page_label]
 
     if current_text:
+
         chunks.append({
             "text": "\n\n".join(current_text),
             "heading": heading_data["heading"],
@@ -222,59 +235,41 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
     return chunks
 
 
-all_final_chunks = []
+def generate_chunks():
 
-for heading_data in chunk:
+    with redirect_stdout(io.StringIO()):
 
-    result = build_paragraph_chunks(heading_data)
+        pages_and_texts = open_and_read_pdf(
+            "knowledge_base/artificial_intelligence_technology.pdf"
+        )
 
-    all_final_chunks.extend(result)
+    chunk = create_chunks(pages_and_texts)
 
-print("\nFINAL CHUNK VALIDATION")
-print("======================")
+    all_final_chunks = []
 
-# 1. Total chunks
-print("Total chunks:", len(all_final_chunks))
+    for heading_data in chunk:
 
-# 2. Token statistics
-token_counts = [chunk["token_count"] for chunk in all_final_chunks]
+        result = build_paragraph_chunks(heading_data)
 
-print("Minimum tokens:", min(token_counts))
-print("Maximum tokens:", max(token_counts))
-print("Average tokens:", round(sum(token_counts) / len(token_counts), 2))
+        all_final_chunks.extend(result)
 
-# 3. Chunks over the limit
-over_limit = [
-    chunk for chunk in all_final_chunks
-    if chunk["token_count"] > 350
-]
+    return all_final_chunks
 
-print("Chunks over 350 tokens:", len(over_limit))
 
-# 4. Empty text
-empty_text = [
-    chunk for chunk in all_final_chunks
-    if not chunk["text"].strip()
-]
+if __name__ == "__main__":
 
-print("Chunks with empty text:", len(empty_text))
+    all_final_chunks = generate_chunks()
 
-# 5. Missing heading
-missing_heading = [
-    chunk for chunk in all_final_chunks
-    if not chunk["heading"]
-]
+    with open("data/chunks.json", "w", encoding="utf-8") as file:
 
-print("Chunks without heading:", len(missing_heading))
+        json.dump(
+            all_final_chunks,
+            file,
+            ensure_ascii=False,
+            indent=4
+        )
 
-# 6. Missing metadata
-missing_metadata = [
-    chunk for chunk in all_final_chunks
-    if (
-        not chunk.get("metadata")
-        or not chunk["metadata"].get("source")
-        or not chunk["metadata"].get("pages")
+    print(
+        f"Chunks generated and saved successfully. "
+        f"Total chunks: {len(all_final_chunks)}"
     )
-]
-
-print("Chunks with missing metadata:", len(missing_metadata))
