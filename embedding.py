@@ -1,29 +1,36 @@
 from sentence_transformers import SentenceTransformer
 import json
 
-model = SentenceTransformer("BAAI/bge-base-en-v1.5")
 
-with open("data/chunks.json", "r", encoding = "utf-8") as f :
-  data = json.load(f)
+def generate_embeddings():
 
-embeddings = model.encode([chunk["text"] for chunk in data], convert_to_tensor=True)
+    model = SentenceTransformer("BAAI/bge-base-en-v1.5")
 
-final_embeddings = list()
-for chunk,embedding in zip(data , embeddings):
-  final_embeddings.append({
-    "chunk" : chunk,
-    "embedding" : embedding
-  })
-print("Chunk Size:", len(data))
-print("Embeddings generated for all chunks.")
-print(f"Total number of embeddings: {len(final_embeddings)}")
+    with open("data/chunks.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-expected_dim = final_embeddings[0]["embedding"].shape[0]
-print("Embedding dimension:", expected_dim)
+    embeddings = model.encode(
+        [chunk["text"] for chunk in data],
+        convert_to_numpy=True,
+        normalize_embeddings=True
+    )
 
-assert len(data) == len(final_embeddings)
-assert all(item["embedding"].shape[0] == expected_dim for item in final_embeddings), \
-    "Dimension mismatch across embeddings"
+    expected_dim = embeddings.shape[1]
 
-print("All checks passed.")
+    assert len(data) == len(embeddings), \
+        "Number of chunks and embeddings do not match"
 
+    assert all(embedding.shape[0] == expected_dim for embedding in embeddings), \
+        "Dimension mismatch across embeddings"
+
+    print("Chunk Size:", len(data))
+    print("Embeddings generated for all chunks.")
+    print("Total number of embeddings:", len(embeddings))
+    print("Embedding dimension:", expected_dim)
+    print("All checks passed.")
+
+    return data, embeddings
+
+
+if __name__ == "__main__":
+    data, embeddings = generate_embeddings()

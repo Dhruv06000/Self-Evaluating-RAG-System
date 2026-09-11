@@ -6,7 +6,7 @@ Self-Evaluating RAG System
 
 ## Current Milestone
 
-### Feature 3 — Document Chunking
+### Feature 4 — Embeddings + FAISS
 
 Status: **Completed**
 
@@ -121,6 +121,53 @@ These artifacts were reviewed and intentionally left unchanged because they do n
 
 No additional PDF preprocessing is planned at this stage.
 
+#### Feature 4 — Embeddings + FAISS
+
+- Created `embedding.py` for the embedding generation pipeline.
+- Used `BAAI/bge-base-en-v1.5` as the embedding model.
+- Loaded the persisted chunks from `data/chunks.json` instead of re-running the chunking pipeline.
+- Generated one embedding for each of the 467 final chunks.
+- Verified that the number of embeddings matches the number of chunks.
+- Verified that all embeddings have the same dimension.
+- Embedding dimension: **768**.
+- Used normalized embeddings so that inner product can be used as cosine similarity.
+- Used `convert_to_numpy=True` so the embeddings are directly compatible with FAISS.
+- Created a FAISS `IndexFlatIP` index using the embedding dimension.
+- Added all 467 normalized embeddings to the FAISS index.
+- Verified that the number of vectors stored in FAISS matches the number of embeddings.
+- Saved the FAISS index to `data/faiss.index`.
+- Implemented and tested query embedding generation using the same embedding model and normalization configuration.
+- Tested semantic search using the query: `What is Artificial Intelligence?`
+- Retrieved the top 5 results using FAISS.
+- Verified that FAISS returns both similarity scores and vector indices.
+- Verified that returned FAISS indices correctly map back to the corresponding chunks in `data/chunks.json`.
+- Verified that retrieved chunks contain relevant AI-related content and preserved metadata.
+
+##### Embedding and FAISS Architecture
+
+The indexing pipeline is:
+
+**`chunks.json → embeddings → normalization → FAISS index → faiss.index`**
+
+The query pipeline is:
+
+**`question → query embedding → normalization → FAISS search → indices + scores → chunks.json → retrieved chunks`**
+
+`data/chunks.json` remains the source of truth for chunk text and metadata, while `data/faiss.index` stores the numerical vectors used for semantic search.
+
+The current FAISS index uses `IndexFlatIP` because the project currently contains only 467 chunks. Exact brute-force search is therefore simple and appropriate at this stage.
+
+##### Embedding and FAISS Validation
+
+- Total chunks: **467**
+- Total embeddings: **467**
+- Embedding dimension: **768**
+- FAISS vectors: **467**
+- FAISS index dimension: **768**
+- Query search: **Successful**
+- Top-k retrieval: **Successful**
+- Chunk-to-index mapping: **Verified**
+
 ## Current Project Structure
 
 ```text
@@ -128,10 +175,13 @@ self_evaluating_rag/
 ├── knowledge_base/
 │   └── artificial_intelligence_technology.pdf
 ├── data/
-│   └── chunks.json
+│   ├── chunks.json
+│   └── faiss.index
 ├── document_ingestion.py
 ├── document_chunking.py
 ├── setup_knowledge_base.py
+├── embedding.py
+├── faiss_index.py
 ├── main.ipynb
 ├── LEARNING_CONTEXT.md
 ├── PROJECT_STATE.md
@@ -159,7 +209,8 @@ The current version intentionally uses no overlap so that retrieval quality can 
 - Feature 1 — Knowledge Base Setup: **Completed**
 - Feature 2 — PDF Document Ingestion: **Completed**
 - Feature 3 — Document Chunking: **Completed**
+- Feature 4 — Embeddings + FAISS: **Completed**
 
 ## Next Milestone
 
-### Feature 4 — Embeddings
+### Feature 5 — Semantic Retrieval
