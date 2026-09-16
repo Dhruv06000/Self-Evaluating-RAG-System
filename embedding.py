@@ -23,14 +23,13 @@ def generate_embeddings():
     assert all(embedding.shape[0] == expected_dim for embedding in embeddings), \
         "Dimension mismatch across embeddings"
 
-    print("Chunk Size:", len(data))
-    print("Embeddings generated for all chunks.")
-    print("Total number of embeddings:", len(embeddings))
-    print("Embedding dimension:", expected_dim)
-    print("All checks passed.")
-
     return data, embeddings
 
 
 if __name__ == "__main__":
     data, embeddings = generate_embeddings()
+
+    print("Chunk Size:", len(data))
+    print("Total number of embeddings:", len(embeddings))
+    print("Embedding dimension:", embeddings.shape[1])
+    print("All checks passed.")
