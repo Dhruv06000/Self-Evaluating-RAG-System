@@ -1,0 +1,151 @@
+[
+  {
+    "id": "q001",
+    "question": "Artificial intelligence, machine learning and deep learning are three concepts often mentioned together. What is the relationship between them? What are the similarities and differences between the three terms?",
+    "ground_truth": {
+      "answer": "Among the three, machine learning is a way or subset of artificial intelligence, and deep learning is a special kind of machine learning. Artificial intelligence can be compared to brain. Machine learning is a process to master cognitive ability, and deep learning is a very efficient teaching system in this process Artificial intelligence is the purpose and the result, while deep learning and machine learning are methods and tools.",
+      "relevant_chunks": [
+        "chunk_000005",
+        "chunk_000006"
+      ]
+    },
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "AI, ML and DL"
+    }
+  },
+  {
+    "id": "q002",
+    "question": "CANN is a chip enablement layer that Huawei introduced for deep neural networks and Ascend AI processors. Please brief the four major modules of CANN.",
+    "ground_truth": {
+      "answer": "The four major function modules of CANN are: (a) Fusion Engine, (b) CCE operator library, (c) Tensor Boost Engine (TBE), and (d) the compiler at the bottom.",
+      "relevant_chunks": [
+        "chunk_000056",
+        "chunk_000057"
+      ]
+    },
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "CANN"
+    }
+  },
+  {
+    "id": "q003",
+    "question": "Machine learning is the core technology of artificial intelligence. Please tell us the definition of machine learning",
+    "ground_truth": {
+      "answer": "For a certain kind of task T and performance measure P, the performance of a computer program measured by P on T improves with experience E, so we call the computer program learning from experience E.",
+      "relevant_chunks": [
+        "chunk_000071",
+        "chunk_000005"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Easy",
+      "topic": "Machine Learning"
+    }
+  },
+  {
+    "id": "q004",
+    "question": "The generalization error of the model can be classified into variance, bias, and irresolvable errors. What is the difference between variance and bias? What are the characteristics of the variance and bias of an overfitting model?",
+    "ground_truth": {
+      "answer": "Variance is the degree of deviation of the prediction results near the mean value, while bias is the difference between the mean value and the correct value of the prediction results. An over-fitting model generally features low bias and high variance.",
+      "relevant_chunks": [
+        "chunk_000097"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Easy",
+      "topic": "variance and bias"
+    }
+  },
+  {
+    "id": "q005",
+    "question": "In accordance with the confusion matrix shown in Fig. 2.25, please find the F1 value.",
+    "ground_truth": {
+      "answer": "The F1 value is 0.848, calculated from precision = 0.875 and recall = 0.824 using F1 = 2 × precision × recall / (precision + recall).",
+      "relevant_chunks": [
+        "chunk_000101",
+        "chunk_000100"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Confusion Matrix and F1"
+    }
+  },
+  {
+    "id": "q006",
+    "question": "In machine learning, the entire dataset is generally divided into three parts: training set, validation set, and test set. What is the difference between the verification set and the test set? Why introduce a validation set?",
+    "ground_truth": {
+      "answer": "The test set cannot participate in model training in any form, including hyperparameter search, and is used for final evaluation of the model's generalization ability. The validation set is also not used for training the model's parameters, but is used to verify and optimize hyperparameters. A validation set is introduced so that the model can be repeatedly optimized using the training and validation sets before final evaluation on the test set.",
+      "relevant_chunks": [
+        "chunk_000106",
+        "chunk_000107"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Validation and Test Sets"
+    }
+  },
+  {
+    "id": "q007",
+    "question": "Linear regression models use linear functions to fit the data. For nonlinear data, how to deal with the linear regression model?",
+    "ground_truth": {
+      "answer": "New features can be constructed from existing features and polynomial regression can then be used. For example, the feature x can be squared and x² can be added as a new feature to the dataset.",
+      "relevant_chunks": [
+        "chunk_000113",
+        "chunk_000114"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Polynomial Regression"
+    }
+  },
+  {
+    "id": "q008",
+    "question": "The Sigmoid function is a type of activation function widely adopted in the early stage of neural network research. What disadvantages does it have? How does the tanh activation function solve these problems?",
+    "ground_truth": {
+      "answer": "The Sigmoid function is easy to saturate, which can cause the vanishing gradient problem, and its output is not zero-centered. The tanh function corrects the disadvantage of non-zero-centered output and its gradient is more like the natural gradient in gradient descent, reducing the number of iterations required. However, tanh is still prone to saturation like Sigmoid.",
+      "relevant_chunks": [
+        "chunk_000159",
+        "chunk_000160"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Sigmoid and tanh Activation Functions"
+    }
+  },
+  {
+    "id": "q009",
+    "question": "Regularization techniques are widely applied in deep learning models. What does it aim at? How does Dropout lead to regularization?",
+    "ground_truth": {
+      "answer": "The goal of regularization is to reduce the generalization error of the model and prevent overfitting. Dropout randomly discards part of the output of neurons during training, creating a series of subnetworks with different structures. These subnetworks converge in a certain way in the same deep neural network, which is equivalent to using ensemble learning.",
+      "relevant_chunks": [
+        "chunk_000163",
+        "chunk_000169"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Regularization and Dropout"
+    }
+  },
+  {
+    "id": "q010",
+    "question": "The vanishing gradient and exploding gradient are two common problems in deep learning. What causes the vanishing and exploding gradient? How to avoid?",
+    "ground_truth": {
+      "answer": "The vanishing and exploding gradient problems mainly arise because the network is too deep and the weight update of the network is unstable, caused by the multiplicative effect during gradient backpropagation. Approaches to address them include pre-training, adopting the ReLU activation function, using LSTM neural networks and residual modules. Gradient clipping is the major solution for exploding gradients.",
+      "relevant_chunks": [
+        "chunk_000199",
+        "chunk_000200"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Vanishing and Exploding Gradients"
+    }
+  }
+]

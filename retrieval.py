@@ -26,6 +26,7 @@ class Retrieval:
     for score , index in zip(scores[0], indices[0]):
       chunk = self.chunks[index]
       results.append({
+                "chunk_id": chunk["chunk_id"],
                 "text": chunk.get("text", ""),
                 "heading": chunk.get("heading", ""),
                 "score": float(score),
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     retriever = Retrieval()
 
     results = retriever.retrieve(
-        "What is machine learning?",
+        "What is Artificial Intelligence ?",
         top_k=5
     )
 
@@ -44,5 +45,6 @@ if __name__ == "__main__":
         print(
             f"{rank}. "
             f"score={result['score']:.4f} | "
-            f"heading={result['heading']}"
+            f"heading={result['heading']}| " 
+            f"chunk_id={result['chunk_id']} | "
         )

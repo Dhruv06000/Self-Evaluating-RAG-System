@@ -17,6 +17,9 @@ def is_heading(text):
         text
     )
 
+    if text.startswith("Appendix"):
+        return bool(re.match(r"^Appendix\s+\d+:\s+.+", text))
+
     if text.startswith("Chapter"):
         return bool(re.match(pattern, text))
 
@@ -94,7 +97,7 @@ def split_into_words(text):
     return text.split()
 
 
-def build_paragraph_chunks(heading_data, chunk_size=350):
+def build_paragraph_chunks(heading_data, chunk_size=350, start_index = 0):
 
     chunks = []
 
@@ -131,6 +134,7 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
                 if current_text:
 
                     chunks.append({
+                        "chunk_id": f"chunk_{start_index + len(chunks) +1 :06d}",
                         "text": "\n\n".join(current_text),
                         "heading": heading_data["heading"],
                         "token_count": current_token_count,
@@ -167,6 +171,7 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
                         if current_text:
 
                             chunks.append({
+                                "chunk_id": f"chunk_{start_index + len(chunks) +1 :06d}",
                                 "text": "\n\n".join(current_text),
                                 "heading": heading_data["heading"],
                                 "token_count": current_token_count,
@@ -201,6 +206,7 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
                             if current_text:
 
                                 chunks.append({
+                                    "chunk_id": f"chunk_{start_index + len(chunks) +1 :06d}",
                                     "text": " ".join(current_text),
                                     "heading": heading_data["heading"],
                                     "token_count": current_token_count,
@@ -220,6 +226,7 @@ def build_paragraph_chunks(heading_data, chunk_size=350):
     if current_text:
 
         chunks.append({
+            "chunk_id": f"chunk_{start_index + len(chunks) +1 :06d}",
             "text": "\n\n".join(current_text),
             "heading": heading_data["heading"],
             "token_count": current_token_count,
@@ -248,8 +255,14 @@ def generate_chunks():
     all_final_chunks = []
 
     for heading_data in chunk:
+        # Skip Appendix 2 because it contains answer keys for the exercise questions
+        # used in evaluation. Including it in the retrieval corpus would cause data leakage.
+        if heading_data["heading"].startswith("Appendix 2: Key to Exercises"):
+            continue
 
-        result = build_paragraph_chunks(heading_data)
+        result = build_paragraph_chunks(
+            heading_data,
+            start_index = len(all_final_chunks))
 
         all_final_chunks.extend(result)
 
@@ -273,3 +286,8 @@ if __name__ == "__main__":
         f"Chunks generated and saved successfully. "
         f"Total chunks: {len(all_final_chunks)}"
     )
+    print(all_final_chunks[0]["chunk_id"])
+    print(all_final_chunks[-1]["chunk_id"])
+    print(len(all_final_chunks))
+    ids = [chunk["chunk_id"] for chunk in all_final_chunks]
+    print(len(ids) == len(set(ids)))

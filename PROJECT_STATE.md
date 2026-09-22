@@ -6,7 +6,7 @@ Self-Evaluating RAG System
 
 ## Current Milestone
 
-### Feature 4 — Embeddings + FAISS
+### Feature 6 — Retrieval Evaluation / Baseline
 
 Status: **Completed**
 
@@ -83,7 +83,7 @@ Status: **Completed**
         ]
     }
 }
-
+```
 ### Chunking Validation
 
 The final chunking pipeline was validated using the complete PDF.
@@ -168,6 +168,48 @@ The current FAISS index uses `IndexFlatIP` because the project currently contain
 - Top-k retrieval: **Successful**
 - Chunk-to-index mapping: **Verified**
 
+#### Feature 5 — Semantic Retrieval
+
+- Created `retrieval.py` for reusable semantic retrieval.
+- Implemented a `Retrieval` class that loads the FAISS index, chunks, and embedding model during initialization.
+- Implemented `retrieve(query: str, top_k: int = 5)`.
+- Validated that the query is not empty after stripping whitespace.
+- Validated that `top_k` is within the valid range of 1 to the total number of chunks.
+- Encoded the query using the same `BAAI/bge-base-en-v1.5` model used for document embeddings.
+- Normalized the query embedding before FAISS search.
+- Used FAISS similarity search to retrieve the top-k most similar chunks.
+- Returned retrieved results ranked by similarity score.
+- Preserved the chunk text, heading, similarity score, and metadata in each result.
+- Converted similarity scores to Python `float` values for clean output.
+
+##### Semantic Retrieval Validation
+
+- Empty query validation: **Passed**
+- Whitespace-only query validation: **Passed**
+- `top_k=0` validation: **Passed**
+- Negative `top_k` validation: **Passed**
+- `top_k` greater than the number of chunks: **Passed**
+- `top_k=467` retrieval: **Passed**
+- Normal semantic retrieval with `top_k=5`: **Passed**
+- Retrieved results were returned in descending similarity-score order.
+- Chunk-to-result mapping was verified.
+- Retrieved results preserved chunk metadata.
+
+#### Feature 6 — Retrieval Evaluation / Baseline
+
+- Created `evaluation.py` for automated retrieval evaluation using standard metrics.
+- Created `data/evaluation_dataset.json` with ground-truth relevant chunk mappings.
+- Implemented **Recall@K**, **Precision@K**, and **MRR@K** (Mean Reciprocal Rank) calculation logic.
+- Configured baseline evaluation for $K=5$.
+- Computed average performance across all evaluation queries.
+- Persisted baseline outputs and per-question evaluation breakdown to `data/baseline_results.json`.
+
+##### Retrieval Baseline Results (K = 5)
+
+- **Average Recall@5:** 0.85
+- **Average Precision@5:** 0.32
+- **Average MRR@5:** 0.77
+
 ## Current Project Structure
 
 ```text
@@ -175,18 +217,22 @@ self_evaluating_rag/
 ├── knowledge_base/
 │   └── artificial_intelligence_technology.pdf
 ├── data/
+│   ├── baseline_results.json
 │   ├── chunks.json
+│   ├── evaluation_dataset.json
 │   └── faiss.index
 ├── document_ingestion.py
 ├── document_chunking.py
 ├── setup_knowledge_base.py
 ├── embedding.py
 ├── faiss_index.py
+├── retrieval.py
+├── evaluation.py
 ├── main.ipynb
 ├── LEARNING_CONTEXT.md
 ├── PROJECT_STATE.md
 └── .gitignore
-
+```
 ## Chunking Strategy
 
 The current chunking strategy is hierarchical:
@@ -210,7 +256,9 @@ The current version intentionally uses no overlap so that retrieval quality can 
 - Feature 2 — PDF Document Ingestion: **Completed**
 - Feature 3 — Document Chunking: **Completed**
 - Feature 4 — Embeddings + FAISS: **Completed**
+- Feature 5 — Semantic Retrieval: **Completed**
+- Feature 6 — Retrieval Evaluation / Baseline: **Completed**
 
 ## Next Milestone
 
-### Feature 5 — Semantic Retrieval
+### Feature 7 — Generator / LLM Integration & Generation Evaluation
