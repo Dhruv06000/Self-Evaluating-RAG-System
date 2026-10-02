@@ -6,7 +6,7 @@ Self-Evaluating RAG System
 
 ## Current Milestone
 
-### Feature 6 — Retrieval Evaluation / Baseline
+### Feature 7 - Context Preparation / ContextBuilder
 
 Status: **Completed**
 
@@ -66,12 +66,17 @@ Status: **Completed**
 - Refactored the chunking pipeline so PDF processing and chunk generation occur through a reusable function.
 - Added `if __name__ == "__main__":` to prevent chunk generation from running automatically when the module is imported.
 - Added JSON persistence for the final chunks.
-- Saved the 467 final chunks to `data/chunks.json`.
+- Saved the 455 final chunks to `data/chunks.json`.
 - The embedding pipeline will consume the saved chunks instead of re-running the chunking pipeline.
+- Added Appendix heading detection to support the document structure.
+- Excluded `Appendix 2: Key to Exercises` from the retrieval corpus because it contains answer keys for questions used in retrieval evaluation.
+- The original PDF remains unchanged; the answer key is used only as a reference when creating evaluation ground truth and is not included as retrievable content.
+- Regenerated the chunk corpus after this change, resulting in 455 final chunks.
 - Final chunk representation:
 
 ```python
 {
+    "chunk_id": "chunk_000001",
     "text": "...",
     "heading": "...",
     "token_count": 280,
@@ -90,7 +95,7 @@ The final chunking pipeline was validated using the complete PDF.
 
 Validation results:
 
-- Total final chunks: **467**
+- Total final chunks: **455**
 - Minimum token count: **7**
 - Maximum token count: **350**
 - Average token count: **253.57**
@@ -126,14 +131,14 @@ No additional PDF preprocessing is planned at this stage.
 - Created `embedding.py` for the embedding generation pipeline.
 - Used `BAAI/bge-base-en-v1.5` as the embedding model.
 - Loaded the persisted chunks from `data/chunks.json` instead of re-running the chunking pipeline.
-- Generated one embedding for each of the 467 final chunks.
+- Generated one embedding for each of the 455 final chunks.
 - Verified that the number of embeddings matches the number of chunks.
 - Verified that all embeddings have the same dimension.
 - Embedding dimension: **768**.
 - Used normalized embeddings so that inner product can be used as cosine similarity.
 - Used `convert_to_numpy=True` so the embeddings are directly compatible with FAISS.
 - Created a FAISS `IndexFlatIP` index using the embedding dimension.
-- Added all 467 normalized embeddings to the FAISS index.
+- Added all 455 normalized embeddings to the FAISS index.
 - Verified that the number of vectors stored in FAISS matches the number of embeddings.
 - Saved the FAISS index to `data/faiss.index`.
 - Implemented and tested query embedding generation using the same embedding model and normalization configuration.
@@ -155,14 +160,14 @@ The query pipeline is:
 
 `data/chunks.json` remains the source of truth for chunk text and metadata, while `data/faiss.index` stores the numerical vectors used for semantic search.
 
-The current FAISS index uses `IndexFlatIP` because the project currently contains only 467 chunks. Exact brute-force search is therefore simple and appropriate at this stage.
+The current FAISS index uses `IndexFlatIP` because the project currently contains only 455 chunks. Exact brute-force search is therefore simple and appropriate at this stage.
 
 ##### Embedding and FAISS Validation
 
-- Total chunks: **467**
-- Total embeddings: **467**
+- Total chunks: **455**
+- Total embeddings: **455**
 - Embedding dimension: **768**
-- FAISS vectors: **467**
+- FAISS vectors: **455**
 - FAISS index dimension: **768**
 - Query search: **Successful**
 - Top-k retrieval: **Successful**
@@ -189,7 +194,7 @@ The current FAISS index uses `IndexFlatIP` because the project currently contain
 - `top_k=0` validation: **Passed**
 - Negative `top_k` validation: **Passed**
 - `top_k` greater than the number of chunks: **Passed**
-- `top_k=467` retrieval: **Passed**
+- `top_k=455` retrieval: **Passed**
 - Normal semantic retrieval with `top_k=5`: **Passed**
 - Retrieved results were returned in descending similarity-score order.
 - Chunk-to-result mapping was verified.
@@ -197,12 +202,16 @@ The current FAISS index uses `IndexFlatIP` because the project currently contain
 
 #### Feature 6 — Retrieval Evaluation / Baseline
 
+#### Feature 6 — Retrieval Evaluation / Baseline
+
 - Created `evaluation.py` for automated retrieval evaluation using standard metrics.
-- Created `data/evaluation_dataset.json` with ground-truth relevant chunk mappings.
+- Created `data/evaluation_dataset.json` with 10 manually curated evaluation questions and ground-truth relevant chunk mappings.
+- Used stable `chunk_id` values instead of positional chunk indices for ground-truth references.
 - Implemented **Recall@K**, **Precision@K**, and **MRR@K** (Mean Reciprocal Rank) calculation logic.
 - Configured baseline evaluation for $K=5$.
 - Computed average performance across all evaluation queries.
 - Persisted baseline outputs and per-question evaluation breakdown to `data/baseline_results.json`.
+- Excluded `Appendix 2: Key to Exercises` from the retrieval corpus to prevent evaluation leakage from answer-key content.
 
 ##### Retrieval Baseline Results (K = 5)
 
@@ -221,6 +230,8 @@ self_evaluating_rag/
 │   ├── chunks.json
 │   ├── evaluation_dataset.json
 │   └── faiss.index
+├── tests/
+│   └── test_context_builder.py
 ├── document_ingestion.py
 ├── document_chunking.py
 ├── setup_knowledge_base.py
@@ -228,11 +239,13 @@ self_evaluating_rag/
 ├── faiss_index.py
 ├── retrieval.py
 ├── evaluation.py
+├── context_builder.py
 ├── main.ipynb
 ├── LEARNING_CONTEXT.md
 ├── PROJECT_STATE.md
 └── .gitignore
 ```
+
 ## Chunking Strategy
 
 The current chunking strategy is hierarchical:
@@ -248,7 +261,69 @@ The strategy follows this priority:
 5. Keep every final chunk at or below 350 tokenizer tokens.
 6. No overlap is used in the current version.
 
-The current version intentionally uses no overlap so that retrieval quality can be evaluated before introducing additional complexity.
+The current chunking implementation was initially developed around the structure of the AI textbook. Generalization of the ingestion and chunking layer is intentionally postponed until after the complete RAG pipeline has been implemented and evaluated.
+
+Context Preparation
+ContextBuilder
+
+Created context_builder.py as a separate component between retrieval and generation.
+
+Responsibilities:
+
+Receives already-retrieved chunks from the retrieval layer.
+Preserves retrieval rank order.
+Formats each chunk with:
+chunk_id
+source
+page labels
+heading
+text
+Uses the BAAI/bge-base-en-v1.5 tokenizer to count context tokens.
+Enforces a configurable max_context_tokens budget.
+Skips a chunk when adding it would exceed the context budget.
+Continues checking later retrieved chunks after skipping a chunk.
+Returns the final formatted context string.
+Does not perform retrieval, ranking, embedding, or generation.
+
+Context format:
+
+[CHUNK]
+
+Chunk ID: <chunk_id>
+
+Source: <source>
+
+Pages: <page labels>
+
+Heading: <heading>
+
+Content:
+<chunk text>
+
+[END CHUNK]
+ContextBuilder Testing
+
+Automated tests were added in:
+
+tests/test_context_builder.py
+
+Tests cover:
+
+Invalid context-token limits.
+Chunk formatting.
+Token counting.
+Empty retrieved-chunk input.
+Multiple chunks fitting within the budget.
+Maximum context-token enforcement.
+Preservation of retrieval order.
+Skip-and-continue behavior when a chunk does not fit.
+Preservation of the input retrieval order.
+Multi-page metadata formatting.
+
+Validation:
+
+ContextBuilder test suite: 10/10 passed
+Full project test suite: 10/10 passed
 
 ## Status
 
@@ -258,7 +333,39 @@ The current version intentionally uses no overlap so that retrieval quality can 
 - Feature 4 — Embeddings + FAISS: **Completed**
 - Feature 5 — Semantic Retrieval: **Completed**
 - Feature 6 — Retrieval Evaluation / Baseline: **Completed**
+- Feature 7 - Context Preparation / ContextBuilder: **Completed**
+
+## Current Architecture
+
+Knowledge Base
+      ↓
+Document Ingestion
+      ↓
+Document Chunking
+      ↓
+Embeddings
+      ↓
+FAISS Index
+      ↓
+Semantic Retrieval
+      ↓
+ContextBuilder
+      ↓
+Generation
+      ↓
+Answer + References
 
 ## Next Milestone
 
-### Feature 7 — Generator / LLM Integration & Generation Evaluation
+### Generation Pipeline
+
+Build the generation component that receives:
+
+the user's question
+the context produced by ContextBuilder
+
+and generates an answer grounded in the retrieved context.
+
+The generation pipeline should also preserve the ability to identify the source chunks used to construct the answer.
+
+The first goal is to complete a simple end-to-end RAG pipeline before introducing additional retrieval complexity.

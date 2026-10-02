@@ -1,3 +1,4 @@
+#document_chunking.py
 import re
 import io
 import json
@@ -247,7 +248,7 @@ def generate_chunks():
     with redirect_stdout(io.StringIO()):
 
         pages_and_texts = open_and_read_pdf(
-            "knowledge_base/artificial_intelligence_technology.pdf"
+            "knowledge_base/Introduction_to_Python_Programming-WEB.pdf"
         )
 
     chunk = create_chunks(pages_and_texts)

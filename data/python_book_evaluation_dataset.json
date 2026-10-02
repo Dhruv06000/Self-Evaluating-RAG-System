@@ -1,0 +1,149 @@
+[
+  {
+    "id": "q001",
+    "question": "What is Python, and why is it a popular choice among programming languages according to the text? Name two well-known tech companies that use Python.",
+    "ground_truth": {
+      "answer": "Python is a top programming language whose syntax is concise and straightforward compared to other languages. It is popular because it has many libraries available for real work, including an extensive Standard Library for solving everyday computing problems. Two leading tech giants that use Python extensively are Google and Apple (others include NASA, Instagram, and Pixar).",
+      "relevant_chunks": [
+        "chunk_000002",
+        "chunk_000003"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Easy",
+      "topic": "Python Introduction and Popularity"
+    }
+  },
+  {
+    "id": "q002",
+    "question": "Explain the default behaviors of the `print()` function regarding value separation and line endings. How can a programmer customize these default behaviors?",
+    "ground_truth": {
+      "answer": "By default, multiple values passed to `print()` are separated by a space character in the output, and the function appends a newline character at the end. Programmers can customize these behaviors by using the `sep` option to change the separation character and the `end` option to change or suppress the trailing newline character.",
+      "relevant_chunks": [
+        "chunk_000005"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Easy",
+      "topic": "Input/Output with print()"
+    }
+  },
+  {
+    "id": "q003",
+    "question": "What are the core rules for naming variables in Python, and what style does Python's official style guide recommend?",
+    "ground_truth": {
+      "answer": "Variable names can contain letters, digits, and underscores, but they cannot start with a digit. They are case-sensitive and cannot be reserved Python keywords. Python's style guide recommends using 'snake case', which consists of all lowercase letters with underscores separating words (e.g., `total_price`).",
+      "relevant_chunks": [
+        "chunk_000010"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Easy",
+      "topic": "Variable Naming Rules"
+    }
+  },
+  {
+    "id": "q004",
+    "question": "How do single and double quotes interact when enclosing a string that contains quotation marks? Give an example of how to correctly include a single quote or double quote inside a string literal.",
+    "ground_truth": {
+      "answer": "To include a single quote inside a string literal, the string must be enclosed in matching double quotes (e.g., \"Won't this work?\"). Conversely, to include a double quote inside a string, the string must be enclosed in matching single quotes (e.g., 'They said \"Try it!\"').",
+      "relevant_chunks": [
+        "chunk_000012"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "String Basics and Quote Rules"
+    }
+  },
+  {
+    "id": "q005",
+    "question": "When Python displays an error message during execution, what three pieces of information does it provide, and what does the caret (`^`) symbol indicate in the traceback?",
+    "ground_truth": {
+      "answer": "The error message provides: (1) the line number where the error occurred, (2) the type of error (such as `SyntaxError`), and (3) additional details about the error. The caret (`^`) symbol indicates the exact point where Python discovered the error in the code.",
+      "relevant_chunks": [
+        "chunk_000020"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Error Handling and Debugging"
+    }
+  },
+  {
+    "id": "q006",
+    "question": "What is the difference between a standard single-line comment and a docstring in Python? What are their respective main purposes?",
+    "ground_truth": {
+      "answer": "Single-line comments start with a hash character (`#`) and are used to explain the purpose or logic of specific code parts to developers reading the source code. A docstring is a multi-line string (`\"\"\"`) placed at the beginning of a program or module to provide documentation summarizing the program's purpose and usage for external users, often used to auto-generate official documentation.",
+      "relevant_chunks": [
+        "chunk_000024",
+        "chunk_000026"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Comments and Documentation"
+    }
+  },
+  {
+    "id": "q007",
+    "question": "Explain the difference between implicit and explicit type conversion in Python, providing an example function for explicit conversion.",
+    "ground_truth": {
+      "answer": "Implicit type conversion is automatically performed by the Python interpreter to convert one data type to another without explicit instruction (e.g., reassigning or combining an integer with a float converts the result to a float). Explicit type conversion requires the programmer to manually invoke conversion functions such as `int()`, `float()`, or `str()` to change a data type.",
+      "relevant_chunks": [
+        "chunk_000041",
+        "chunk_000042"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Type Conversion"
+    }
+  },
+  {
+    "id": "q008",
+    "question": "What are floating-point round-off errors and overflow errors in Python? How can round-off errors be mitigated when displaying output?",
+    "ground_truth": {
+      "answer": "A round-off error occurs because floating-point numbers are represented in binary, causing exact decimal fractions (like 0.1) to be stored as approximations. An overflow error occurs when a calculated float value is too large to be represented in memory (exceeding maximum float bounds). Round-off errors in output can be mitigated using the `round()` function to round to a specified number of decimal places.",
+      "relevant_chunks": [
+        "chunk_000047",
+        "chunk_000048",
+        "chunk_000049"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Hard",
+      "topic": "Floating-Point Precision and Errors"
+    }
+  },
+  {
+    "id": "q009",
+    "question": "Distinguish between true division (`/`), floor division (`//`), and the modulo operator (`%`) in Python. How are floor division and modulo commonly used together for unit conversion?",
+    "ground_truth": {
+      "answer": "True division (`/`) performs standard division and always returns a float. Floor division (`//`) computes the integer quotient without fractions. The modulo operator (`%`) computes the integer remainder. In unit conversion (e.g., converting centimeters to meters), floor division by the modulus (100) extracts the whole primary units (meters), while modulo by 100 extracts the remaining sub-units (centimeters).",
+      "relevant_chunks": [
+        "chunk_000052",
+        "chunk_000053"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Hard",
+      "topic": "Division Operators and Modulo"
+    }
+  },
+  {
+    "id": "q010",
+    "question": "What is the primary difference between built-in functions and standard library module functions in Python? Give an example of each from the text.",
+    "ground_truth": {
+      "answer": "Built-in functions (such as `print()`, `input()`, or `round()`) are always available in Python without needing to import any modules. Standard library module functions (such as `math.sqrt()` or `math.ceil()`) reside in specific external modules and require an explicit `import` statement (e.g., `import math`) before they can be called using module dot notation.",
+      "relevant_chunks": [
+        "chunk_000056",
+        "chunk_000058"
+      ]
+    },
+    "metadata": {
+      "difficulty": "Medium",
+      "topic": "Modules and Built-in Functions"
+    }
+  }
+]

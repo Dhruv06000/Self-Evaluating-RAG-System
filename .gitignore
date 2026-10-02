@@ -8,3 +8,5 @@ htmlcov/
 # Ignore the RAG knowledge base files (DO NOT UPLOAD)
 knowledge_base/
 faiss_test.py
+*.index
+result/

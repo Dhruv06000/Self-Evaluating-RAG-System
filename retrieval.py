@@ -37,7 +37,7 @@ if __name__ == "__main__":
     retriever = Retrieval()
 
     results = retriever.retrieve(
-        "What is Artificial Intelligence ?",
+        "What is Machine Learning ?",
         top_k=5
     )
 
@@ -47,4 +47,5 @@ if __name__ == "__main__":
             f"score={result['score']:.4f} | "
             f"heading={result['heading']}| " 
             f"chunk_id={result['chunk_id']} | "
+            f"text={result['text']}..."
         )
