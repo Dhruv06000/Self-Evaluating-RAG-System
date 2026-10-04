@@ -1,4 +1,10 @@
 from transformers import AutoTokenizer
+from dataclasses import dataclass 
+
+@dataclass(frozen = True)
+class BuildingContext:
+    context             : str
+    included_chunk_ids  : tuple
 
 
 class ContextBuilder:
@@ -8,9 +14,10 @@ class ContextBuilder:
         self.max_context_tokens = max_context_tokens
         self.tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-base-en-v1.5")
 
-    def build(self, retrieved_chunks: list) -> str:
+    def build(self, retrieved_chunks: list) -> BuildingContext:
         """Build a context string from retrieved chunks without exceeding max_context_tokens."""
         selected_chunks = []
+        included_chunk_ids = []
         separator = "\n\n"
 
         for chunk in retrieved_chunks:
@@ -23,8 +30,12 @@ class ContextBuilder:
             # Check exact token size of the combined candidate string
             if self._count_tokens(candidate_context) <= self.max_context_tokens:
                 selected_chunks.append(formatted_chunk)
+                included_chunk_ids.append(chunk["chunk_id"])
 
-        return separator.join(selected_chunks)
+        return BuildingContext(
+            context = separator.join(selected_chunks),
+            included_chunk_ids = tuple(included_chunk_ids)
+        )
 
     def _format_chunk(self, chunk: dict) -> str:
         return f"""[CHUNK]\n
@@ -40,3 +51,4 @@ Content:\n{chunk["text"]}\n
     def _count_tokens(self, text: str) -> int:
         """Count tokens using tokenizer without adding special tokens like [CLS]/[SEP]."""
         return len(self.tokenizer.encode(text, add_special_tokens=False))
+

@@ -9,4 +9,3 @@ htmlcov/
 knowledge_base/
 faiss_test.py
 *.index
-result/

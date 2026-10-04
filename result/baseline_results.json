@@ -1,0 +1,179 @@
+{
+    "k": 5,
+    "summary": {
+        "average_recall": 0.85,
+        "average_precision": 0.31999999999999995,
+        "average_mrr": 0.7666666666666667
+    },
+    "details": [
+        {
+            "question": "Artificial intelligence, machine learning and deep learning are three concepts often mentioned together. What is the relationship between them? What are the similarities and differences between the three terms?",
+            "ground_truth_chunks": [
+                "chunk_000005",
+                "chunk_000006"
+            ],
+            "retrieved_chunks": [
+                "chunk_000006",
+                "chunk_000005",
+                "chunk_000137",
+                "chunk_000068",
+                "chunk_000024"
+            ],
+            "recall": 1.0,
+            "precision": 0.4,
+            "mrr": 1.0
+        },
+        {
+            "question": "CANN is a chip enablement layer that Huawei introduced for deep neural networks and Ascend AI processors. Please brief the four major modules of CANN.",
+            "ground_truth_chunks": [
+                "chunk_000056",
+                "chunk_000057"
+            ],
+            "retrieved_chunks": [
+                "chunk_000057",
+                "chunk_000056",
+                "chunk_000068",
+                "chunk_000058",
+                "chunk_000354"
+            ],
+            "recall": 1.0,
+            "precision": 0.4,
+            "mrr": 1.0
+        },
+        {
+            "question": "Machine learning is the core technology of artificial intelligence. Please tell us the definition of machine learning",
+            "ground_truth_chunks": [
+                "chunk_000071",
+                "chunk_000005"
+            ],
+            "retrieved_chunks": [
+                "chunk_000005",
+                "chunk_000135",
+                "chunk_000070",
+                "chunk_000006",
+                "chunk_000149"
+            ],
+            "recall": 0.5,
+            "precision": 0.2,
+            "mrr": 1.0
+        },
+        {
+            "question": "The generalization error of the model can be classified into variance, bias, and irresolvable errors. What is the difference between variance and bias? What are the characteristics of the variance and bias of an overfitting model?",
+            "ground_truth_chunks": [
+                "chunk_000097"
+            ],
+            "retrieved_chunks": [
+                "chunk_000135",
+                "chunk_000098",
+                "chunk_000097",
+                "chunk_000096",
+                "chunk_000095"
+            ],
+            "recall": 1.0,
+            "precision": 0.2,
+            "mrr": 0.3333333333333333
+        },
+        {
+            "question": "In accordance with the confusion matrix shown in Fig. 2.25, please find the F1 value.",
+            "ground_truth_chunks": [
+                "chunk_000101",
+                "chunk_000100"
+            ],
+            "retrieved_chunks": [
+                "chunk_000099",
+                "chunk_000101",
+                "chunk_000151",
+                "chunk_000157",
+                "chunk_000156"
+            ],
+            "recall": 0.5,
+            "precision": 0.2,
+            "mrr": 0.5
+        },
+        {
+            "question": "In machine learning, the entire dataset is generally divided into three parts: training set, validation set, and test set. What is the difference between the verification set and the test set? Why introduce a validation set?",
+            "ground_truth_chunks": [
+                "chunk_000106",
+                "chunk_000107"
+            ],
+            "retrieved_chunks": [
+                "chunk_000088",
+                "chunk_000106",
+                "chunk_000135",
+                "chunk_000107",
+                "chunk_000094"
+            ],
+            "recall": 1.0,
+            "precision": 0.4,
+            "mrr": 0.5
+        },
+        {
+            "question": "Linear regression models use linear functions to fit the data. For nonlinear data, how to deal with the linear regression model?",
+            "ground_truth_chunks": [
+                "chunk_000113",
+                "chunk_000114"
+            ],
+            "retrieved_chunks": [
+                "chunk_000112",
+                "chunk_000115",
+                "chunk_000114",
+                "chunk_000131",
+                "chunk_000102"
+            ],
+            "recall": 0.5,
+            "precision": 0.2,
+            "mrr": 0.3333333333333333
+        },
+        {
+            "question": "The Sigmoid function is a type of activation function widely adopted in the early stage of neural network research. What disadvantages does it have? How does the tanh activation function solve these problems?",
+            "ground_truth_chunks": [
+                "chunk_000159",
+                "chunk_000160"
+            ],
+            "retrieved_chunks": [
+                "chunk_000160",
+                "chunk_000159",
+                "chunk_000203",
+                "chunk_000161",
+                "chunk_000158"
+            ],
+            "recall": 1.0,
+            "precision": 0.4,
+            "mrr": 1.0
+        },
+        {
+            "question": "Regularization techniques are widely applied in deep learning models. What does it aim at? How does Dropout lead to regularization?",
+            "ground_truth_chunks": [
+                "chunk_000163",
+                "chunk_000169"
+            ],
+            "retrieved_chunks": [
+                "chunk_000169",
+                "chunk_000163",
+                "chunk_000164",
+                "chunk_000165",
+                "chunk_000166"
+            ],
+            "recall": 1.0,
+            "precision": 0.4,
+            "mrr": 1.0
+        },
+        {
+            "question": "The vanishing gradient and exploding gradient are two common problems in deep learning. What causes the vanishing and exploding gradient? How to avoid?",
+            "ground_truth_chunks": [
+                "chunk_000199",
+                "chunk_000200"
+            ],
+            "retrieved_chunks": [
+                "chunk_000200",
+                "chunk_000199",
+                "chunk_000203",
+                "chunk_000157",
+                "chunk_000177"
+            ],
+            "recall": 1.0,
+            "precision": 0.4,
+            "mrr": 1.0
+        }
+    ]
+}

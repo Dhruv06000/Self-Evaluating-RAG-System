@@ -1,3 +1,4 @@
+#Test_context_builder.py
 import pytest
 from context_builder import ContextBuilder
 
@@ -69,9 +70,11 @@ def test_count_tokens(builder):
 
 
 def test_empty_retrieved_chunks(builder):
-    context = builder.build([])
+    result = builder.build([])
 
-    assert context == ""
+    assert result.context == ""
+    assert result.included_chunk_ids == () 
+    
 
 
 def test_all_chunks_fit():
@@ -83,11 +86,11 @@ def test_all_chunks_fit():
 
     builder = ContextBuilder(1000)
 
-    context = builder.build(chunks)
+    result = builder.build(chunks)
 
-    assert "chunk_A" in context
-    assert "chunk_B" in context
-    assert "chunk_C" in context
+    assert "chunk_A" in result.context
+    assert "chunk_B" in result.context
+    assert "chunk_C" in result.context
 
 
 def test_context_does_not_exceed_token_budget():
@@ -111,9 +114,9 @@ def test_context_does_not_exceed_token_budget():
 
     builder = ContextBuilder(500)
 
-    context = builder.build(chunks)
+    result = builder.build(chunks)
 
-    assert builder._count_tokens(context) <= 500
+    assert builder._count_tokens(result.context) <= 500
 
 
 def test_retrieval_order_is_preserved():
@@ -125,11 +128,11 @@ def test_retrieval_order_is_preserved():
 
     builder = ContextBuilder(1000)
 
-    context = builder.build(chunks)
+    result = builder.build(chunks)
 
-    position_A = context.index("chunk_A")
-    position_B = context.index("chunk_B")
-    position_C = context.index("chunk_C")
+    position_A = result.context.index("chunk_A")
+    position_B = result.context.index("chunk_B")
+    position_C = result.context.index("chunk_C")
 
     assert position_A < position_B < position_C
 
@@ -154,14 +157,14 @@ def test_chunk_that_does_not_fit_is_skipped_and_later_chunk_is_checked():
 
     builder = ContextBuilder(budget)
 
-    context = builder.build(chunks)
+    result = builder.build(chunks)
 
-    assert "chunk_A" in context
-    assert "chunk_B" in context
-    assert "chunk_C" not in context
-    assert "chunk_D" in context
+    assert "chunk_A" in result.context
+    assert "chunk_B" in result.context
+    assert "chunk_C" not in result.context
+    assert "chunk_D" in result.context
 
-    assert builder._count_tokens(context) <= budget
+    assert builder._count_tokens(result.context) <= budget
 
 
 def test_context_builder_does_not_modify_retrieval_order():
@@ -173,10 +176,10 @@ def test_context_builder_does_not_modify_retrieval_order():
 
     builder = ContextBuilder(1000)
 
-    context = builder.build(chunks)
+    result = builder.build(chunks)
 
-    assert context.index("chunk_003") < context.index("chunk_001")
-    assert context.index("chunk_001") < context.index("chunk_002")
+    assert result.context.index("chunk_003") < result.context.index("chunk_001")
+    assert result.context.index("chunk_001") < result.context.index("chunk_002")
 
 
 def test_multi_page_metadata_is_formatted():
@@ -194,3 +197,68 @@ def test_multi_page_metadata_is_formatted():
     formatted = builder._format_chunk(chunk)
 
     assert "Pages: 42, 43" in formatted
+
+
+
+def make_skipped_chunk_scenario():
+    """A, B, C where B is too large to fit. The budget fits exactly A + C."""
+    chunks = [
+        make_chunk("chunk_A", "A"),
+        make_chunk("chunk_B", "large chunk of text " * 500),
+        make_chunk("chunk_C", "C"),
+    ]
+
+    probe = ContextBuilder(1000)
+    formatted_A = probe._format_chunk(chunks[0])
+    formatted_B = probe._format_chunk(chunks[1])
+    formatted_C = probe._format_chunk(chunks[2])
+
+    budget = probe._count_tokens("\n\n".join([formatted_A, formatted_C]))
+
+    # Make the test's premise explicit: B really cannot fit.
+    assert probe._count_tokens(formatted_B) > budget
+
+    return ContextBuilder(budget), chunks
+
+
+def test_skipped_chunk_id_is_not_in_included_chunk_ids():
+    builder, chunks = make_skipped_chunk_scenario()
+
+    result = builder.build(chunks)
+
+    assert result.included_chunk_ids == ("chunk_A", "chunk_C")
+    assert "chunk_B" not in result.included_chunk_ids
+
+
+def test_included_chunk_ids_preserve_retrieval_order():
+    chunks = [
+        make_chunk("chunk_003", "Third."),
+        make_chunk("chunk_001", "First."),
+        make_chunk("chunk_002", "Second."),
+    ]
+
+    result = ContextBuilder(1000).build(chunks)
+
+    assert result.included_chunk_ids == ("chunk_003", "chunk_001", "chunk_002")
+
+
+def test_included_chunk_ids_match_context_content():
+    builder, chunks = make_skipped_chunk_scenario()
+
+    result = builder.build(chunks)
+
+    for chunk in chunks:
+        chunk_id = chunk["chunk_id"]
+        if chunk_id in result.included_chunk_ids:
+            assert f"Chunk ID: {chunk_id}" in result.context
+        else:
+            assert f"Chunk ID: {chunk_id}" not in result.context
+
+
+def test_first_chunk_larger_than_budget_gives_empty_result():
+    chunks = [make_chunk("chunk_A", "some text that cannot fit")]
+
+    result = ContextBuilder(5).build(chunks)
+
+    assert result.context == ""
+    assert result.included_chunk_ids == ()
