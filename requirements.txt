@@ -97,3 +97,5 @@ urllib3==2.7.0
 wcwidth==0.8.2
 webencodings==0.6.1
 yarg==0.1.9
+google-genai
+python-dotenv
