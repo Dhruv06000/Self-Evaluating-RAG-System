@@ -100,7 +100,7 @@ def calculate_average_metrics(evaluation_results):
 
 if __name__ == "__main__":
     K = 5
-    with open("result/python_book_evaluation_dataset.json", "r", encoding="utf-8") as file:
+    with open("data/evaluation_dataset.json", "r", encoding="utf-8") as file:
         evaluation_data = json.load(file)
 
     retriever = Retrieval()
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         "details": evaluation_results,
     }
 
-    output_path = "data/baseline_results.json"
+    output_path = "result/baseline_results.json"
     with open(output_path, "w", encoding="utf-8") as out_file:
         json.dump(baseline_payload, out_file, indent=4)
 

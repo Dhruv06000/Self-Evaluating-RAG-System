@@ -9,3 +9,7 @@ htmlcov/
 knowledge_base/
 faiss_test.py
 *.index
+experiment/
+experiment_result/
+data/faiss.index
+main.ipynb
