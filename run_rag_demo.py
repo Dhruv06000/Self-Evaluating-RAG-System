@@ -1,4 +1,4 @@
-"""Manual end-to-end check: Retrieval -> ContextBuilder -> Generator.
+"""Manual end-to-end check through RAGPipeline (Retrieval -> ContextBuilder -> Generator).
 
 Makes real API calls (one per question). Run from the project root:
     python run_rag_demo.py
@@ -7,6 +7,7 @@ import time
 
 from context_builder import ContextBuilder
 from generator import Generator
+from rag_pipeline import RAGPipeline
 from retrieval import Retrieval
 
 MODEL = "gemini-3.8-flash"   # use the model name that worked in your smoke test
@@ -24,11 +25,11 @@ QUESTIONS = [
 ]
 
 
-def generate_with_retry(generator, question, built):
-    """Call the generator, retrying on temporary failures. Returns None if all attempts fail."""
+def run_with_retry(pipeline, question):
+    """Run the pipeline, retrying on temporary failures. Returns None if all attempts fail."""
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
-            return generator.generate(question, built)
+            return pipeline.run(question, top_k=TOP_K)
         except Exception as e:
             print(f"  attempt {attempt}/{MAX_ATTEMPTS} failed: {e}")
             if attempt < MAX_ATTEMPTS:
@@ -37,29 +38,27 @@ def generate_with_retry(generator, question, built):
 
 
 def main():
-    retriever = Retrieval()
-    builder = ContextBuilder(MAX_CONTEXT_TOKENS)
-    generator = Generator(model=MODEL)
+    pipeline = RAGPipeline(
+        Retrieval(),
+        ContextBuilder(MAX_CONTEXT_TOKENS),
+        Generator(model=MODEL),
+    )
 
     for label, question in QUESTIONS:
         print("=" * 70)
         print(f"[{label}] {question}")
 
-        # Retrieval and context building are local, so they need no retries.
-        retrieved = retriever.retrieve(question, top_k=TOP_K)
-        built = builder.build(retrieved)
-        print(f"retrieved : {[r['chunk_id'] for r in retrieved]}")
-        print(f"included  : {list(built.included_chunk_ids)}")
-
-        result = generate_with_retry(generator, question, built)
+        result = run_with_retry(pipeline, question)
         if result is None:
             print("FAILED: no answer after all attempts, skipping this question.")
             continue
 
-        print(f"answer    : {result.answer}")
-        print(f"cited     : {list(result.cited_chunk_ids)}")
-        print(f"invalid   : {list(result.invalid_citations)}")
-        print(f"refused   : {result.refused}")
+        print(f"retrieved : {[c['chunk_id'] for c in result.retrieved_chunks]}")
+        print(f"included  : {list(result.built_context.included_chunk_ids)}")
+        print(f"answer    : {result.generation.answer}")
+        print(f"cited     : {list(result.generation.cited_chunk_ids)}")
+        print(f"invalid   : {list(result.generation.invalid_citations)}")
+        print(f"refused   : {result.generation.refused}")
 
         time.sleep(PAUSE_SECONDS)
 

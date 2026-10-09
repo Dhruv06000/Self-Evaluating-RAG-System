@@ -6,7 +6,7 @@ Self-Evaluating RAG System
 
 ## Current Milestone
 
-### Feature 8 - Generation Pipeline
+### Feature 9 - Reusable RAG Pipeline
 
 Status: **Completed**
 
@@ -27,7 +27,8 @@ Status: **Completed**
 
 - Learned how to open PDFs using PyMuPDF.
 - Created `document_ingestion.py` for reusable ingestion logic.
-- Implemented page-by-page PDF text extraction using `page.get_text()`.
+- Implemented page-by-page PDF text extraction using `page.get_text("blocks")`; each non-empty text block becomes one paragraph.
+- Dropped digit-only blocks near the bottom of a page (page numbers).
 - Added basic text formatting by replacing newlines with spaces and stripping surrounding whitespace.
 - Implemented handling for pages with no extractable text by skipping them.
 - Represented each extracted page as a page-level document.
@@ -222,19 +223,18 @@ The current FAISS index uses `IndexFlatIP` because the project currently contain
 ```text
 self_evaluating_rag/
 ├── knowledge_base/
-│   └── artificial_intelligence_technology.pdf
+│   └── artificial_intelligence_technology.pdf   (not tracked; downloaded by setup_knowledge_base.py)
 ├── data/
-│   ├── chunks.json
-│   ├── evaluation_dataset.json
-│   ├── faiss.index
-│   ├── Python_book_chunks.json              (early experiment, see below)
-│   └── python_book_evaluation_dataset.json  (early experiment, see below)
+│   ├── chunks.json                  (tracked: ground-truth chunk IDs depend on it)
+│   ├── evaluation_dataset.json      (tracked: hand-curated)
+│   └── faiss.index                  (git-ignored; rebuild with `python faiss_index.py`)
 ├── result/
-│   ├── baseline_results.json
-│   └── baseline_python_book_results.json    (early experiment, see below)
+│   └── baseline_results.json        (tracked, so later changes can be compared against it)
+├── experiments/                     (git-ignored, local only: early Python-book experiment files)
 ├── tests/
 │   ├── test_context_builder.py
-│   └── test_generator.py
+│   ├── test_generator.py
+│   └── test_rag_pipeline.py
 ├── document_ingestion.py
 ├── document_chunking.py
 ├── setup_knowledge_base.py
@@ -244,16 +244,17 @@ self_evaluating_rag/
 ├── evaluation.py
 ├── context_builder.py
 ├── generator.py
+├── rag_pipeline.py
 ├── run_rag_demo.py
 ├── main.ipynb
 ├── requirements.txt
 ├── LEARNING_CONTEXT.md
 ├── PROJECT_STATE.md
-├── .env                                     (API key, git-ignored, never committed)
+├── .env                             (API key, git-ignored, never committed)
 └── .gitignore
 ```
 
-The Python-book files are an early, informal generalization experiment (a second book chunked and baselined). They are not part of the main pipeline. Formal generalization remains postponed (see Next Milestone).
+The early Python-book generalization experiment (a second book chunked and baselined) was moved out of the repo into the local, git-ignored `experiments/` folder. It is not part of the main pipeline. Its old versions remain in Git history. Formal generalization remains postponed (see Next Milestone).
 
 ## Chunking Strategy
 
@@ -400,7 +401,7 @@ Validation:
 
 #### Manual End-to-End Check
 
-`run_rag_demo.py` runs Retrieval → ContextBuilder → Generator on four real questions with the live model (`top_k=5`, `max_context_tokens=2500`). It is a manual check, not an automated test. Observed results:
+`run_rag_demo.py` ran Retrieval → ContextBuilder → Generator on four real questions with the live model (`top_k=5`, `max_context_tokens=2500`). It was first wired by hand; since Feature 9 it runs through `RAGPipeline`. It is a manual check, not an automated test. Observed results:
 
 - **Answerable** ("What is machine learning?"): grounded answer; all cited IDs were in the context; no invalid citations.
 - **Partial** (machine learning plus the first iPhone's release date): answered the supported part and ended with `Missing information:`; `refused` was false.
@@ -424,6 +425,71 @@ Observed behavior worth keeping in mind:
 - No retry or error-handling policy for provider failures inside `generator.py`.
 - `generate` needs a real `GOOGLE_API_KEY` to construct a `Generator`.
 
+## Pipeline
+
+### Feature 9 — Reusable RAG Pipeline
+
+Created `rag_pipeline.py`. `RAGPipeline` is an orchestrator: it calls the three existing components in order and records every stage's output. It does not retrieve, count tokens, build prompts, parse citations, or generate. Those responsibilities stay in `Retrieval`, `ContextBuilder`, and `Generator`.
+
+Flow of `RAGPipeline.run(question, top_k=5)`:
+
+1. `retrieved = retriever.retrieve(question, top_k)`
+2. `built = context_builder.build(retrieved)`
+3. `generation = generator.generate(question, built)`
+4. Return a `RAGResult` containing the question, `tuple(retrieved)`, `built`, and `generation`.
+
+`RAGResult` (frozen dataclass), four fields:
+
+- `question: str`: stored so a saved result is self-contained.
+- `retrieved_chunks: tuple`: what retrieval returned (a tuple, so it cannot be mutated in place).
+- `built_context: BuildingContext`: stored whole. `.context` is the exact text the model saw; `.included_chunk_ids` are the chunks that survived the token budget.
+- `generation: GenerationResult`: stored whole. Holds `answer`, `cited_chunk_ids`, `invalid_citations`, `refused`.
+
+Why the whole objects instead of copied fields: one source of truth, so copies cannot drift apart. Comparing the IDs in `retrieved_chunks` with `built_context.included_chunk_ids` shows what the token budget dropped, which lets later evaluation separate retrieval failures, context failures, and generation failures.
+
+Design decisions:
+
+- **Components are injected.** `__init__(retriever, context_builder, generator)` takes already-built objects. The slow embedding model and tokenizer load once, and tests can pass fakes. No base classes or provider interfaces; duck typing is enough.
+- **`top_k` is a parameter of `run`** (default 5). It is an input, not part of the result. Evaluation can vary it per call without redesign.
+- **The pipeline catches nothing.** Exceptions from any stage propagate, and later stages do not run. A swallowed error in an evaluating system would look like a valid result.
+- **The pipeline does not validate the question.** `Retrieval.retrieve` and `Generator.generate` already raise `ValueError` for empty questions, so the rule lives in one place per component.
+- **Retry policy is not part of the pipeline.** It remains in `run_rag_demo.py`, now wrapping `pipeline.run(...)`.
+
+#### Pipeline Testing
+
+Automated tests are in `tests/test_rag_pipeline.py` (4 tests), using three small fakes (retriever, builder, generator) that record what they receive. No network or real models are needed. They cover:
+
+- The result contains each stage's output unchanged (the fake builder drops one of two chunk IDs, simulating a budget drop).
+- Each stage receives the right input: `top_k` reaches the retriever (tested with a non-default value, 3), the builder gets the retriever's output, and the generator gets the question and the builder's output.
+- A generator exception propagates, and retrieval and building had already run.
+- A retrieval exception propagates, and the builder and generator are never called.
+
+Break-it checks (each sabotage made at least one test fail):
+
+| Sabotage in `run` | Caught by |
+|---|---|
+| `build([])` instead of `build(retrieved)` | `test_stages_receive_the_right_inputs`, `test_generation_error_propagates` |
+| Swapped generator arguments | `test_stages_receive_the_right_inputs` only |
+| `top_k` not forwarded | `test_stages_receive_the_right_inputs` only |
+| Generator exception swallowed (`generation = None`) | `test_generation_error_propagates` only |
+
+Lessons recorded: a test fails only if one of its asserts depends on the changed behavior, and a test that uses default values cannot catch a bug that drops those values (the `top_k` check needs a non-default value).
+
+Validation:
+
+- ContextBuilder tests: 14/14 passed
+- Generator tests: 25/25 passed
+- Pipeline tests: 4/4 passed
+- Full project test suite: **43/43 passed**
+- Live demo through `RAGPipeline`: answerable question gave a cited answer with no invalid citations; the partial question ended with `Missing information:`; the out-of-scope and injection-in-question cases returned the sentinel (`refused` true).
+
+#### Known Limitations (Pipeline)
+
+- No retry for transient provider errors (503) inside the pipeline or generator. In the demo, a retry re-runs retrieval and context building too, which is cheap locally but is a reason to revisit where retry belongs. When added, it should retry only transient errors, close to the network call (`Generator._call_llm`) or in the caller.
+- Test runs take about 10-20 seconds even with fakes. The likely cause is heavy imports (`transformers` via `context_builder`, `google.genai` via `generator`), needed for the `RAGResult` type hints. This was not measured.
+- The pipeline runs one question at a time; there is no batch method yet.
+- Instruction-inside-context (prompt rule 6) is still untested, and faithfulness is still not measured.
+
 ## Status
 
 - Feature 1 — Knowledge Base Setup: **Completed**
@@ -434,6 +500,7 @@ Observed behavior worth keeping in mind:
 - Feature 6 — Retrieval Evaluation / Baseline: **Completed**
 - Feature 7 — Context Preparation / ContextBuilder: **Completed**
 - Feature 8 — Generation Pipeline: **Completed**
+- Feature 9 — Reusable RAG Pipeline: **Completed**
 
 ## Current Architecture
 
@@ -455,13 +522,13 @@ Generation
       ↓
 Answer + References
 
+`RAGPipeline.run(question, top_k)` orchestrates Semantic Retrieval → ContextBuilder → Generation and returns a `RAGResult` (question, retrieved chunks, built context, `GenerationResult`).
+
 ## Next Milestone
 
-### Simple End-to-End Pipeline
+### Answer-Level Evaluation
 
-Wire the existing components into one reusable function or class (question in, answer plus validated references out): Retrieval → ContextBuilder → Generator. `run_rag_demo.py` is a manual check, not that pipeline.
-
-Then, in this order:
+The end-to-end pipeline is done (Feature 9), so evaluation can now call one entry point and inspect every stage through `RAGResult`. Next, in this order:
 
 1. Answer-level evaluation: faithfulness/groundedness, answer relevance, and citation correctness. Grow the 10-question evaluation set if the results are too noisy to trust. If an LLM judge is used, its limitations must be documented.
 2. Self-evaluation / corrective behavior (for example: flag or refuse an answer when the faithfulness check fails or invalid citations appear).
@@ -471,10 +538,20 @@ Then, in this order:
 
 Retrieval quality bounds generation quality: with Recall@5 = 0.85, the generator never sees the right evidence for some questions. Answer evaluation should separate retrieval failures from generation failures.
 
-## Housekeeping To Do
+## Housekeeping
 
-- `evaluation.py`: the `__main__` block still points at Python-book files and a non-existent `result/python_book_evaluation_dataset.json`; it should read `data/evaluation_dataset.json` and write to one consistent results folder.
-- `.gitignore` ignores `result/`, so baseline results are not committed. Decide on one results folder and track it.
-- `requirements.txt` must be saved as UTF-8 and list all dependencies (including `faiss-cpu`, `sentence-transformers`, `torch`, `transformers`, `pytest`, `google-genai`, `python-dotenv`).
-- `faiss_index.py` and `setup_knowledge_base.py` run their logic on import; wrap them in `if __name__ == "__main__":`.
-- Verify the Feature 2 bullet about text extraction (`document_ingestion.py` may use block-based extraction rather than plain `page.get_text()`).
+Done:
+
+- `evaluation.py` now reads `data/evaluation_dataset.json` and writes `result/baseline_results.json`. The baseline was reproduced exactly (Recall@5 0.85, Precision@5 0.32, MRR@5 0.77), including after rebuilding the FAISS index from scratch.
+- `result/` is tracked; `data/faiss.index` is git-ignored and untracked; the Python-book experiment files moved to the git-ignored `experiments/` folder.
+- `faiss_index.py` logic moved into `build_index(index_path="data/faiss.index")` under an `if __name__ == "__main__":` guard.
+- Confirmed `.env` was never committed.
+- Feature 2 bullet about text extraction corrected (block-based extraction).
+
+Still to do:
+
+- Confirm `document_chunking.py` points at `knowledge_base/artificial_intelligence_technology.pdf` (it had pointed at the Python-book PDF, which would overwrite `data/chunks.json` if re-run).
+- `setup_knowledge_base.py` still runs its logic on import (low risk, optional): wrap it in `if __name__ == "__main__":`.
+- `requirements.txt`: confirm it is saved as UTF-8 and lists all dependencies.
+- Delete the throwaway `demo.py` and `imp.txt` if they still exist, and make sure they are not committed.
+- Optional: remove the unused `Retrieval` import from `rag_pipeline.py` if it is still there, and align indentation (the file uses 2 spaces; the rest of the project mixes 2 and 4).
