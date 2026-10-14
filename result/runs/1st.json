@@ -1,0 +1,1093 @@
+{
+  "timestamp": "20261014_020101",
+  "complete": true,
+  "errored_metrics": 0,
+  "golden_sha256": "e3b21b212ac4",
+  "chunks_sha256": "6c48ae6cad81",
+  "config": {
+    "retriever": "Retrieval",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "chunk_size": 350,
+    "chunk_overlap": 0,
+    "top_k": 5,
+    "judge_model": "gemini-3.5-flash-lite",
+    "golden_set": "golden/retriever_golden.json",
+    "num_goldens": 15
+  },
+  "summary": {
+    "Contextual Recall": {
+      "n": 15,
+      "pass_rate": 86.66666666666667,
+      "avg_score": 0.8833333333333333,
+      "min_score": 0.0,
+      "max_score": 1.0
+    },
+    "Contextual Precision": {
+      "n": 15,
+      "pass_rate": 86.66666666666667,
+      "avg_score": 0.8744444444444445,
+      "min_score": 0.2,
+      "max_score": 1.0
+    }
+  },
+  "details": [
+    {
+      "question": "How did John McCarthy define artificial intelligence, and what limitation does the book point out in that definition?",
+      "source": "Ch. 1, Section 1.1.1 (printed p. 1)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000008",
+          "heading": "1.1.4 The History of AI",
+          "pages": [
+            "5",
+            "6"
+          ],
+          "preview": "Figure 1.4 presents us a brief history of AI.\n\nThe ofﬁcial origin of modern AI c",
+          "score": 0.6469
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000013",
+          "heading": "1.1.4 The History of AI",
+          "pages": [
+            "8",
+            "9"
+          ],
+          "preview": "3. The First AI Winter (1976–1982) However, the AI manic did not last too long, ",
+          "score": 0.6466
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000011",
+          "heading": "1.1.4 The History of AI",
+          "pages": [
+            "7",
+            "8"
+          ],
+          "preview": "In the following two decades, AI was developing rapidly in a wide range of ﬁelds",
+          "score": 0.6217
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000062",
+          "heading": "1.5.4 Will Everyone Be Unemployed?",
+          "pages": [
+            "38"
+          ],
+          "preview": "Throughout the course of human development, people are always seeking ways to en",
+          "score": 0.6211
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000010",
+          "heading": "1.1.4 The History of AI",
+          "pages": [
+            "7"
+          ],
+          "preview": "In 1946, the American physiologist Warren McCulloch established the ﬁrst model o",
+          "score": 0.6188
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 0.5,
+          "reason": "The score is 0.50 because sentence 1 is successfully attributed to the 5th node in retrieval context, while sentence 2 lacks support from any of the retrieval nodes.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 0.2,
+          "reason": "The score is 0.20 because the only relevant node is ranked fifth, while the first four nodes are irrelevant. Specifically, the first retrieval context node is irrelevant because it \"discusses the Turing Test proposed by Alan M. Turing and early history of AI, but does not mention John McCarthy's definition of AI\", the second retrieval context node is irrelevant because it \"covers the First AI Winter and the XOR problem, but has no information regarding John McCarthy or his definition of AI\", the third retrieval context node is irrelevant because it \"discusses Arthur Samuel and machine learning along with pattern recognition, which is irrelevant to John McCarthy's definition of AI\", and the fourth retrieval context node is irrelevant because it \"is about human efficiency and job replacement by AI, which does not relate to John McCarthy\". These four irrelevant nodes should have been ranked lower than the fifth node, which is the only relevant one as it \"mentions that 'in 1956, John McCarthy ofﬁcially introduced AI as a new discipline at the 2-month long Dartmouth Conference,' though the expected output draws on external knowledge or other parts of the text for the exact definition and limitation\".",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What is the relationship between artificial intelligence, machine learning, and deep learning?",
+      "source": "Ch. 1, Section 1.1.2 (printed pp. 4-5)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000006",
+          "heading": "1.1.2 The Relationship Between AI, Machine Learning, and Deep Learning",
+          "pages": [
+            "4",
+            "5"
+          ],
+          "preview": "The study of machine learning aims at enabling computers to simulate or perform ",
+          "score": 0.8582
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000005",
+          "heading": "1.1.1 What Is Artiﬁcial Intelligence?",
+          "pages": [
+            "3",
+            "4"
+          ],
+          "preview": "1.1 The Concept of Artiﬁcial Intelligence 3\n\nMachine learning (ML) is apparently",
+          "score": 0.7562
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000137",
+          "heading": "Chapter 3 Overview of Deep Learning",
+          "pages": [
+            "87"
+          ],
+          "preview": "As a machine learning model based on neural networks, deep learning is particula",
+          "score": 0.7539
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000024",
+          "heading": "1.2 AI-Related Technologies",
+          "pages": [
+            "13",
+            "14"
+          ],
+          "preview": "Deep learning is one of the most essential technologies for machine learning. Th",
+          "score": 0.749
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000139",
+          "heading": "3.1 Introduction to Deep Learning",
+          "pages": [
+            "88"
+          ],
+          "preview": "avoid the bias that are internet to people’s selection of features, deep learnin",
+          "score": 0.7268
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by the 1st node in retrieval context, perfectly capturing the relationships between AI, machine learning, and deep learning.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all relevant nodes are perfectly ranked at the top, such as the first node which states that 'Artiﬁcial intelli- gence is the target and result while deep learning and machine learning are methods and tools' and the second node noting that machine learning 'is an important sub-field of AI', while the irrelevant nodes that focus on specific fields or details are correctly placed below them.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What are the three main schools of AI, and what is the core of each?",
+      "source": "Ch. 1, Section 1.1.5 (printed p. 12)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000021",
+          "heading": "1.1.5 The Three Main Schools of AI",
+          "pages": [
+            "12"
+          ],
+          "preview": "Currently, symbolism, connectionism, and behaviorism constitute the three main s",
+          "score": 0.7313
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000044",
+          "heading": "1.3.1 The Technologies of AI",
+          "pages": [
+            "25"
+          ],
+          "preview": "As shown by Fig. 1.10, the AI technologies mainly include three types of applica",
+          "score": 0.7313
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000269",
+          "heading": "6.1.1 The Logic Architecture of Ascend AI Processor Hardware",
+          "pages": [
+            "163"
+          ],
+          "preview": "The logic architecture of Ascend AI processor hardware is mainly composed of fou",
+          "score": 0.7098
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000028",
+          "heading": "1.2.2 An Overview of AI Processor",
+          "pages": [
+            "15",
+            "16"
+          ],
+          "preview": "In the four key elements of AI technology (data, algorithms, computing power, an",
+          "score": 0.6996
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000067",
+          "heading": "1.7 Chapter Summary",
+          "pages": [
+            "40"
+          ],
+          "preview": "This chapter introduces the basic concepts, development history and application ",
+          "score": 0.6926
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 0.75,
+          "reason": "The score is 0.75 because the sentences regarding symbolism and connectionism are successfully supported by node(s) in retrieval context (specifically the 1st node), while the sentence regarding behaviorism lacks support as it is entirely missing from the retrieval context.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because the first retrieval context node correctly provides the three main schools of AI and their core principles, and it is perfectly ranked above all the irrelevant nodes that discuss AI application technologies, processor hardware, and general AI concepts.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What do 'full-stack' and 'all-scenario' mean in Huawei's AI strategy?",
+      "source": "Ch. 1, Section 1.4.1 (printed p. 33)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000052",
+          "heading": "1.4.1 Full-Stack All-Scenario AI Solutions",
+          "pages": [
+            "32",
+            "33"
+          ],
+          "preview": "In the ﬁrst quarter of 2020, Huawei’s all-scenario AI computing framework MindSp",
+          "score": 0.819
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000268",
+          "heading": "Chapter 6 Huawei Atlas AI Computing Solution",
+          "pages": [
+            "163"
+          ],
+          "preview": "This chapter mainly introduces Huawei Ascend AI processor and Huawei Atlas AI co",
+          "score": 0.7973
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000230",
+          "heading": "5.1 Introduction to MindSpore Development Framework",
+          "pages": [
+            "137"
+          ],
+          "preview": "MindSpore is a Huawei self-developed AI development framework which can achieve ",
+          "score": 0.7815
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000350",
+          "heading": "7.1 Introduction to HUAWEI HiAI Platform",
+          "pages": [
+            "221",
+            "222"
+          ],
+          "preview": "Currently most consumers are exposed to such AI Apps as voice assistant, AI phot",
+          "score": 0.7794
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000056",
+          "heading": "1.4.2 Directions of Huawei Full-Stack AI",
+          "pages": [
+            "35"
+          ],
+          "preview": "including the high technological standards, soaring development costs and long d",
+          "score": 0.773
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by the 1st node in the retrieval context. Excellent work!",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because the first node in the retrieval contexts provides the exact definitions, stating that 'It directly defines full-stack as 'a full-stack solution including chip, chip enable, training and reasoning framework and application enable' and all-scenario as 'an all-scenario deployment environment including public cloud, private cloud, all kinds of edge computing, IoT terminals and consumer terminals'.' This ensures the only relevant node is perfectly ranked at the very top, while the remaining irrelevant nodes correctly follow below since 'It only introduces the chapter topics and does not provide the specific meanings of 'full-stack' and 'all-scenario'.' Outstanding retrieval precision!",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What is the difference between a regression model and a classification model in supervised learning?",
+      "source": "Ch. 2, Section 2.2.1 (printed p. 48)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000080",
+          "heading": "2.2.1 Supervised Learning",
+          "pages": [
+            "48"
+          ],
+          "preview": "The input (feature) and output (target) of a supervised learning algorithm can b",
+          "score": 0.7836
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000076",
+          "heading": "2.1.2 Major Problems Solved by Machine Learning",
+          "pages": [
+            "46",
+            "47"
+          ],
+          "preview": "Machine learning can deal with various types of problems, including the most typ",
+          "score": 0.7756
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000081",
+          "heading": "2.2.1 Supervised Learning",
+          "pages": [
+            "48"
+          ],
+          "preview": "Although the range of the regression model can be an inﬁnite set, the output of ",
+          "score": 0.7735
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000135",
+          "heading": "2.8 Exercises",
+          "pages": [
+            "86"
+          ],
+          "preview": "1. Machine learning is the core technology of artiﬁcial intelligence. Please tel",
+          "score": 0.7546
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000131",
+          "heading": "2.6 Case Study",
+          "pages": [
+            "82",
+            "83",
+            "84"
+          ],
+          "preview": "By the end of this chapter, we are about to review the overall process of a mach",
+          "score": 0.7431
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all statements in the expected output are fully supported by node(s) in retrieval context, specifically regarding regression and classification models.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because the first node directly answers the question by stating 'When the value of the target variable is continuous, the output of the supervised learning algorithm is called a regression model... Regression model is widely used in time series forecasting... For instance, how much money can you earn form stocks next week? What will the temperature be tomorrow?' and 'Correspondingly, when the target variable takes discrete values, the output of the supervised learning algorithm is called a classiﬁcation model... Such as whether there will be trafﬁc jams on a highway', and the second node provides supporting information about the main difference, noting that 'the output of classiﬁcation is discrete serial numbers of classes... while the output of regression is continuous value.', perfectly placing all relevant nodes at the top ahead of the irrelevant ones.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What are the typical data quality problems that make data 'dirty', and what is data cleaning?",
+      "source": "Ch. 2, Section 2.3.2 (printed p. 54)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000090",
+          "heading": "2.3.2 Data Cleaning",
+          "pages": [
+            "54",
+            "55"
+          ],
+          "preview": "The workload of data cleaning is often quite heavy. Research shows that data sci",
+          "score": 0.7715
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000089",
+          "heading": "2.3.2 Data Cleaning",
+          "pages": [
+            "53",
+            "54"
+          ],
+          "preview": "Data is vital to the model and determines the limit of the model’s capabilities.",
+          "score": 0.7698
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000087",
+          "heading": "2.3 The Overall Process of Machine Learning",
+          "pages": [
+            "52"
+          ],
+          "preview": "A complete machine learning project often involves data collection, data cleanin",
+          "score": 0.6274
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000197",
+          "heading": "3.7.1 Imbalanced Data",
+          "pages": [
+            "119"
+          ],
+          "preview": "Imbalanced data refers to a problem in the dataset of classiﬁcation tasks where ",
+          "score": 0.6189
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000098",
+          "heading": "2.3.5 Model Evaluation",
+          "pages": [
+            "59",
+            "60",
+            "61"
+          ],
+          "preview": "Fig. 2.20 Underﬁtting, good ﬁtting and overﬁtting\n\n2.3 The Overall Process of Ma",
+          "score": 0.6082
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by information found across the first and second nodes in the retrieval context, demonstrating perfect recall!",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because the first and second nodes are correctly ranked at the top, effectively detailing the 'time spent on cleaning' and providing the specific data quality problems ('Incomplete, Noisy, Inconsistent') along with the definition of data cleaning. Meanwhile, the irrelevant nodes, such as the third node discussing 'a complete machine learning project', the fourth node explaining 'Imbalanced data', and the fifth node covering 'underfitting, overfitting, and regression model performance', are appropriately ranked lower since they do not directly answer the user's input regarding typical data quality problems and data cleaning.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What are underfitting and overfitting, and how can overfitting be reduced?",
+      "source": "Ch. 2, Section 2.3.5 (printed p. 59)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000096",
+          "heading": "2.3.5 Model Evaluation",
+          "pages": [
+            "59"
+          ],
+          "preview": "Once the model is formed and ﬁxed, all possible functions will construct a space",
+          "score": 0.7685
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000201",
+          "heading": "3.7.3 Overﬁtting",
+          "pages": [
+            "121"
+          ],
+          "preview": "Overﬁtting refers to the problem that the model performs well on the training se",
+          "score": 0.7631
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000163",
+          "heading": "3.4 Regularization",
+          "pages": [
+            "101"
+          ],
+          "preview": "Regularization is a rather important and highly effective measure to reduce gene",
+          "score": 0.7439
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000097",
+          "heading": "2.3.5 Model Evaluation",
+          "pages": [
+            "59"
+          ],
+          "preview": "The capacity of a model refers to its ability to ﬁt a variety of functions, also",
+          "score": 0.7196
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000098",
+          "heading": "2.3.5 Model Evaluation",
+          "pages": [
+            "59",
+            "60",
+            "61"
+          ],
+          "preview": "Fig. 2.20 Underﬁtting, good ﬁtting and overﬁtting\n\n2.3 The Overall Process of Ma",
+          "score": 0.7022
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by the 1st node in the retrieval context.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all the relevant nodes (first to fourth nodes) providing definitions and reduction methods for underfitting and overfitting are correctly ranked higher than the fifth node, which discusses regression performance indicators and bias-variance and is not directly used in forming the expected output.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "In the book's cat-image classifier example with 200 test images, what are the precision, recall, and accuracy?",
+      "source": "Ch. 2, Section 2.3.5 (printed p. 62)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000101",
+          "heading": "2.3.5 Model Evaluation",
+          "pages": [
+            "62"
+          ],
+          "preview": "At the end of this section, let’s take an example to illustrate the calculation ",
+          "score": 0.8368
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000264",
+          "heading": "5.2.3 Realization of Handwritten Digit Recognition with Mindspore",
+          "pages": [
+            "161"
+          ],
+          "preview": "============== Starting Testing ============== ========== Accuracy:{'Accuracy':0",
+          "score": 0.6847
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000250",
+          "heading": "5.2.3 Realization of Handwritten Digit Recognition with Mindspore",
+          "pages": [
+            "152",
+            "153"
+          ],
+          "preview": "1. Overview This tutorial uses a simple image classiﬁcation example to demonstra",
+          "score": 0.6786
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000100",
+          "heading": "2.3.5 Model Evaluation",
+          "pages": [
+            "61",
+            "62"
+          ],
+          "preview": "1. Positive tuple P: tuple of the major classes of interest. 2. Negative tuple N",
+          "score": 0.6751
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000135",
+          "heading": "2.8 Exercises",
+          "pages": [
+            "86"
+          ],
+          "preview": "1. Machine learning is the core technology of artiﬁcial intelligence. Please tel",
+          "score": 0.6603
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all information regarding the image dataset breakdown, model predictions, and calculated metrics in the expected output is fully supported by node(s) in retrieval context.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because the first retrieval context node correctly provides all the statistics and calculations needed for the expected output, stating 'Among them, 170 are labeled as images with cats and 30 are labeled not' and 'the precision of the model is 140/160... the recall is 140/170... and the accuracy is (140 + 10)/ 200'. It is perfectly ranked above the irrelevant retrieval context nodes, such as the second node which discusses a different model accuracy of 97.4% which is not part of the cat-image classifier example in the expected output, the third node which talks about the MNIST dataset and MindSpore framework, which are completely irrelevant to the specific cat-image classifier example, the fourth node which discusses general definitions of confusion matrix tuples and document retrieval, but does not contain the specific numbers for the cat-image classifier example, and the fifth node which contains generic machine learning review questions and does not provide the specific numbers or calculations for the expected output.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What are the three variants of gradient descent, and how do they differ?",
+      "source": "Ch. 2, Section 2.4.1 (printed p. 64)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000171",
+          "heading": "3.5 Optimizer",
+          "pages": [
+            "106"
+          ],
+          "preview": "There are various optimized versions of the gradient descent algorithm. In the i",
+          "score": 0.7937
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000104",
+          "heading": "2.4.1 Gradient Descent",
+          "pages": [
+            "64"
+          ],
+          "preview": "The optimization idea of the gradient descent algorithm is to use the negative g",
+          "score": 0.7885
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000153",
+          "heading": "3.2.2 Gradient Descent",
+          "pages": [
+            "94",
+            "95"
+          ],
+          "preview": "The gradient of the multivariate function f(x1, x2, . . ., xn) at x is\n\n—f x1, x",
+          "score": 0.7824
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000177",
+          "heading": "3.5.4 Adam Optimizer",
+          "pages": [
+            "109"
+          ],
+          "preview": "In form, m and v are the moving averages of gradient and squares of the gradient",
+          "score": 0.7524
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000132",
+          "heading": "2.6 Case Study",
+          "pages": [
+            "84",
+            "85"
+          ],
+          "preview": "Where m represents the number of samples, h(x) is the predicted value, and y is ",
+          "score": 0.7486
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 0.0,
+          "reason": "The score is 0.00 because sentences 1, 2, and 3 in the expected output regarding the specific details of Batch Gradient Descent, Stochastic Gradient Descent, and Mini-batch Gradient Descent cannot be attributed to the nodes in retrieval context.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 0.3333333333333333,
+          "reason": "The score is 0.33 because the only relevant node is ranked third, preceded by irrelevant nodes. Specifically, the third node in the retrieval contexts is relevant because 'This document mentions 'batch gradient descent (BGD)' and the 'stochastic gradient descent (SGD)' algorithm, providing information on variants of gradient descent.' In contrast, the first node is irrelevant because 'This document discusses various optimizers like SGD, Momentum, Adam, etc., but does not detail the three variants of gradient descent requested.' and the second node is irrelevant because 'This text explains the general optimization idea of the gradient descent algorithm and formula, but does not cover the three specific variants.' The score is not higher because the relevant node should have been ranked higher than the irrelevant nodes.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What are the three stages of building a decision tree, and which indicators are used to measure purity?",
+      "source": "Ch. 2, Section 2.5.3 (printed pp. 73-74)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000119",
+          "heading": "2.5.3 Decision Tree",
+          "pages": [
+            "74",
+            "75"
+          ],
+          "preview": "Where, pk represents the probability that the sample belongs to class k, and K r",
+          "score": 0.7604
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000118",
+          "heading": "2.5.3 Decision Tree",
+          "pages": [
+            "73",
+            "74"
+          ],
+          "preview": "Decision tree is a tree structure (binary or non-binary) classiﬁer, as shown in ",
+          "score": 0.7413
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000093",
+          "heading": "2.3.4 The Construction of Machine Learning Models",
+          "pages": [
+            "56",
+            "57",
+            "58"
+          ],
+          "preview": "After ﬁnishing data cleaning and feature extraction, it is time to build the mod",
+          "score": 0.6415
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000087",
+          "heading": "2.3 The Overall Process of Machine Learning",
+          "pages": [
+            "52"
+          ],
+          "preview": "A complete machine learning project often involves data collection, data cleanin",
+          "score": 0.6343
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000129",
+          "heading": "2.5.7 Ensemble Learning",
+          "pages": [
+            "80",
+            "81"
+          ],
+          "preview": "Gradient boosting decision tree (GBDT) is one of the Boosting methods. The predi",
+          "score": 0.6292
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by node(s) in retrieval context: the first sentence regarding the three stages of decision trees is supported by the 1st node, and the second sentence concerning purity indicators and algorithms is supported by the 2nd node.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all relevant information regarding the three stages of building a decision tree, such as '1. Feature selection', '2. Decision tree generation', and '3. Pruning' (found in the first node), along with the purity indicators like information entropy and Gini coefﬁcient (found in the second node), are perfectly ranked at the very top above all irrelevant nodes.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "How does dropout work as a regularization method, and what is the risk of early stopping?",
+      "source": "Ch. 3, Sections 3.4.3-3.4.4 (printed p. 105)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000169",
+          "heading": "3.4.3 Dropout",
+          "pages": [
+            "105"
+          ],
+          "preview": "Dropout is a regularization method that is very popular and simple in computatio",
+          "score": 0.8356
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000163",
+          "heading": "3.4 Regularization",
+          "pages": [
+            "101"
+          ],
+          "preview": "Regularization is a rather important and highly effective measure to reduce gene",
+          "score": 0.8014
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000170",
+          "heading": "3.4.4 Early Stopping",
+          "pages": [
+            "105"
+          ],
+          "preview": "Early stopping of training should be allowed. As shown in Fig. 3.17, examining t",
+          "score": 0.7922
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000164",
+          "heading": "3.4.1 Parameter Norm Penalty",
+          "pages": [
+            "102"
+          ],
+          "preview": "For many regularization methods, they constrain the learning capability of the m",
+          "score": 0.7338
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000166",
+          "heading": "3.4.1 Parameter Norm Penalty",
+          "pages": [
+            "103"
+          ],
+          "preview": "As can be seen from Fig. 3.15 that the parameter that can stabilize the L1 regul",
+          "score": 0.7296
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by node(s) in retrieval context 1 and 3, demonstrating perfect retrieval recall!",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 0.8333333333333333,
+          "reason": "The score is 0.83 because although the first node is relevant, stating 'It explains dropout by stating that 'Dropout is to randomly discard a part of the output of neurons during the training phase. The parameters of these discarded neurons will not be updated... Dropout builds a series of subnets featuring different structures... while running the model, we will leverage the collective intelligence of all the trained subnets, so that the neuron outputs will no longer be discarded.'', the second node in the retrieval contexts is irrelevant, stating 'It only lists early stopping and dropout as techniques without explaining how dropout works or the risks of early stopping.', and should have been ranked lower than the third node, which is relevant.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What is the Adam optimizer, and what are the default values of its hyperparameters mentioned in the book?",
+      "source": "Ch. 3, Section 3.5.4 (printed pp. 108-109)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000176",
+          "heading": "3.5.4 Adam Optimizer",
+          "pages": [
+            "108",
+            "109"
+          ],
+          "preview": "The Adaptive Moment Estimation (Adam) optimizer is currently the most widely use",
+          "score": 0.8284
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000177",
+          "heading": "3.5.4 Adam Optimizer",
+          "pages": [
+            "109"
+          ],
+          "preview": "In form, m and v are the moving averages of gradient and squares of the gradient",
+          "score": 0.7556
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000171",
+          "heading": "3.5 Optimizer",
+          "pages": [
+            "106"
+          ],
+          "preview": "There are various optimized versions of the gradient descent algorithm. In the i",
+          "score": 0.7403
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000259",
+          "heading": "5.2.3 Realization of Handwritten Digit Recognition with Mindspore",
+          "pages": [
+            "158",
+            "159"
+          ],
+          "preview": "if __name__ == \"__main__\":\n\n... #deﬁne the loss function net_loss = SoftmaxCross",
+          "score": 0.7284
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000225",
+          "heading": "4.4.2 Development Process",
+          "pages": [
+            "134"
+          ],
+          "preview": "value of the loss function. The optimizer that is more frequently used in ﬁnding",
+          "score": 0.7028
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all information in the expected output is fully supported by node(s) in retrieval context, specifically matching the description of the Adam optimizer, its moments, and its default hyperparameters across the first and second nodes.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all relevant nodes containing the definition and hyperparameter values of the Adam optimizer are perfectly ranked at the top, specifically where the first node explains 'The Adaptive Moment Estimation (Adam) optimizer is currently the most widely used optimizer that evolved from Adagrad and Adadelta' and the second node provides 'the default value of a and b is 0.9 and 0.999 respectively, and that of the learning rate is 0.0001', correctly placing the irrelevant nodes with general mentions and other optimizers below them.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "How do TensorFlow 1.0's static graph, TensorFlow 2.0's eager execution, and AutoGraph differ?",
+      "source": "Ch. 4, Sections 4.2.3-4.2.4 (printed p. 128)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000217",
+          "heading": "4.2.4 TensorFlow 2.0 AutoGraph",
+          "pages": [
+            "128"
+          ],
+          "preview": "In TensorFlow 2.0, eager execution is enabled by default. For users, eager execu",
+          "score": 0.8538
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000216",
+          "heading": "4.2.3 TensorFlow 2.0 Eager Execution",
+          "pages": [
+            "128"
+          ],
+          "preview": "TensorFlow 1.0 adopts a static graph mechanism which separates the deﬁnition of ",
+          "score": 0.8523
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000214",
+          "heading": "4.2.1 Introduction to TensorFlow 2.0",
+          "pages": [
+            "127"
+          ],
+          "preview": "The core function of TensorFlow 2.0 is eager execution, a dynamic graph mecha- n",
+          "score": 0.7874
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000213",
+          "heading": "4.1.3 Introduction to TensorFlow",
+          "pages": [
+            "127"
+          ],
+          "preview": "Keras, which receives the third most Stars (namely, being tagged) on GitHub, is ",
+          "score": 0.7521
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000223",
+          "heading": "4.4.2 Development Process",
+          "pages": [
+            "131",
+            "132"
+          ],
+          "preview": "The development process of TensorFlow 2.0 includes ﬁve steps.\n\n1. Data preparati",
+          "score": 0.72
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by the node(s) in retrieval context.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all relevant nodes containing 'The text explains TensorFlow 2.0 eager execution, the @tf.function decorator, and AutoGraph converting operations into graphs for performance.' (rank 1), 'The text details TensorFlow 1.0 adopting a static graph mechanism, separating computation definition from execution, and its pros and cons.' (rank 2), 'The text discusses TensorFlow 2.0's core function of eager execution and how it allows users to write and debug models normally.' (rank 3), and 'The text mentions TensorFlow 1.0 requiring a session and session.run, leading to a complicated debugging experience.' (rank 4) are perfectly ranked above the irrelevant node containing 'The text describes the five-step development process and MNIST handwritten digit recognition, which is not part of the expected output.' (rank 5).",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What are the three main parts of the Da Vinci architecture in the Ascend AI processor, and what are the basic computing units?",
+      "source": "Ch. 6, Section 6.1.2 (printed pp. 163-165)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000270",
+          "heading": "6.1.2 Da Vinci Architecture",
+          "pages": [
+            "163",
+            "164",
+            "165"
+          ],
+          "preview": "Da Vinci Architecture, which is both the AI computing engine and the core of the",
+          "score": 0.8789
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000347",
+          "heading": "6.6 Exercises",
+          "pages": [
+            "218",
+            "219"
+          ],
+          "preview": "1. As two processors for AI computing, what is the difference between CPU and GP",
+          "score": 0.8678
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000269",
+          "heading": "6.1.1 The Logic Architecture of Ascend AI Processor Hardware",
+          "pages": [
+            "163"
+          ],
+          "preview": "The logic architecture of Ascend AI processor hardware is mainly composed of fou",
+          "score": 0.8532
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000272",
+          "heading": "6.1.2 Da Vinci Architecture",
+          "pages": [
+            "165",
+            "166",
+            "167"
+          ],
+          "preview": "6.1 The Hardware Architecture of Ascend AI Processor 165\n\nof data congestion on ",
+          "score": 0.775
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000035",
+          "heading": "1.2.2 An Overview of AI Processor",
+          "pages": [
+            "19"
+          ],
+          "preview": "Ascend 310 Ascend 910 Chip: Ascend-Mini Architecture: Da Vinci 16-bit ﬂoating po",
+          "score": 0.7567
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all the sentences in the expected output are fully supported by the information provided in the 1st node in the retrieval context.",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 0.75,
+          "reason": "The score is 0.75 because while the first node correctly answers the query by stating 'Da Vinci Architecture is mainly composed of three parts: computing unit, memory system and control unit' and lists the three basic computing units: 'Cube Unit, Vector Unit and Scalar Unit', and the fourth node provides supporting details about the memory system and the control unit ('The control unit is made up of system control module...'), the second, third, and fifth nodes are irrelevant. The second node only 'contains review questions about processors and software stacks, but does not provide direct answers or details about the parts and computing units of the Da Vinci architecture', the third node discusses 'the logic architecture of Ascend AI processor hardware modules (Control CPU, AI Core, etc.) rather than the internal parts and computing units of the Da Vinci architecture itself', and the fifth node provides 'technical specifications and performance metrics for the Ascend 310 and Ascend 910 chips, which are irrelevant to the architectural parts and basic computing units requested'. To achieve a higher score, the irrelevant nodes should have been ranked lower than the relevant ones.",
+          "error": null
+        }
+      }
+    },
+    {
+      "question": "What is the three-layer architecture of the HUAWEI HiAI platform, and what does each layer emphasize?",
+      "source": "Ch. 7, Section 7.1.1 (printed pp. 222-223)",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "chunk_000353",
+          "heading": "7.1.1 Architecture of HUAWEI HiAI Platform",
+          "pages": [
+            "223",
+            "224"
+          ],
+          "preview": "The biggest feature of HUAWEI HiAI 3.0 platform is that AI enables distributed f",
+          "score": 0.8604
+        },
+        {
+          "rank": 2,
+          "chunk_id": "chunk_000349",
+          "heading": "Chapter 7 HUAWEI AI Open Platform",
+          "pages": [
+            "221"
+          ],
+          "preview": "This chapter is an introduction to HUAWEI HiAI, an open AI capability platform f",
+          "score": 0.8479
+        },
+        {
+          "rank": 3,
+          "chunk_id": "chunk_000352",
+          "heading": "7.1.1 Architecture of HUAWEI HiAI Platform",
+          "pages": [
+            "222",
+            "223"
+          ],
+          "preview": "HUAWEI HiAI platform builds a three-layer ecosystem of “Service, Engine and Foun",
+          "score": 0.8372
+        },
+        {
+          "rank": 4,
+          "chunk_id": "chunk_000373",
+          "heading": "7.4 Chapter Summary",
+          "pages": [
+            "237",
+            "238"
+          ],
+          "preview": "This chapter mainly introduces the three-layer ecological structure of HUAWEI Hi",
+          "score": 0.7954
+        },
+        {
+          "rank": 5,
+          "chunk_id": "chunk_000374",
+          "heading": "7.5 Exercises",
+          "pages": [
+            "238"
+          ],
+          "preview": "1. HUAWEI HiAI 3.0 was ofﬁcially released at Software Green Alliance Developer C",
+          "score": 0.7863
+        }
+      ],
+      "metrics": {
+        "Contextual Recall": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all information in the expected output is perfectly attributed to the 3rd node in retrieval context!",
+          "error": null
+        },
+        "Contextual Precision": {
+          "score": 1.0,
+          "reason": "The score is 1.00 because all the relevant nodes are perfectly ranked at the top, ensuring that the most pertinent information comes first. Specifically, the first node highlights that 'The architecture of HUAWEI HiAI consists of three layers: Service, Engine and Foundation' and explains the Service layer, the second node introduces the 'three-layer open architecture based on 'Service, Engine and Foundation' that provides capabilities at chip, application and service', and the third node provides the complete structure and emphasis of all three layers: '1. Service: Create once, reuse many times. 2. Engine: Distributed, full scenario. 3. Foundation: Greater computing power, more operators; more frames, smaller models.' Meanwhile, the irrelevant nodes, such as the fourth node which discusses chapter summaries, offline connection activities, and innovation contests, and the fifth node which contains questions and chapter license information, are correctly placed below the relevant ones.",
+          "error": null
+        }
+      }
+    }
+  ]
+}
