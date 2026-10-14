@@ -2,8 +2,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from context_builder import BuildingContext
-from generator import (
+from src.context_builder import BuildingContext
+from src.generator import (
     REFUSAL_SENTINEL,
     SYSTEM_PROMPT,
     Generator,

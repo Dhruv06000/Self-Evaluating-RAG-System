@@ -4,13 +4,14 @@ import json
 
 def generate_embeddings():
 
-    model = SentenceTransformer("BAAI/bge-base-en-v1.5")
+    model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
 
-    with open("data/chunks.json", "r", encoding="utf-8") as f:
+    with open("data/1024_chunks.json", "r", encoding="utf-8") as f:
         data = json.load(f)
 
     embeddings = model.encode(
         [chunk["text"] for chunk in data],
+        batch_size=8,
         convert_to_numpy=True,
         normalize_embeddings=True
     )

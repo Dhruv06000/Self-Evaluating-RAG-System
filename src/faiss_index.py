@@ -1,9 +1,9 @@
 import faiss
 
-from embedding import generate_embeddings
+from src.embedding import generate_embeddings
 
 
-def build_index(index_path: str = "data/faiss.index") -> None:
+def build_index(index_path: str = "data/faiss_1024.index") -> None:
     _, embeddings = generate_embeddings()
 
     faiss_index = faiss.IndexFlatIP(embeddings.shape[1])

@@ -1,6 +1,6 @@
 #Test_context_builder.py
 import pytest
-from context_builder import ContextBuilder
+from src.context_builder import ContextBuilder
 
 
 @pytest.fixture

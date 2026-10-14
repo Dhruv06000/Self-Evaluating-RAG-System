@@ -1,0 +1,77 @@
+[
+  {
+    "question": "How did John McCarthy define artificial intelligence, and what limitation does the book point out in that definition?",
+    "ideal_answer": "John McCarthy proposed at the 1956 Dartmouth Conference that AI is about letting a machine simulate the intelligent behavior of humans as precisely as possible. The limitation is that this definition seemingly ignores the possibility of strong AI, meaning machines that can solve problems by reasoning.",
+    "source": "Ch. 1, Section 1.1.1 (printed p. 1)"
+  },
+  {
+    "question": "What is the relationship between artificial intelligence, machine learning, and deep learning?",
+    "ideal_answer": "Machine learning is an approach or subset of AI, and deep learning is a special form of machine learning that derives from artificial neural networks and mimics how the human brain interprets data such as images, sound, and text. AI is the target and result, while machine learning and deep learning are the methods and tools used to reach it.",
+    "source": "Ch. 1, Section 1.1.2 (printed pp. 4-5)"
+  },
+  {
+    "question": "What are the three main schools of AI, and what is the core of each?",
+    "ideal_answer": "The three main schools are symbolism, connectionism, and behaviorism. Symbolism views cognition as symbol processing, and its core is symbolic and machine reasoning. Connectionism views thinking as the activity of neurons, and its core is neural networks and deep learning. Behaviorism holds that intelligence depends on perception and action, and its core is behavior control, adaptation, and evolutionary computing.",
+    "source": "Ch. 1, Section 1.1.5 (printed p. 12)"
+  },
+  {
+    "question": "What do 'full-stack' and 'all-scenario' mean in Huawei's AI strategy?",
+    "ideal_answer": "Full-stack means a complete solution covering the chip, chip enablement, training and reasoning frameworks, and application enablement. All-scenario means deployment across public cloud, private cloud, various edge computing setups, IoT terminals, and consumer terminals. The Atlas AI computing solution, based on the Ascend AI processor, is the bedrock of this strategy.",
+    "source": "Ch. 1, Section 1.4.1 (printed p. 33)"
+  },
+  {
+    "question": "What is the difference between a regression model and a classification model in supervised learning?",
+    "ideal_answer": "In supervised learning, when the target variable is continuous the model is called a regression model, used for things like forecasting stock earnings or tomorrow's temperature. When the target variable takes discrete values the model is called a classification model, which maps samples to given classes, such as predicting whether a highway will have traffic jams.",
+    "source": "Ch. 2, Section 2.2.1 (printed p. 48)"
+  },
+  {
+    "question": "What are the typical data quality problems that make data 'dirty', and what is data cleaning?",
+    "ideal_answer": "Dirty data can be incomplete (missing attributes or values), noisy (erroneous records or outliers), or inconsistent (conflicting records or discrepancies). Data cleaning is the process of filling in missing values and finding and eliminating data abnormalities. Data scientists reportedly spend about 60% of their time on cleaning and organizing data.",
+    "source": "Ch. 2, Section 2.3.2 (printed p. 54)"
+  },
+  {
+    "question": "What are underfitting and overfitting, and how can overfitting be reduced?",
+    "ideal_answer": "Underfitting happens when the model is too simple or training time is too short, which leads to a large training error. Overfitting happens when the model is too complex, giving a small training error but a larger generalization error. Overfitting can be reduced by simplifying the model, ending training before overfitting occurs, and using dropout and weight decay.",
+    "source": "Ch. 2, Section 2.3.5 (printed p. 59)"
+  },
+  {
+    "question": "In the book's cat-image classifier example with 200 test images, what are the precision, recall, and accuracy?",
+    "ideal_answer": "Of 200 images, 170 are labeled as having cats and 30 are not. The model marks 160 images as cats, of which 140 are correct. Precision is 140/160 = 87.5%, recall is 140/170 = 82.4%, and accuracy is (140+10)/200 = 75%.",
+    "source": "Ch. 2, Section 2.3.5 (printed p. 62)"
+  },
+  {
+    "question": "What are the three variants of gradient descent, and how do they differ?",
+    "ideal_answer": "Batch Gradient Descent (BGD) updates weights using the gradient mean of all samples, which is the most stable but uses a lot of computing resources. Stochastic Gradient Descent (SGD) randomly selects one sample per update, which is more efficient but unstable. Mini-batch Gradient Descent (MBGD) uses the gradient mean of n samples per update, combining the characteristics of BGD and SGD.",
+    "source": "Ch. 2, Section 2.4.1 (printed p. 64)"
+  },
+  {
+    "question": "What are the three stages of building a decision tree, and which indicators are used to measure purity?",
+    "ideal_answer": "The three stages are feature selection (choosing the feature to split the current node), decision tree generation (recursively creating child nodes from top to bottom until the data cannot be split further), and pruning (reducing tree size to suppress overfitting, either pre-pruning or post-pruning). Purity is measured by indicators such as information entropy and the Gini coefficient, and common algorithms include ID3, C4.5, and CART.",
+    "source": "Ch. 2, Section 2.5.3 (printed pp. 73-74)"
+  },
+  {
+    "question": "How does dropout work as a regularization method, and what is the risk of early stopping?",
+    "ideal_answer": "Dropout randomly discards part of the neurons' outputs during training, and the parameters of discarded neurons are not updated. This builds many subnets with different structures, similar to ensemble learning, and at run time no neuron outputs are discarded. Early stopping halts training when the validation loss starts to rise to avoid overfitting, but it risks underfitting because the validation set may not be sufficient to find the exact moment of minimum generalization error.",
+    "source": "Ch. 3, Sections 3.4.3-3.4.4 (printed p. 105)"
+  },
+  {
+    "question": "What is the Adam optimizer, and what are the default values of its hyperparameters mentioned in the book?",
+    "ideal_answer": "Adam (Adaptive Moment Estimation) is the most widely used optimizer, evolved from Adagrad and Adadelta, and it finds an adaptive learning rate for each parameter using estimates of the first moment (mean) and second moment (uncentered variance) of past gradients, with bias correction for the early iterations. The default values are 0.9 for a, 0.999 for b, and 0.0001 for the learning rate.",
+    "source": "Ch. 3, Section 3.5.4 (printed pp. 108-109)"
+  },
+  {
+    "question": "How do TensorFlow 1.0's static graph, TensorFlow 2.0's eager execution, and AutoGraph differ?",
+    "ideal_answer": "TensorFlow 1.0 uses a static graph that separates defining computations from running them: you build a graph, run a session, and feed data. It is good for distributed training, optimization, and deployment but hard to debug. TensorFlow 2.0 enables eager execution by default, an imperative environment consistent with native Python that returns results immediately, though possibly at a cost to performance and deployment. The @tf.function decorator with AutoGraph converts functions into graphs to get better performance and deployability.",
+    "source": "Ch. 4, Sections 4.2.3-4.2.4 (printed p. 128)"
+  },
+  {
+    "question": "What are the three main parts of the Da Vinci architecture in the Ascend AI processor, and what are the basic computing units?",
+    "ideal_answer": "The Da Vinci architecture consists of a computing unit, a memory system, and a control unit. The computing unit has three basic resources: the Cube Unit (matrix operations), the Vector Unit (vector and scalar or dual-vector calculations), and the Scalar Unit (acts like a micro CPU controlling AI Core operation). The memory system comprises the on-chip memory unit and its data paths, and the control unit provides command control for the whole calculation process.",
+    "source": "Ch. 6, Section 6.1.2 (printed pp. 163-165)"
+  },
+  {
+    "question": "What is the three-layer architecture of the HUAWEI HiAI platform, and what does each layer emphasize?",
+    "ideal_answer": "HiAI builds a three-layer ecosystem of Service, Engine, and Foundation. Service is about opening service capability: create once, reuse many times. Engine provides upper-layer functional business APIs that run efficiently on mobile devices: distributed, full scenario. Foundation flexibly schedules heterogeneous resources to accelerate neural network and operator computation: greater computing power, more operators, more frameworks, smaller models.",
+    "source": "Ch. 7, Section 7.1.1 (printed pp. 222-223)"
+  }
+]

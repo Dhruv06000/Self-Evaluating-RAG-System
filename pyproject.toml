@@ -1,0 +1,29 @@
+[project]
+name = "self-evaluating-rag"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pymupdf",
+    "tqdm",
+    "torch",
+    "faiss-cpu",
+    "sentence-transformers",
+    "transformers",
+    "python-dotenv",
+    "google-genai",
+    "deepeval",
+    "portalocker[win32]>=4.4.0",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu128" }]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

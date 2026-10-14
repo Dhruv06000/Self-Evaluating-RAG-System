@@ -5,14 +5,14 @@ Makes real API calls (one per question). Run from the project root:
 """
 import time
 
-from context_builder import ContextBuilder
-from generator import Generator
+from src.context_builder import ContextBuilder
+from src.generator import Generator
 from rag_pipeline import RAGPipeline
-from retrieval import Retrieval
+from src.retriever import Retrieval
 
 MODEL = "gemini-3.8-flash"   # use the model name that worked in your smoke test
 TOP_K = 5
-MAX_CONTEXT_TOKENS = 2500
+MAX_CONTEXT_TOKENS = 6000
 PAUSE_SECONDS = 5            # stay well under the free-tier requests-per-minute limit
 MAX_ATTEMPTS = 3             # retries for temporary provider errors such as 503
 RETRY_WAIT_SECONDS = 20

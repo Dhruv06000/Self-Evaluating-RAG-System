@@ -6,7 +6,7 @@ import json
 from contextlib import redirect_stdout
 from transformers import AutoTokenizer
 
-from document_ingestion import open_and_read_pdf
+from src.document_ingestion import open_and_read_pdf
 
 
 def is_heading(text):
@@ -34,11 +34,11 @@ def is_heading(text):
 
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "BAAI/bge-base-en-v1.5"
+    "Qwen/Qwen3-Embedding-0.6B"
 )
 
 
-def create_chunks(pages_and_texts, chunk_size=350):
+def create_chunks(pages_and_texts, chunk_size=1024):
 
     chunks = []
 
@@ -98,7 +98,7 @@ def split_into_words(text):
     return text.split()
 
 
-def build_paragraph_chunks(heading_data, chunk_size=350, start_index = 0):
+def build_paragraph_chunks(heading_data, chunk_size=1024, start_index = 0):
 
     chunks = []
 
@@ -274,7 +274,7 @@ if __name__ == "__main__":
 
     all_final_chunks = generate_chunks()
 
-    with open("data/chunks.json", "w", encoding="utf-8") as file:
+    with open("data/1024_chunks.json", "w", encoding="utf-8") as file:
 
         json.dump(
             all_final_chunks,

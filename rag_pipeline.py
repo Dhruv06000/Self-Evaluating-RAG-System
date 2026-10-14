@@ -1,7 +1,7 @@
 from dataclasses import dataclass 
 
-from context_builder import BuildingContext
-from generator import GenerationResult
+from src.context_builder import BuildingContext
+from src.generator import GenerationResult
 
 @dataclass(frozen= True)
 class RAGResult:

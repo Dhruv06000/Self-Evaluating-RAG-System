@@ -12,7 +12,7 @@ class ContextBuilder:
         if max_context_tokens <= 0:
             raise ValueError("max_context_tokens must be greater than zero.")
         self.max_context_tokens = max_context_tokens
-        self.tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-base-en-v1.5")
+        self.tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-Embedding-0.6B")
 
     def build(self, retrieved_chunks: list) -> BuildingContext:
         """Build a context string from retrieved chunks without exceeding max_context_tokens."""

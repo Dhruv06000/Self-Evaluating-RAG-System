@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from context_builder import BuildingContext
+from src.context_builder import BuildingContext
 
 REFUSAL_SENTINEL = "[[INSUFFICIENT_CONTEXT]]"
 
