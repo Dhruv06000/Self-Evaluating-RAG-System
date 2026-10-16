@@ -199,13 +199,17 @@ def test_partial_answer_is_not_a_refusal(generator):
 # ---------- _call_llm (client replaced by a fake) ----------
 
 def fake_client(text):
+    """Fake of the OpenAI-compatible client: client.chat.completions.create(...)."""
     calls = []
 
-    def generate_content(**kwargs):
+    def create(**kwargs):
         calls.append(kwargs)
-        return SimpleNamespace(text=text)
+        message = SimpleNamespace(content=text)
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
 
-    client = SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
+    client = SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=create))
+    )
     return client, calls
 
 
@@ -230,9 +234,11 @@ def test_call_llm_sends_system_prompt_model_and_temperature(generator):
 
     call = calls[0]
     assert call["model"] == "test-model"
-    assert call["contents"] == "the user message"
-    assert call["config"].system_instruction == SYSTEM_PROMPT
-    assert call["config"].temperature == 0.0
+    assert call["messages"] == [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": "the user message"},
+    ]
+    assert call["temperature"] == 0.0
 
 
 def test_generation_result_is_immutable():

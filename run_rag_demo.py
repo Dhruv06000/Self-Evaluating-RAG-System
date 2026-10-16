@@ -10,7 +10,7 @@ from src.generator import Generator
 from rag_pipeline import RAGPipeline
 from src.retriever import Retrieval
 
-MODEL = "gemini-3.8-flash"   # use the model name that worked in your smoke test
+MODEL = "openai/gpt-oss-120b"   # use the model name that worked in your smoke test
 TOP_K = 5
 MAX_CONTEXT_TOKENS = 6000
 PAUSE_SECONDS = 5            # stay well under the free-tier requests-per-minute limit

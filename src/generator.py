@@ -3,12 +3,14 @@ import re
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
 from src.context_builder import BuildingContext
 
 REFUSAL_SENTINEL = "[[INSUFFICIENT_CONTEXT]]"
+
+# Groq exposes an OpenAI-compatible API, so the OpenAI SDK works with this base URL.
+GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
 # One citation = one chunk ID inside its own square brackets, e.g. [chunk_000123].
 CITATION_PATTERN = re.compile(r"\[(chunk_\d+)\]")
@@ -34,6 +36,8 @@ Rules:
 7. Be direct and concise. Do not add information the question did not ask for."""
 
 
+
+
 def build_user_message(context: str, question: str) -> str:
     """Format the context and question into the user message the model receives."""
     return (
@@ -54,13 +58,16 @@ class Generator:
     def __init__(self, model: str, temperature: float = 0.0):
         """
         Args:
-            model: Name of the model used for generation.
+            model: Name of the model used for generation (e.g. "openai/gpt-oss-120b" on Groq).
             temperature: Sampling temperature. Defaults to 0.0 to reduce drift from the context.
         """
         self.model = model
         self.temperature = temperature
         load_dotenv()
-        self.client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
+        self.client = OpenAI(
+            api_key=os.environ["GROQ_API_KEY"],
+            base_url=GROQ_BASE_URL,
+        )
 
     def generate(self, question: str, built_context: BuildingContext) -> GenerationResult:
         """Generate a grounded answer from the question and the built context."""
@@ -78,15 +85,15 @@ class Generator:
 
     def _call_llm(self, user_message: str) -> str:
         """The only method that touches the network."""
-        response = self.client.models.generate_content(
+        response = self.client.chat.completions.create(
             model=self.model,
-            contents=user_message,
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
-                temperature=self.temperature,
-            ),
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_message},
+            ],
+            temperature=self.temperature,
         )
-        text = response.text
+        text = response.choices[0].message.content
         if text is None or not text.strip():
             raise RuntimeError("Received empty response from the model.")
         return text.strip()
