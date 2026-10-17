@@ -534,7 +534,7 @@ Done:
 - Retrieval rebuilt on Qwen3-Embedding-0.6B / 1024-token chunks; all `from_pretrained` and `SentenceTransformer` model names point to `Qwen/Qwen3-Embedding-0.6B`.
 - `eval_retriever.py` constants updated (`EMBEDDING_MODEL`, `CHUNK_SIZE = 1024`, `CHUNKS_PATH = "data/1024_chunks.json"`).
 - `MAX_CONTEXT_TOKENS` raised to 6000.
-- `context_builder.py`, `generator.py`, and the other library modules now live in `src/` and import as `src.*` (`rag_pipeline.py` is the exception, see below).
+- `context_builder.py`, `generator.py`, `rag_pipeline.py`, and the other library modules now live in `src/` and import as `src.*` 
 - Stale files removed (old chunk corpus, old evaluation script and dataset, `requirements.txt`, `main.ipynb`).
 - `pyproject.toml`, `uv.lock`, and `.python-version` are committed, so the environment (including the CUDA torch index) is reproducible.
 - Confirmed `.env` was never committed.
@@ -546,17 +546,8 @@ Done (Feature 10):
 
 Still to do:
 
-- Commit the restored original prompt with a clear message; keep the alternative prompt in a branch or commit so it is not lost.
 - Rename the four generator result files to say which prompt each used (for example `generator_original_prompt_run1.json`).
 - Make `eval_generator.py` save a full run record (timestamp, config, prompt and dataset hashes, per-case answer, scores and judge reasons, incomplete-run flag) and never overwrite an earlier run.
 - Fix the citation bracket issue (full-width `【chunk_...】` brackets): decide between a stronger prompt instruction and a tolerant parser (parser suggested), with a test, as its own commit.
-- Rename `generator_evalution` to `generator_evaluation` (typo in output path and files).
-
-- Move `rag_pipeline.py` into `src/` with `git mv`, switch its imports and the imports in `tests/test_rag_pipeline.py` and `run_rag_demo.py` to `src.*`, then re-run `uv run pytest` and `uv run python -m run_rag_demo` (the tests use fakes, so only the demo proves the real imports work). Do this as its own commit.
-- Delete the old commented-out block at the top of `evals/eval_retriever.py` (it still mentions bge-base and 350).
-- Set `LIMIT = None` in `eval_retriever.py` for full runs (use `1` only for smoke tests).
 - `src/setup_knowledge_base.py` still runs its logic on import (low risk): wrap it in `if __name__ == "__main__":`.
 - Write a real `README.md` (it is empty, and `pyproject.toml` refers to it).
-- Optional: give the run files descriptive names (they are `1st.json` and `2nd.json`).
-- Optional: set `HF_TOKEN` to remove the unauthenticated Hugging Face warning, and run pytest with `-p no:cacheprovider` to silence the `.pytest_cache` permission warning.
-- Optional: remove the unused `Retrieval` import from `rag_pipeline.py` if it is still there, and align indentation (2 versus 4 spaces).

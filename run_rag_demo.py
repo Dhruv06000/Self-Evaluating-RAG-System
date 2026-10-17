@@ -7,8 +7,11 @@ import time
 
 from src.context_builder import ContextBuilder
 from src.generator import Generator
-from rag_pipeline import RAGPipeline
+from src.rag_pipeline import RAGPipeline
 from src.retriever import Retrieval
+
+from dotenv import load_dotenv
+load_dotenv()
 
 MODEL = "openai/gpt-oss-120b"   # use the model name that worked in your smoke test
 TOP_K = 5

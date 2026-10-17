@@ -7,6 +7,8 @@ from contextlib import redirect_stdout
 from transformers import AutoTokenizer
 
 from src.document_ingestion import open_and_read_pdf
+from dotenv import load_dotenv
+load_dotenv()
 
 
 def is_heading(text):

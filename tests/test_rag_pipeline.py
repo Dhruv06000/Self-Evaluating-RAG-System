@@ -1,6 +1,6 @@
 from src.context_builder import BuildingContext
 from src.generator import GenerationResult
-from rag_pipeline import RAGPipeline, RAGResult
+from src.rag_pipeline import RAGPipeline, RAGResult
 import pytest
 
 

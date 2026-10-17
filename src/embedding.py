@@ -1,5 +1,7 @@
 from sentence_transformers import SentenceTransformer
 import json
+from dotenv import load_dotenv
+load_dotenv()
 
 
 def generate_embeddings():
