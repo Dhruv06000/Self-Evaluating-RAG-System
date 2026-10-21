@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-10-17
+Last updated: 2026-10-21
 
 ## Project
 
@@ -10,9 +10,11 @@ Self-Evaluating RAG System
 
 ### Feature 10 - Answer-Level (Generator) Evaluation - Completed (component level)
 
-The generator was evaluated on its own, with the retriever taken out of the loop: each case gives the generator a fixed, hand-picked context (`ideal_context`) and DeepEval's Faithfulness and Answer Relevancy score the answer. Four runs were made to compare two system prompts. The original prompt is the one kept in the code. Per-case detail was not saved, so this is a component-level score, not a full answer-quality study (see Feature 10 for results and limits).
+The generator was evaluated on its own, with the retriever taken out of the loop: each case gives the generator a fixed context (`ideal_context`, verbatim chunks from `data/1024_chunks.json`) and DeepEval's Faithfulness and Answer Relevancy score the answer. The evaluation set is a new 20-question set of answerable textbook questions, built in the format of the course instructor's dataset. Three finished runs agree: **100% pass on both metrics in every run** (Faithfulness average 0.93 to 0.95, Answer Relevancy average 0.99 to 1.00). See Feature 10 for results and limits.
 
-Decision (2026-10-17): the component-level generator evaluation is considered done for now with these two metrics. More answer-level evaluation (behavior checks for false-premise, unanswerable and contradictory cases; citation correctness; repeated runs) comes later with the expanded golden dataset and in the full pipeline evaluation.
+Since Feature 10 started, the generator changed: it now returns JSON (`answer` plus a `citations` list) instead of writing chunk IDs inside the answer text, and it runs on `openai/gpt-oss-120b` through Groq (see Feature 8).
+
+Decision (2026-10-21): the component-level generator evaluation is complete with these two metrics on answerable questions. The earlier harder dataset (false-premise, unanswerable, partial and contradictory cases) and its results were set aside to keep the system simple. Behavior checks for those cases, citation correctness and refusal rates are **not covered yet** and come back with the expanded golden dataset and the full pipeline evaluation.
 
 Earlier milestone (2026-10-14): the retrieval layer was rebuilt (Qwen3 embeddings, 1024-token chunks, query prompt) and re-evaluated with Contextual Recall and Contextual Precision; those two metrics are final for retrieval, and the 15-question retriever golden set stays as is. Details are in the Decision Log and Feature 6.
 
@@ -243,6 +245,16 @@ Content:
 
 Note: the formatter emits extra blank lines (explicit `\n` plus real line breaks). It works and is tested; tightening it would save a few tokens and is optional.
 
+##### Review notes (2026-10-20, found in review, not fixed)
+
+- If the budget skips every chunk, `context` is empty and the generator returns the sentinel without calling the model, so "budget too small" looks the same as "not in the book". The two can be told apart only by comparing `retrieved_chunks` with `included_chunk_ids` in `RAGResult`. A test for this case is still to be written.
+- Skip-and-continue is a policy choice: a later chunk can be kept while a higher-ranked one is dropped. The alternative is to stop at the first chunk that does not fit (a strict rank prefix). At budget 6000 with `top_k=5` neither fires, so the budget is a safety guard. The policy decision is still open.
+- The budget is an estimate: it uses the Qwen tokenizer, while the generator is a different model family, and it ignores the system prompt, the `<RETRIEVED_CONTEXT>` tags and the question.
+- The format wastes a few tokens (blank lines after every field; the full source path on every chunk).
+- `_format_chunk` indexes `chunk["metadata"]["source"]` and `["pages"]` directly, while `Retrieval` uses `.get(...)`; a chunk with empty metadata would raise `KeyError`.
+- The page labels it shows inherit the known page-boundary bug of the chunker.
+- The generator evaluation's golden contexts do not use this format (see Feature 10).
+
 ##### ContextBuilder Testing
 
 `tests/test_context_builder.py` (14 tests): invalid budget, chunk and multi-page formatting, token counting, empty input, multiple chunks within budget, budget enforcement, order preservation, skip-and-continue, skipped chunks absent from `included_chunk_ids`, consistency between IDs and context, and a first chunk larger than the budget. The skipped-chunk tests were verified by temporarily breaking the code. All pass with the Qwen tokenizer.
@@ -282,11 +294,22 @@ Grounding prompt rules:
 
 Provider (original): Google Gemini via AI Studio (free tier), key from `GOOGLE_API_KEY`.
 
-Provider (current, changed during Feature 10): generator model `openai/gpt-oss-120b` through the Groq free API, using the OpenAI SDK with the Groq base URL. The prompt, the `GenerationResult` contract, and the citation format are unchanged. API keys are read from the environment or the git-ignored `.env`. (The sections of this file written before the change that say "Gemini" describe the original setup.)
+Provider (current, changed during Feature 10): generator model `openai/gpt-oss-120b` through the Groq free API, using the OpenAI SDK with the Groq base URL (`GROQ_API_KEY`). Keys are read from the environment or the git-ignored `.env`. Text above that says "Gemini" or describes inline regex citations describes the original setup; the current behavior is in the next block.
+
+##### Current generator contract (JSON output, changed during Feature 10)
+
+- The model must reply with one JSON object, `{"answer": "...", "citations": ["chunk_000123", ...]}`, requested with `response_format={"type": "json_object"}` at temperature 0.0. Chunk IDs are no longer written inside the answer text.
+- Prompt rules 2 and 4 changed to fit: the sentinel goes in `answer` with an empty `citations` list, and IDs go only in `citations`. Rules 1, 3, 5, 6 and 7 are unchanged, and an output-format section was added.
+- `_post_process` parses the JSON, de-duplicates citations in first-appearance order, splits them into `cited_chunk_ids` (present in the context) and `invalid_citations` (not in the context), and sets `refused` only when the answer equals the sentinel exactly. Unparseable JSON, or a missing `answer` or `citations` key, raises `RuntimeError`. An empty model reply also raises `RuntimeError`.
+- `CITATION_PATTERN` was removed. This also removes the earlier full-width bracket problem (`【chunk_...】` not matched by the regex).
+- Trade-off: the answer no longer shows which claim each chunk supports, only which chunks the model says it used.
+- Manual check (`python -m src.generator`, 2026-10-20): `_post_process` behaved as expected on seven hand-written replies (normal, invalid ID, duplicate IDs, refusal, partial, broken JSON, missing field), and an empty context returns a refusal without a model call. One real call on a thin fake context of two chunks ("how are machine learning and deep learning related?") returned the sentinel although the context was relevant. This is not a parsing bug (the raw reply was the refusal). Possible causes (the context did not state the relation directly, rule 2 versus rule 3, or a reasoning model combined with JSON mode) were not investigated further. Open item: count refusals on answerable questions in the pipeline evaluation.
 
 ##### Generation Testing
 
 `tests/test_generator.py` (25 tests), with the model call replaced by a fake: message format, sentinel in the prompt, empty and whitespace questions, empty-context refusal, question stripping, valid/invented/budget-skipped citations, duplicate and adjacent citations, no citations, comma-separated IDs deliberately not extracted, refusal detection (exact sentinel, whitespace, sentinel inside a partial answer, partial answer), `_call_llm` behavior, and result immutability. The tests were mutation-checked.
+
+**Status (2026-10-21):** these 25 tests were written for the earlier regex-citation, Gemini version. Many will fail with the JSON format and need rewriting (the seven manual cases above map directly to tests). Not re-run since the change.
 
 ##### Manual End-to-End Check (re-run with the Qwen setup)
 
@@ -299,7 +322,7 @@ Provider (current, changed during Feature 10): generator model `openai/gpt-oss-1
 
 Observations worth keeping:
 
-- A valid citation only proves the chunk was in the context. In one run the answer said the term "machine learning" was coined and defined in 1956 by Arthur Samuel and cited `chunk_000007`. Open `chunk_000007` and check whether it actually says that; Samuel's coining is usually dated 1959, and 1956 is the Dartmouth conference. In the next run the claim did not appear.
+- A valid citation only proves the chunk was in the context. In one run the answer said the term "machine learning" was coined and defined in 1956 by Arthur Samuel and cited `chunk_000007`. Checked on 2026-10-20: `chunk_000007` (section 1.1.4) says that in 1956 Arthur Samuel of IBM wrote the checkers-playing program and that he then coined and defined the term machine learning, so the claim was supported by the book's text (the book's date, not necessarily the usual 1959). The lesson stands: check cited chunks by hand.
 - Temperature 0 is not deterministic: with identical retrieved chunks in the same order, two runs produced different answers (one listed the types of ML, the other did not). Answer-level evaluation needs repeated runs.
 - A two-topic question blurs the query embedding: the best definition chunk ranked 5th. Splitting such questions into sub-queries is a possible later improvement.
 - Refusals depend entirely on the generator, because retrieval always returns 5 chunks even for unrelated questions.
@@ -311,9 +334,9 @@ Observations worth keeping:
 - Grounding is requested by the prompt, not enforced.
 - Each manual check case was run once or twice; four examples are a smoke test, not an evaluation.
 - Prompt rule 6 (instructions hidden inside the context) has not been tested. The injection check placed the instruction in the question, and the sentinel may have appeared simply because the context had nothing about France.
-- The citation format is strict (one ID per bracket); deviations are missed, not guessed.
-- No retry or error-handling policy for provider failures inside `generator.py` (the demo script retries on 503).
-- `generate` needs a real `GOOGLE_API_KEY` to construct a `Generator`.
+- (Original regex version only, no longer applies) The citation format was strict; deviations were missed, not guessed.
+- No retry or error-handling policy for provider failures inside `generator.py` (the demo script retries on 503). A bad JSON reply raises `RuntimeError` and would stop an evaluation run unless the caller catches it. Idea noted: pass `max_retries` to the `OpenAI(...)` client so 429/5xx retries stay next to the network call; not done.
+- `Generator` needs a real `GROQ_API_KEY` to construct (a test can bypass the constructor with `Generator.__new__`).
 
 #### Feature 9 - Reusable RAG Pipeline
 
@@ -351,39 +374,48 @@ Design decisions:
 
 ##### What was built
 
-- `evals/eval_generator.py` runs the `Generator` on each case of `golden/faithfulness_dataset.json` and scores the answer with DeepEval's `FaithfulnessMetric` and `AnswerRelevancyMetric` (threshold 0.7, `include_reason=True`).
-- Dataset: **20 cases**, each with `query` and `ideal_context` (a list of raw chunk texts). It mixes normal questions with false-premise, partly unanswerable, and contradictory-chunk cases.
-- The retriever is not used. `build_golden_context` turns the raw chunks into the shape the generator expects (synthetic IDs `chunk_000001`, `chunk_000002`, ... per case, formatted as `Chunk ID: ...` blocks). So this measures the generator on perfect context, an upper bound for the generator inside the real pipeline.
-- Citation tags are stripped from the answer (with `CITATION_PATTERN`) before the judge sees it, so the judge scores plain claims.
-- Generator: `openai/gpt-oss-120b` (Groq). Judge: `gpt-4o-mini`. The two are from different model families, which reduces self-preference bias. A 3-second pause is used between generation calls.
+- `evals/eval_generator.py` runs the `Generator` on each case of the golden file and scores the answer with DeepEval's `FaithfulnessMetric` and `AnswerRelevancyMetric` (threshold 0.7, `include_reason=True`, judge `gpt-4o-mini`). Generator: `openai/gpt-oss-120b` (Groq). The two are different model families, which reduces self-preference bias. A 3-second pause is used between generation calls, and all judge calls run in parallel (DeepEval's default async mode).
+- The retriever is not used. `build_golden_context` turns the raw chunk strings into the shape the generator expects (synthetic IDs `chunk_000001`, ... per case, formatted as `Chunk ID: ...` blocks). So this measures the generator on perfect context, an upper bound for the generator inside the real pipeline. Note: this is not the `[CHUNK] ... [END CHUNK]` format that `ContextBuilder` produces, so the generator is evaluated on a slightly different context shape than it sees in the pipeline.
 - `evals/harness.py` (`load_goldens`, `summarize_by_metric`, `print_summary`) is shared with the retriever evaluation.
+- Only the per-metric summary is saved, to `result/generator_evalution.json`, and the file name is fixed, so each run overwrites the previous one unless it is renamed by hand.
 
-##### Results (same dataset, same judge, same generator model; only the system prompt differs)
+##### Dataset (new, 2026-10-20)
 
-| Run | Prompt | Faithfulness pass / avg | Answer Relevancy pass / avg |
-|---|---|---|---|
-| 1st | original | 85% / 0.905 | 90% / 0.918 |
-| 2nd | alternative | 75% / 0.835 | 80% / 0.899 |
-| 3rd | alternative (unchanged, rerun) | 75% / 0.870 | 80% / 0.879 |
-| 4th | original (restored, rerun) | 90% / 0.893 | 90% / 0.923 |
+- Built in the format of the course instructor's dataset (`id`, `query`, `ideal_context`, plus a provenance field; the instructor's set has 15 easy answerable questions on a different corpus of lecture transcripts, with context copied verbatim from his vector database).
+- **20 questions on this textbook**, drafted by Claude from `data/1024_chunks.json`: short, lowercase, natural questions, each answerable from its context. `ideal_context` is one chunk (18 questions) or two adjacent chunks (2 questions: bias and privacy, semi-supervised learning) copied verbatim from the chunk file; this was checked by script. Provenance field `source_sections` holds the section heading and page range from chunk metadata (pages can be off by one at the end because of the known chunker bug). Chapters 1 to 8 are covered, with the most questions in chapter 2.
+- Tiny chunks, exercises and chapter summaries were not used.
+- The owner read all 20 questions with their contexts and confirmed that each can be answered from its context.
+- Limits: all questions are answerable, so the set cannot test refusal, partial answers, false premises, conflicting chunks or injected instructions. The questions were written from the chunks, so they match chunk boundaries by construction; the set is for the generator only and must not be used for retrieval scoring.
+- File: `faithfulness_dataset_textbook.json` (check that `GOLDEN_PATH` in `evals/eval_generator.py` points at the file under the name you saved).
 
-Result files: `result/1st_generator_evalution.json` ... `4th_generator_evalution.json` (summaries only).
+##### Results (new dataset, same judge, same generator model)
+
+| Run | Faithfulness pass / avg (min) | Answer Relevancy pass / avg (min) |
+|---|---|---|
+| 1 | 100% / 0.9525 (0.75) | 100% / 0.99 (0.80) |
+| 2 | 100% / 0.95 | 100% / 0.99 |
+| 3 | 100% / 0.93 | 100% / 1.00 |
+
+One extra attempt did not count: the judge's first request to OpenAI stalled and DeepEval raised `TimeoutError` after about 3 minutes, so no scores were produced. Each finished run took about 12 to 15 seconds and about 0.02 USD.
 
 How to read this:
 
-- Both runs with the alternative prompt scored lower than both runs with the original on both metrics, and the two runs of each prompt agree with each other. That is a consistent direction, so the alternative prompt is probably slightly worse on these metrics. It is **not proven**: 2 runs per prompt, 20 cases, one judge, and a pass rate moves 5 points per case.
-- **The original prompt is the one in the code.** Note: the alternative prompt should be kept in Git (branch or commit) so the attempt is not lost.
-- Failures that remain with the original prompt (run 4, read from the terminal output): case 7 (SVM loss function), case 13 (ReLU false premise), case 19 (contradictory chunks). Reading them: in 7 the answer correctly says the loss function is missing from the context and the judge penalizes it for not naming "hinge loss", which is outside knowledge (a judge error); in 13 the answer corrects the question's premise and Relevancy penalizes it; in 19 the answer states both versions as prompt rule 5 asks and Faithfulness penalizes it. So these failures mostly show that Faithfulness and Relevancy do not fit false-premise, unanswerable and contradictory cases, not that the generator misbehaves. This reading was not yet checked case by case against the dataset.
+- The averages moved by about 0.02 (Faithfulness) and 0.01 (Answer Relevancy) between runs. That is about one claim in one answer, so it is noise, not a trend.
+- The set is easy and answerable, so 100% is the expected result. It shows that nothing is badly broken on answerable questions, not that the generator is strong in general.
+- Which answer scored 0.75 on Faithfulness and which 0.80 on Answer Relevancy was not recorded (summaries only). A small loop over `result.test_results` that prints the weak cases was suggested and skipped.
+
+##### History (set aside, not comparable with the above)
+
+Before the dataset change, a different 20-case mixed dataset (including false-premise, unanswerable and contradictory-chunk cases) was run with the earlier regex-citation generator. Four runs compared two prompts: the original prompt scored Faithfulness 85% and 90% pass and Answer Relevancy 90% and 90%; the alternative prompt scored 75% and 75% and 80% and 80%. After the generator was changed to JSON output, one run on that old set gave Faithfulness 75% pass (avg 0.8475) and Answer Relevancy 70% pass (avg 0.8356); the cause of the drop was not investigated. On 2026-10-21 that dataset and those results were set aside (result files renamed as old, the old dataset file removed) to keep the system simple. Failures seen in the old runs mostly looked like metric mismatch for false-premise, unanswerable and conflicting-chunk cases (the metrics penalize correct behavior), but this was never checked case by case.
 
 ##### Known Limitations (Generator Evaluation)
 
-- 20 cases, one judge model, two runs per prompt; no noise estimate beyond that.
-- Only the per-metric summary is saved: no answers, per-case scores, or judge reasons. Which cases changed between prompts cannot be recovered. The output file name is fixed, so each run must be renamed by hand or it is overwritten.
-- No run record (timestamp, config, prompt hash, dataset hash, incomplete-run flag), unlike `evals/eval_retriever.py`.
-- Faithfulness and Answer Relevancy do not fit false-premise, unanswerable and contradictory-chunk cases (they need behavior checks: did it flag the premise, refuse, or show both versions?).
-- **Citation correctness is not measured** (citations are stripped before judging), and **refusal behavior is not measured** as a rate.
-- The generator sometimes writes citations with full-width brackets (for example `【chunk_000003】`), which `CITATION_PATTERN` (`\[(chunk_\d+)\]`) does not match. Those citations would be missing from `cited_chunk_ids`. Not fixed yet; this matters for pipeline evaluation.
-- DeepEval printed "No hyperparameters logged" (the config is not attached to the runs).
+- 20 easy answerable cases, one judge model, three runs; no noise estimate beyond that.
+- Only the per-metric summary is saved: no answers, per-case scores or judge reasons, no run record (timestamp, config, prompt hash, dataset hash, incomplete-run flag), unlike `evals/eval_retriever.py`. A run that fails midway (as the timed-out attempt did) loses all generated answers, because nothing is saved until the end.
+- **Refusal behavior, false-premise handling, conflicting chunks, partial answers and prompt rule 6 (instructions inside the context) are not tested.** Faithfulness and Answer Relevancy also do not fit those cases.
+- **Citation correctness is not measured**, and refusals are not counted as a rate. On this set any refusal would be a wrongful one; the script does not check `refused`.
+- The golden context uses synthetic chunk IDs and a simpler format than `ContextBuilder`.
+- DeepEval prints "No hyperparameters logged" (the config is not attached to the runs).
 - The judge is an LLM, not ground truth.
 
 ## Current Project Structure
@@ -397,11 +429,11 @@ self_evaluating_rag/
 │   └── faiss_1024.index             (git-ignored; rebuild with `uv run python -m src.faiss_index`)
 ├── golden/
 │   ├── retriever_golden.json        (15 questions: question, ideal_answer, source; no chunk IDs)
-│   └── faithfulness_dataset.json    (20 generator-eval cases: query + ideal_context chunks)
+│   └── faithfulness_dataset_textbook.json  (20 generator-eval questions: id, query, ideal_context, source_sections; answerable only)
 ├── result/
 │   ├── baseline_results.json        (old bge/350 chunk-ID baseline, historical)
 │   ├── generator_evalution.json     (summary written by eval_generator.py; overwritten on each run)
-│   ├── 1st..4th_generator_evalution.json  (the four generator runs, renamed by hand)
+│   ├── (older generator results, renamed by hand to mark them old)
 │   └── runs/
 │       ├── 1st.json                 (DeepEval run: bge-base, 350 tokens)
 │       └── 2nd.json                 (DeepEval run: Qwen3-0.6B, 1024 tokens)
@@ -414,7 +446,8 @@ self_evaluating_rag/
 │   ├── faiss_index.py
 │   ├── retriever.py
 │   ├── context_builder.py
-│   └── generator.py
+│   ├── generator.py
+│   └── rag_pipeline.py
 ├── evals/
 │   ├── eval_retriever.py
 │   ├── eval_generator.py
@@ -423,7 +456,6 @@ self_evaluating_rag/
 │   ├── test_context_builder.py
 │   ├── test_generator.py
 │   └── test_rag_pipeline.py
-├── rag_pipeline.py                  (still at the project root; to be moved into src/)
 ├── run_rag_demo.py                  (manual end-to-end check, project root)
 ├── experiments/                     (git-ignored, local only)
 ├── pyproject.toml                   (dependencies + CUDA torch index)
@@ -436,7 +468,7 @@ self_evaluating_rag/
 └── .gitignore
 ```
 
-Layout checked against `git status` and a directory listing on 2026-10-14. Removed from the repository in the Qwen3 update (all still in Git history): `evaluation.py`, `data/evaluation_dataset.json`, `data/chunks.json` (old 455-chunk corpus), `main.ipynb`, and `requirements.txt` (dependencies now live in `pyproject.toml`). The old flat files at the project root (`retrieval.py`, `embedding.py`, and so on) moved into `src/`; `retrieval.py` became `src/retriever.py`.
+Layout checked against `git status` and a directory listing on 2026-10-14; the 2026-10-21 edits (golden file name, result files, `rag_pipeline.py` in `src/`) were made by hand, so check them against `git status`. Removed from the repository in the Qwen3 update (all still in Git history): `evaluation.py`, `data/evaluation_dataset.json`, `data/chunks.json` (old 455-chunk corpus), `main.ipynb`, and `requirements.txt` (dependencies now live in `pyproject.toml`). The old flat files at the project root (`retrieval.py`, `embedding.py`, and so on) moved into `src/`; `retrieval.py` became `src/retriever.py`.
 
 Run everything from the project root as modules, for example `uv run python -m src.embedding`, `uv run python -m evals.eval_retriever`, `uv run pytest`.
 
@@ -453,6 +485,15 @@ Hierarchical: **Heading -> Paragraph -> Sentence -> Word**
 
 The implementation was developed around the structure of the AI textbook. Generalization of ingestion and chunking is intentionally postponed until after answer-level evaluation and the expanded golden set (see Next Milestone). The generalization goals are structure-aware splitting when headings exist, a recursive size-plus-overlap fallback when they do not, and a normalized Document schema (source, page, section, url) for PDF, Word, text/Markdown, and web pages.
 
+Decisions and plan from review (2026-10-21):
+
+- The chunker is scoped to one document type, not defective. Book-specific parts: `is_heading` (the numbering regex), the Appendix 2 skip, the hard-coded PDF path and the assumption that one PDF text block is one paragraph. Document-agnostic parts: the embedder, FAISS, retriever, ContextBuilder, generator, pipeline and eval harness.
+- Before writing any questions for a second book, run the current chunker on it and inspect the number of headings found, the token-count distribution, tiny chunks and a few chunks by eye (about 30 minutes, no LLM). That shows how much generalization is needed.
+- Structure from the PDF's own bookmarks (`doc.get_toc()`) first, font size and weight from `page.get_text("dict")` as a heuristic for PDFs without bookmarks, and a recursive size-based split as the last fallback.
+- LangChain's `RecursiveCharacterTextSplitter` is to be used as a comparison baseline on the current book (what the heading logic adds over a generic splitter), not as a replacement. LangChain is not planned for `ContextBuilder` or `Generator`: the logic there is small and is the part being learned; a thin wrapper is enough if provider switching is needed.
+- Report results per document, not pooled. Book 1 must not regress after generalization, and book 2 must reach an acceptable level; they are different documents, so one result is not "better" than the other. Write book-2 questions by hand (or verify each by hand) so they do not just mirror chunk boundaries.
+- The instructor's `chunks_dump.json` (697 lecture-transcript chunks) is already chunked, so it could test retrieval and generation on a second kind of text, but not the chunker.
+
 ## Status
 
 - Feature 1 - Knowledge Base Setup: **Completed**
@@ -464,15 +505,15 @@ The implementation was developed around the structure of the AI textbook. Genera
 - Feature 7 - Context Preparation / ContextBuilder: **Completed** (budget 6000)
 - Feature 8 - Generation Pipeline: **Completed**
 - Feature 9 - Reusable RAG Pipeline: **Completed**
-- Feature 10 - Answer-Level (Generator) Evaluation: **Completed** (component level; 4 runs, summaries only; limits listed)
+- Feature 10 - Answer-Level (Generator) Evaluation: **Completed** (component level; new 20-question answerable set, 3 runs, summaries only; limits listed)
 - Feature 11 - Full Pipeline Evaluation: **Not started (next)**
 
 Validation:
 
 - ContextBuilder tests: 14/14 passed
-- Generator tests: 25/25 passed
+- Generator tests (25): written for the earlier regex-citation Gemini generator; need rewriting for the JSON format and were not re-run after the change
 - Pipeline tests: 4/4 passed
-- Full project test suite: **43/43 passed** (36-124 seconds depending on the run; heavy imports)
+- Full project test suite: **43/43 passed** as of 2026-10-14 (before the generator change); must be re-run after the generator tests are rewritten (36-124 seconds depending on the run; heavy imports)
 
 ## Current Architecture
 
@@ -490,7 +531,7 @@ Semantic Retrieval (query prompt)
       |
 ContextBuilder (budget 6000)
       |
-Generation (gpt-oss-120b via Groq)
+Generation (gpt-oss-120b via Groq, JSON output)
       |
 Answer + References
 
@@ -508,22 +549,22 @@ Things to design and decide (the learning part of this feature):
 
 - **Metrics per stage and end to end:** retrieval (Contextual Recall / Precision on the real retrieved chunks), generation on the real context (Faithfulness, Answer Relevancy), and end-to-end answer correctness against the golden `ideal_answer`. Decide whether a correctness metric (for example a DeepEval GEval or Answer Correctness style check) is needed, and how its judge is chosen.
 - **Failure attribution:** a rule for classifying each bad answer, for example: the needed information was not in the retrieved chunks (retrieval), it was retrieved but dropped by the token budget (context), it was in the included chunks but the answer is wrong or unfaithful (generation).
-- **Citation correctness:** use `cited_chunk_ids` and `invalid_citations` from the pipeline result. First fix the full-width bracket citation issue (see Known Limitations of Feature 10) or the numbers will be wrong.
-- **Refusal behavior:** answers or refuses when it should. Needs unanswerable questions.
-- **Inputs:** the 15 retriever golden questions. Caution: that set is saturated for retrieval (recall 1.0), so end-to-end results may sit near the ceiling. Open decision: build the harness on the current set and expand the dataset afterward (suggested), or expand the dataset first. The generator dataset (`faithfulness_dataset.json`) uses fixed contexts and is not an end-to-end set.
+- **Citation correctness:** use `cited_chunk_ids` and `invalid_citations` from the pipeline result. The full-width bracket problem is gone since citations come as a JSON list. A valid citation still only proves the chunk was in the context; whether it supports the claim needs a check against the relevant chunks.
+- **Refusal behavior:** answers or refuses when it should. Needs unanswerable questions. Also count refusals on answerable questions: one wrongful refusal was seen in a manual check (see Feature 8).
+- **Inputs:** the 15 retriever golden questions (they have `ideal_answer`, so they support a correctness metric). The 20 textbook questions can also be run through the pipeline for Faithfulness and Answer Relevancy, but they have no `ideal_answer` and were written from the chunks, so they cannot score retrieval. Caution: the retriever set is saturated (recall 1.0), so end-to-end results may sit near the ceiling. Open decision: build the harness on the current sets and expand the dataset afterward (suggested), or expand the dataset first.
 - **Non-determinism and judge noise:** temperature 0 is not deterministic, so repeat runs and report the spread, not a single run.
-- **Run records:** reuse the pattern from `evals/eval_retriever.py` (one saved JSON per run, config including prompt hash and model names, file hashes, per-question details with answers and judge reasons, an incomplete-run flag, retries on rate limits, sequential calls on free tiers). Also add this to `eval_generator.py` so its runs stop being summaries only.
-- **Generator reliability:** `Generator._call_llm` has no retry for 429/503 yet. A full pipeline run makes many calls, so decide where retry belongs (close to the network call, only transient errors).
-- **Known claim to check:** the Samuel 1956 statement (see Feature 8). Open `chunk_000007` and compare it with the model's claim.
+- **Run records:** reuse the pattern from `evals/eval_retriever.py` (one saved JSON per run, config including prompt hash and model names, file hashes, per-question details with answers and judge reasons, an incomplete-run flag, retries on rate limits). Catch errors per question so one failure does not stop the run, keep generation sequential on the free Groq tier (the paid OpenAI judge can run in parallel, but a stalled judge request cost one run, so `AsyncConfig(run_async=False)` is the fallback), and skip DeepEval metrics on refused answers. The same record design could be added to `eval_generator.py` later.
+- **Generator reliability:** `Generator._call_llm` has no retry for 429/503 yet, and a bad JSON reply raises `RuntimeError`. A full pipeline run makes many calls, so decide where retry belongs (close to the network call, only transient errors; passing `max_retries` to the OpenAI client is the simplest option) and how a run handles an unusable reply.
+- **ContextBuilder decision still open:** skip-and-continue versus stop-at-first-miss, and a test for the empty-context case (see Feature 7 review notes).
 
 ### After Feature 11, in this order
 
-1. **Expand the golden dataset** (if not done before Feature 11): paraphrased questions, questions that need two sections, and unanswerable questions. Keep `source` pages and no chunk IDs. The file hash will change, so treat results as a new baseline. Re-evaluate retriever, generator and pipeline, and run the judge more than once to see its noise.
+1. **Expand the golden dataset** (if not done before Feature 11): paraphrased questions, questions that need two sections, and unanswerable questions; the set-aside hard cases (false premise, partial answer, conflicting chunks, injection) also need to come back, because the current generator set cannot test them. Keep `source` pages and no chunk IDs. The file hash will change, so treat results as a new baseline. Re-evaluate retriever, generator and pipeline, and run the judge more than once to see its noise.
 2. **Self-evaluation / corrective behavior:** for example, flag or refuse an answer when the faithfulness check fails or invalid citations appear.
 3. **Test prompt rule 6** (an instruction hidden inside the retrieved context).
 4. **Optional ablations** to explain the Qwen improvement: Qwen at 350-token chunks; Qwen without the query prompt. Only informative once the golden set can discriminate.
 5. **Ingestion/chunking fixes, one at a time, each followed by re-evaluation:** page metadata at chunk boundaries; merge tiny chunks; embed the heading with the text; NFKC normalization for ligatures; decide about excluding exercise and chapter-summary sections; mid-sentence splits and the separator inconsistency; re-count final chunk tokens.
-6. **Generalize ingestion and chunking** (Document schema with source, page, section, url; structure-aware splitting with a recursive size-plus-overlap fallback; text/Markdown, Word, then web URLs), then re-run the evaluation on the book and on a second document to check for regressions.
+6. **Generalize ingestion and chunking** (see the decisions under Chunking Strategy: second-book diagnostic first, bookmarks then font size then a recursive fallback, LangChain splitter as a baseline only; Document schema with source, page, section, url; text/Markdown, Word, then web URLs), then add the second book with per-document golden questions and re-run the evaluation per document to check for regressions.
 7. **FastAPI service, Docker, deployment.** Plan for: a CPU-only torch build in the deployed image (the CUDA wheels in `pyproject.toml` are for local use); Qwen3-0.6B memory needs versus the host's RAM (build the index offline and ship it); rate limits, a maximum question length, and a daily cap, because a public endpoint spends the API keys; retry for 429/503; and checking the book's license before hosting excerpts (or use documents that may be published).
 8. **README with the results tables and an honest limitations section, a short demo, and a LinkedIn post.** Consider posting a first version after Feature 11 (evaluation plus a live API on the current corpus) and treating generalization as version 2.
 
@@ -542,12 +583,14 @@ Done:
 
 Done (Feature 10):
 
-- Generator evaluation script and 20-case dataset added; four runs compared (original vs alternative prompt); the original prompt is the one in the code.
+- Generator evaluation script added; generator changed to JSON output on Groq; new 20-question answerable textbook dataset built, hand-checked and used for three finished runs (100% pass on both metrics). The older dataset and results were set aside.
 
 Still to do:
 
-- Rename the four generator result files to say which prompt each used (for example `generator_original_prompt_run1.json`).
-- Make `eval_generator.py` save a full run record (timestamp, config, prompt and dataset hashes, per-case answer, scores and judge reasons, incomplete-run flag) and never overwrite an earlier run.
-- Fix the citation bracket issue (full-width `【chunk_...】` brackets): decide between a stronger prompt instruction and a tolerant parser (parser suggested), with a test, as its own commit.
+- Rewrite `tests/test_generator.py` for the JSON format (cases: normal, invented ID, duplicate IDs, refusal, partial, broken JSON, missing field, empty context with the model call faked), then run `uv run pytest`.
+- Check `run_rag_demo.py`: it may still name a Gemini model and `GOOGLE_API_KEY`; update it to the Groq model and key, then run it once.
+- Optional: name each generator result file by run (the script overwrites `result/generator_evalution.json`), or put a timestamp in the output name.
+- Optional: add `max_retries` to the Groq `OpenAI(...)` client and decide how an unusable JSON reply is handled in evaluation runs.
+- Optional: ContextBuilder fixes from the review notes (empty-context test, policy decision, defensive `.get`, tighter format).
 - `src/setup_knowledge_base.py` still runs its logic on import (low risk): wrap it in `if __name__ == "__main__":`.
 - Write a real `README.md` (it is empty, and `pyproject.toml` refers to it).

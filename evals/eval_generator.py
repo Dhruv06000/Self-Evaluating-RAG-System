@@ -9,7 +9,7 @@ from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
 from deepeval.metrics import FaithfulnessMetric, AnswerRelevancyMetric
 
-from src.generator import Generator, CITATION_PATTERN
+from src.generator import Generator
 from evals.harness import load_goldens, summarize_by_metric, print_summary
 
 load_dotenv()
@@ -42,9 +42,7 @@ def run():
         result = generator.generate(query, build_golden_context(chunks))
         time.sleep(3)
 
-        # Strip citation tags so the judge sees plain claims
-        answer = CITATION_PATTERN.sub("", result.answer)
-        answer = re.sub(r"\[\s*\]|\s{2,}", " ", answer).strip()
+        answer = result.answer
 
         test_cases.append(
             LLMTestCase(

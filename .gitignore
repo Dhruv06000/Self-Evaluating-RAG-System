@@ -11,3 +11,5 @@ faiss_test.py
 *.index
 main.ipynb
 .deepeval/
+/result/old_dataset_generator_result
+

@@ -1,16 +1,16 @@
 {
     "Faithfulness": {
         "n": 20,
-        "pass_rate": 75.0,
-        "avg_score": 0.835138888888889,
-        "min_score": 0.5,
+        "pass_rate": 100.0,
+        "avg_score": 0.9478571428571427,
+        "min_score": 0.75,
         "max_score": 1.0
     },
     "Answer Relevancy": {
         "n": 20,
-        "pass_rate": 80.0,
-        "avg_score": 0.8990476190476191,
-        "min_score": 0.6,
+        "pass_rate": 100.0,
+        "avg_score": 0.99,
+        "min_score": 0.8,
         "max_score": 1.0
     }
 }
