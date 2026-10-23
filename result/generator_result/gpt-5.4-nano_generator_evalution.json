@@ -1,0 +1,23 @@
+{
+    "Faithfulness": {
+        "n": 20,
+        "pass_rate": 95.0,
+        "avg_score": 0.9202380952380953,
+        "min_score": 0.6666666666666666,
+        "max_score": 1.0
+    },
+    "Answer Relevancy": {
+        "n": 20,
+        "pass_rate": 100.0,
+        "avg_score": 0.99375,
+        "min_score": 0.875,
+        "max_score": 1.0
+    },
+    "config": {
+        "Generator_model": "gpt-5.4-nano",
+        "judge_model": "gpt-4o-mini",
+        "prompt" : "Best and comlex",
+        "golden_set": "golden/faithfulness_dataset.json",
+        "num_goldens": 20
+    }
+}

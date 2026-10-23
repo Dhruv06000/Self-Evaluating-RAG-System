@@ -9,7 +9,7 @@ class Retrieval:
     with open("data/1024_chunks.json", "r", encoding="utf-8") as f:
       self.chunks = json.load(f)
     self.model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
-  def retrieve(self , query : str, top_k : int = 5):
+  def retrieve(self , query : str, top_k : int = 2):
     query = query.strip()
     if not query:
       raise ValueError("Query cannot be empty.")
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     results = retriever.retrieve(
         "What is Machine Learning ?",
-        top_k=5
+        top_k=2
     )
 
     for rank, result in enumerate(results, start=1):

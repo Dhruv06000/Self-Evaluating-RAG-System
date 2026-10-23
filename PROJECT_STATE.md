@@ -1,12 +1,26 @@
 # Project State
 
-Last updated: 2026-10-21
+Last updated: 2026-10-23
 
 ## Project
 
 Self-Evaluating RAG System
 
 ## Current Milestone
+
+### Feature 11 - Full Pipeline Evaluation - Completed (reduced scope: pipeline evaluation script and `top_k` tuning)
+
+`evals/eval_rag_pipeline.py` now runs the whole system (retriever, ContextBuilder, generator) on the 20 textbook questions and scores each answer with DeepEval's Contextual Relevancy, Faithfulness and Answer Relevancy (judge `gpt-4o-mini`). The first run showed the generator coping well (Faithfulness 0.94, Answer Relevancy 0.99) but Contextual Relevancy low (**0.35, 10% pass**): with 1024-token chunks and `top_k=5`, about 3,000 tokens reach the generator and usually only one chunk is relevant. The only lever changed in this feature was `top_k`, one value at a time, with the baseline repeated to measure judge noise and the retriever recall check re-run at each value.
+
+Result: **Contextual Relevancy 0.35 (`top_k=5`) -> 0.48 (`top_k=3`) -> 0.56 (`top_k=2`, 30% pass)**, with Faithfulness (0.94 -> 0.98 -> 0.96) and Answer Relevancy (0.99 -> 0.99 -> 0.99) holding, and retriever recall 1.0 at `top_k=3` and `top_k=2` on the 15 golden questions.
+
+Decision (2026-10-23): **`top_k = 2`**. The gain is far above the measured judge noise, and the guard metrics held. The result has limits that must be kept with it: part of the gain is mechanical (fewer chunks always raise this metric), the retriever golden set is saturated and cannot show recall loss, and the 20 questions were written from single chunks, so the set favours a small `top_k`. Multi-section and paraphrased questions are not tested yet. Details, tables and limits are in Feature 11 below. Chunk size was **not** changed; it is the next lever if more relevancy is wanted.
+
+Not covered by Feature 11 and carried over: failure attribution (which stage failed), citation correctness, refusal rates, an end-to-end correctness metric against `ideal_answer`, and saved per-case run records for the pipeline evaluation.
+
+Next feature: **expand the golden dataset** (see "Next Milestone").
+
+Previous milestone, Feature 10:
 
 ### Feature 10 - Answer-Level (Generator) Evaluation - Completed (component level)
 
@@ -18,15 +32,14 @@ Decision (2026-10-21): the component-level generator evaluation is complete with
 
 Earlier milestone (2026-10-14): the retrieval layer was rebuilt (Qwen3 embeddings, 1024-token chunks, query prompt) and re-evaluated with Contextual Recall and Contextual Precision; those two metrics are final for retrieval, and the 15-question retriever golden set stays as is. Details are in the Decision Log and Feature 6.
 
-Next feature: **Feature 11 - Full Pipeline Evaluation**. See "Next Milestone".
-
 ## Decision Log (what changed and why)
 
 | Step | Setup | Outcome |
 |---|---|---|
 | Original | `BAAI/bge-base-en-v1.5`, 350-token chunks, 455 chunks, 768-dim | Chunk-ID baseline: Recall@5 0.85, Precision@5 0.32, MRR@5 0.77 (10 questions). First DeepEval run (15 questions): judge recall 0.88, judge precision 0.87. |
 | Attempt | `gemini-embedding-001` through the API | Abandoned. The model is API-only (no local tokenizer, so chunk counting needed a proxy), and the free tier returned `429 RESOURCE_EXHAUSTED` when embedding in batches of 100. |
-| Current | `Qwen/Qwen3-Embedding-0.6B`, 1024-token chunks, 218 chunks, 1024-dim, query prompt | Judge recall 1.00, judge precision 0.974 on the same 15 questions. |
+| Current | `Qwen/Qwen3-Embedding-0.6B`, 1024-token chunks, 218 chunks, 1024-dim, query prompt | Judge recall 1.00, judge precision 0.974 on the same 15 questions (Gemini judge). |
+| 2026-10-23 | Same index and chunks, `top_k` 5 -> 2; judges changed to `gpt-4o-mini` (no Google key) | Pipeline Contextual Relevancy 0.35 -> 0.56 with Faithfulness and Answer Relevancy holding; retriever recall 1.0 at `top_k=2` (gpt-4o-mini judge). Not comparable with the Gemini-judge rows above. See Feature 11. |
 
 Why Qwen3-Embedding-0.6B: it runs locally (free, no rate limits, deterministic), its context length is far above 1024 tokens (bge-base reads at most 512, so 1024-token chunks would have been silently truncated), and its own tokenizer can be used for exact counting.
 
@@ -176,7 +189,7 @@ Edge-case validation (empty query, whitespace query, `top_k` of 0, negative, and
 ##### 6b. DeepEval retrieval evaluation (current)
 
 - `evals/eval_retriever.py` runs the injected `Retrieval` on every golden question and scores the retrieved texts with DeepEval's `ContextualRecallMetric` and `ContextualPrecisionMetric` (threshold 0.7, `include_reason=True`). The generator is not involved (placeholder output).
-- Judge: Gemini (`gemini-3.5-flash-lite`, temperature 0), evaluated one question at a time with retries on rate limits (an unscored metric causes a retry, and the run is flagged `INCOMPLETE_...` if scores are still missing).
+- Judge: Gemini (`gemini-3.5-flash-lite`, temperature 0) for all runs up to 2026-10-14. **From 2026-10-23 the judge is `gpt-4o-mini`** (passed to the metrics as a model name; there is no Google key). Runs are evaluated one question at a time with retries (an unscored metric causes a retry, and the run is flagged `INCOMPLETE_...` if scores are still missing); the pause and retry-wait constants were lowered because the Gemini quota window no longer applies. **Runs before and after the judge change are not comparable.**
 - Every run is saved to `result/runs/retriever_<timestamp>.json` and never overwrites an earlier run. Each record stores the config (embedding model, chunk size, overlap, top_k, judge, golden set), SHA-256 prefixes of the golden file and the chunk file, the per-metric summary, and per-question details (retrieved chunks with rank, heading, pages, score; metric scores and the judge's reasons).
 - `evals/harness.py` provides `load_goldens`, `summarize_by_metric`, and `print_summary`; the summary is per metric on purpose, so a regression in one metric cannot hide behind another.
 - **Golden set:** `golden/retriever_golden.json`, 15 questions (SHA `e3b21b212ac4`). Each entry has `question`, `ideal_answer`, and `source` (chapter, section, printed page). Chunk IDs are deliberately not used, so the set survives re-chunking.
@@ -204,6 +217,22 @@ Limitations of this evaluation:
 - The judge is an LLM, not ground truth. Its run-to-run variance has not been measured yet (the two runs above are different configurations, not repeats).
 - Contextual recall asks whether the expected answer can be supported by the retrieved text; it does not show that the best chunk was found.
 - Three variables changed between run 1 and run 2 (see Decision Log).
+
+##### Retrieval results by `top_k` (judge `gpt-4o-mini`, 2026-10-23, same golden set and chunk file)
+
+| top_k | Contextual Recall | Contextual Precision | Run file |
+|---|---|---|---|
+| 5 | 0.950 (Q10 0.75, Q11 0.5) | 0.947 | `retriever_20261023_144521.json` |
+| 3 | 1.000 | 0.989 | `retriever_20261023_145705.json` |
+| 2 | 1.000 | 1.000 | `retriever_20261023_150501.json` |
+
+All three runs are complete and share the golden hash `e3b21b212ac4` and chunk hash `8d41cbfbc8f4`; only the judge (against the Gemini runs) and `top_k` differ.
+
+How to read this:
+
+- The `top_k=5` recall of 0.95 is judge noise, not a retrieval effect: at `top_k=3` the top three chunks for Q10 and Q11 are the same as at `top_k=5`, yet their recall went from 0.75 and 0.5 to 1.0. Lowering `top_k` cannot add information. So the correct claim is "lower `top_k` did not reduce recall", not "it improved recall". Per-question recall from this judge can swing by 0.25 to 0.5 between runs.
+- At `top_k=2` the AutoGraph section of Q13 (4.2.4, rank 3 at `top_k=3`) is no longer retrieved, yet the judge still gives recall 1.0. Either the same content appears in the two retrieved chunks or the judge is lenient. Together with the saturation noted above, this means the retriever golden set is a weak check for recall loss.
+- Precision gains come from removing low-ranked irrelevant chunks (exercises, chapter summaries) that ranked above or among relevant ones; they are small and subject to the same judge noise.
 
 #### Feature 7 - ContextBuilder (updated)
 
@@ -418,6 +447,59 @@ Before the dataset change, a different 20-case mixed dataset (including false-pr
 - DeepEval prints "No hyperparameters logged" (the config is not attached to the runs).
 - The judge is an LLM, not ground truth.
 
+#### Feature 11 - Full Pipeline Evaluation (reduced scope)
+
+##### What was built
+
+- `evals/eval_rag_pipeline.py` runs the injected `RAGPipeline` on every query of the 20-question textbook set (`GOLDEN_PATH` in the script), builds one DeepEval test case per query from live output, and scores it with `ContextualRelevancyMetric`, `FaithfulnessMetric` and `AnswerRelevancyMetric` (threshold 0.7, `include_reason=True`, judge `gpt-4o-mini`). Generator: `openai/gpt-oss-120b` through Groq; context budget 6000 tokens.
+- The retrieval context given to the metrics is only the chunks the generator actually saw (retrieved chunks whose IDs are in `included_chunk_ids`), so a chunk dropped by the token budget cannot affect the score.
+- The per-metric summary is saved as JSON through `harness.summarize_by_metric`; DeepEval prints per-case scores and judge reasons in the terminal. Each run takes about 30 seconds and about 0.05 USD.
+- `evals/eval_retriever.py` was changed to use the `gpt-4o-mini` judge (see Feature 6).
+
+##### Why `top_k` was tuned
+
+The first run gave Contextual Relevancy 0.354 (10% pass) next to Faithfulness 0.939 and Answer Relevancy 0.992. The generator handles noisy context, but the context is wide: 5 chunks of up to 1024 tokens (about 525 on average) reach it, and for most questions one chunk holds the answer. Contextual Relevancy scores the share of retrieved text that is relevant, so it is structurally low in this setup. Only `top_k` was changed in this feature, one value at a time.
+
+##### Method
+
+- Baseline repeated once to estimate judge noise: Contextual Relevancy average 0.354 and 0.350 (difference 0.004).
+- Rule for keeping a setting: the Contextual Relevancy average must rise by clearly more than about 0.03, Faithfulness and Answer Relevancy must stay within about 0.03, and retriever Contextual Recall at the same `top_k` must hold on the 15 golden questions.
+- One run per `top_k` below the baseline; results compared on averages, not on single questions.
+
+##### Results (20 questions, judge `gpt-4o-mini`)
+
+| top_k | Ctx Relevancy avg (pass) | Faithfulness avg (pass) | Answer Relevancy avg (pass) | Retriever recall / precision |
+|---|---|---|---|---|
+| 5, run 1 | 0.354 (10%) | 0.939 (95%) | 0.992 (100%) | 0.950 / 0.947 |
+| 5, run 2 | 0.350 (10%) | 0.944 (100%) | 1.000 (100%) | (same as run 1) |
+| 3 | 0.480 (15%) | 0.976 (100%) | 0.994 (100%) | 1.000 / 0.989 |
+| 2 | **0.558 (30%)** | 0.957 (100%) | 0.987 (100%) | 1.000 / 1.000 |
+
+Lowest scores per metric: Contextual Relevancy 0.12 / 0.07 / 0.13 / 0.16 (runs in table order), Faithfulness 0.67 / 0.75 / 0.86 / 0.75, Answer Relevancy 0.83 / 1.00 / 0.88 / 0.86. No Answer Relevancy score near zero appears at any setting, so there is no sign of wrongful refusals.
+
+##### Decision (2026-10-23): `top_k = 2`
+
+Contextual Relevancy rose by 0.13 (5 to 3) and by a further 0.08 (3 to 2), both far above the 0.004 noise, with the guard metrics inside the 0.03 tolerance and retriever recall unchanged. Gains are shrinking (diminishing returns). The 0.02 movement in Faithfulness between `top_k=3` and `top_k=2` is the size of the generator's own run-to-run variation and is not read as an effect.
+
+##### How to read these results
+
+- **Mechanical effect.** Retrieving fewer chunks raises Contextual Relevancy almost automatically; `top_k=1` would raise it further. The metric alone does not show that retrieval got better, only that the context got narrower. The recall check is the safeguard, and it is weak (below).
+- **Saturated retriever set.** Recall is 1.0 at `top_k` 3 and 2, and Q13 still scores 1.0 without its 4.2.4 section. The set cannot show recall loss.
+- **The 20 questions favour a small `top_k`.** They were written from the chunks, 18 from a single chunk and 2 from two chunks. Multi-section questions are the real risk for `top_k=2` and are not tested.
+- **Judge noise.** The judge is an LLM, not ground truth; per-question scores move between runs (recall on Q10 and Q11), so only averages were compared.
+- **Honest claim:** on this dataset `top_k=2` raised Contextual Relevancy from 0.35 to 0.56 with no measurable loss; the dataset cannot show losses on harder questions.
+- Chunk size was not changed. Relevancy is still below the 0.7 threshold (70% of cases fail), and the remaining noise sits inside the 1024-token chunks, so smaller chunks are the next lever.
+- With `top_k=2` the context is about 1,100 tokens, so the 6000-token budget in `ContextBuilder` never triggers; it remains only a safety guard.
+
+##### Known Limitations (Pipeline Evaluation)
+
+- 20 easy answerable questions, one judge model, one run per `top_k` below the baseline; no noise estimate beyond the two baseline runs.
+- Only the per-metric summary is saved: no answers, per-case scores or reasons, refusal flags, citations, retrieved or included chunk IDs, and no run record (timestamp, config, hashes, incomplete-run flag) as in `eval_retriever.py`. Per-case reasons were read only in the terminal.
+- No failure attribution (retrieval versus context budget versus generation), no citation-correctness check, no refusal-rate count, no end-to-end correctness metric against `ideal_answer`.
+- The result file names were set by hand per `top_k` (see the project structure); the script's output path is not yet built from `TOP_K`, so a run can overwrite the previous summary.
+- The pipeline and retriever evaluations use different golden sets; the 20-question set has no `ideal_answer` and cannot score retrieval.
+- Pipeline errors (a bad JSON reply or a provider error) are not caught per question and would stop a run.
+
 ## Current Project Structure
 
 ```text
@@ -433,10 +515,12 @@ self_evaluating_rag/
 ├── result/
 │   ├── baseline_results.json        (old bge/350 chunk-ID baseline, historical)
 │   ├── generator_evalution.json     (summary written by eval_generator.py; overwritten on each run)
+│   ├── pipeline_result/             (summaries from eval_rag_pipeline.py: 1st_rag_pipeline_evalution.json and rag_pipeline_evalution.json = top_k 5 runs 1 and 2; rag_pipeline_evalution_k3.json; rag_pipeline_evalution_k2.json)
 │   ├── (older generator results, renamed by hand to mark them old)
 │   └── runs/
 │       ├── 1st.json                 (DeepEval run: bge-base, 350 tokens)
-│       └── 2nd.json                 (DeepEval run: Qwen3-0.6B, 1024 tokens)
+│       ├── 2nd.json                 (DeepEval run: Qwen3-0.6B, 1024 tokens; Gemini judge)
+│       └── retriever_<timestamp>.json  (gpt-4o-mini judge: 20261023_144521 top_k 5, 20261023_145705 top_k 3, 20261023_150501 top_k 2)
 ├── src/
 │   ├── __init__.py
 │   ├── setup_knowledge_base.py
@@ -451,6 +535,7 @@ self_evaluating_rag/
 ├── evals/
 │   ├── eval_retriever.py
 │   ├── eval_generator.py
+│   ├── eval_rag_pipeline.py
 │   └── harness.py
 ├── tests/
 │   ├── test_context_builder.py
@@ -468,7 +553,7 @@ self_evaluating_rag/
 └── .gitignore
 ```
 
-Layout checked against `git status` and a directory listing on 2026-10-14; the 2026-10-21 edits (golden file name, result files, `rag_pipeline.py` in `src/`) were made by hand, so check them against `git status`. Removed from the repository in the Qwen3 update (all still in Git history): `evaluation.py`, `data/evaluation_dataset.json`, `data/chunks.json` (old 455-chunk corpus), `main.ipynb`, and `requirements.txt` (dependencies now live in `pyproject.toml`). The old flat files at the project root (`retrieval.py`, `embedding.py`, and so on) moved into `src/`; `retrieval.py` became `src/retriever.py`.
+Layout checked against `git status` and a directory listing on 2026-10-14; the 2026-10-21 edits (golden file name, result files, `rag_pipeline.py` in `src/`) and the 2026-10-23 result file names were made by hand, so check them against `git status`. Removed from the repository in the Qwen3 update (all still in Git history): `evaluation.py`, `data/evaluation_dataset.json`, `data/chunks.json` (old 455-chunk corpus), `main.ipynb`, and `requirements.txt` (dependencies now live in `pyproject.toml`). The old flat files at the project root (`retrieval.py`, `embedding.py`, and so on) moved into `src/`; `retrieval.py` became `src/retriever.py`.
 
 Run everything from the project root as modules, for example `uv run python -m src.embedding`, `uv run python -m evals.eval_retriever`, `uv run pytest`.
 
@@ -506,14 +591,15 @@ Decisions and plan from review (2026-10-21):
 - Feature 8 - Generation Pipeline: **Completed**
 - Feature 9 - Reusable RAG Pipeline: **Completed**
 - Feature 10 - Answer-Level (Generator) Evaluation: **Completed** (component level; new 20-question answerable set, 3 runs, summaries only; limits listed)
-- Feature 11 - Full Pipeline Evaluation: **Not started (next)**
+- Feature 11 - Full Pipeline Evaluation: **Completed (reduced scope)**: pipeline evaluation script built; `top_k` tuned 5 -> 2 (Contextual Relevancy 0.35 -> 0.56, guards held); failure attribution, citation, refusal checks and per-case run records not done
+- Feature 12 - Expanded golden dataset: **Not started (next)**
 
 Validation:
 
 - ContextBuilder tests: 14/14 passed
 - Generator tests (25): written for the earlier regex-citation Gemini generator; need rewriting for the JSON format and were not re-run after the change
 - Pipeline tests: 4/4 passed
-- Full project test suite: **43/43 passed** as of 2026-10-14 (before the generator change); must be re-run after the generator tests are rewritten (36-124 seconds depending on the run; heavy imports)
+- Full project test suite: **43/43 passed** as of 2026-10-14 (before the generator change); must be re-run after the generator tests are rewritten (36-124 seconds depending on the run; heavy imports); not re-run during Feature 11
 
 ## Current Architecture
 
@@ -537,36 +623,43 @@ Answer + References
 
 `RAGPipeline.run(question, top_k)` orchestrates Semantic Retrieval -> ContextBuilder -> Generation and returns a `RAGResult` (question, retrieved chunks, built context, `GenerationResult`).
 
+Operating setting chosen in Feature 11: `top_k = 2` (see Feature 11 for the evidence and its limits).
+
 ## Next Milestone
 
-### Feature 11 - Full Pipeline Evaluation (next)
+### Feature 12 - Expanded golden dataset (next)
 
-Retrieval and the generator were each measured on their own. This feature evaluates the whole system, question in, answer out, using `RAGPipeline.run(question, top_k)`, which returns a `RAGResult` (retrieved chunks, built context with the included chunk IDs, and the generation with cited and invalid citations).
+Why: the current sets cannot tell whether `top_k=2` is really safe. The retriever set is saturated (recall 1.0 at every setting), and the 20 pipeline questions were written from single chunks. A discriminative set is needed before any further tuning or any claim about retrieval quality.
 
-The central aim: when an answer is bad, say **which stage failed** (retrieval, the context budget, or generation), using what `RAGResult` already records.
+What it should contain:
 
-Things to design and decide (the learning part of this feature):
+- **Paraphrased questions** that do not reuse the book's wording.
+- **Questions that need two sections**, the real risk for `top_k=2`.
+- **Unanswerable questions**, to measure refusals, and the set-aside hard cases (false premise, partial answer, conflicting chunks, an instruction hidden in the retrieved context).
+- Keep `source` pages and no chunk IDs, so the set survives re-chunking. Write questions by hand or verify each by hand, so they do not mirror chunk boundaries. The file hash will change, so results are a new baseline.
 
-- **Metrics per stage and end to end:** retrieval (Contextual Recall / Precision on the real retrieved chunks), generation on the real context (Faithfulness, Answer Relevancy), and end-to-end answer correctness against the golden `ideal_answer`. Decide whether a correctness metric (for example a DeepEval GEval or Answer Correctness style check) is needed, and how its judge is chosen.
-- **Failure attribution:** a rule for classifying each bad answer, for example: the needed information was not in the retrieved chunks (retrieval), it was retrieved but dropped by the token budget (context), it was in the included chunks but the answer is wrong or unfaithful (generation).
-- **Citation correctness:** use `cited_chunk_ids` and `invalid_citations` from the pipeline result. The full-width bracket problem is gone since citations come as a JSON list. A valid citation still only proves the chunk was in the context; whether it supports the claim needs a check against the relevant chunks.
-- **Refusal behavior:** answers or refuses when it should. Needs unanswerable questions. Also count refusals on answerable questions: one wrongful refusal was seen in a manual check (see Feature 8).
-- **Inputs:** the 15 retriever golden questions (they have `ideal_answer`, so they support a correctness metric). The 20 textbook questions can also be run through the pipeline for Faithfulness and Answer Relevancy, but they have no `ideal_answer` and were written from the chunks, so they cannot score retrieval. Caution: the retriever set is saturated (recall 1.0), so end-to-end results may sit near the ceiling. Open decision: build the harness on the current sets and expand the dataset afterward (suggested), or expand the dataset first.
-- **Non-determinism and judge noise:** temperature 0 is not deterministic, so repeat runs and report the spread, not a single run.
-- **Run records:** reuse the pattern from `evals/eval_retriever.py` (one saved JSON per run, config including prompt hash and model names, file hashes, per-question details with answers and judge reasons, an incomplete-run flag, retries on rate limits). Catch errors per question so one failure does not stop the run, keep generation sequential on the free Groq tier (the paid OpenAI judge can run in parallel, but a stalled judge request cost one run, so `AsyncConfig(run_async=False)` is the fallback), and skip DeepEval metrics on refused answers. The same record design could be added to `eval_generator.py` later.
-- **Generator reliability:** `Generator._call_llm` has no retry for 429/503 yet, and a bad JSON reply raises `RuntimeError`. A full pipeline run makes many calls, so decide where retry belongs (close to the network call, only transient errors; passing `max_retries` to the OpenAI client is the simplest option) and how a run handles an unusable reply.
-- **ContextBuilder decision still open:** skip-and-continue versus stop-at-first-miss, and a test for the empty-context case (see Feature 7 review notes).
+Then re-evaluate retriever, generator and pipeline on the new set, compare `top_k=2` with `top_k=3` again, and run the judge more than once to see its noise.
 
-### After Feature 11, in this order
+### Carried over from Feature 11 (not done)
 
-1. **Expand the golden dataset** (if not done before Feature 11): paraphrased questions, questions that need two sections, and unanswerable questions; the set-aside hard cases (false premise, partial answer, conflicting chunks, injection) also need to come back, because the current generator set cannot test them. Keep `source` pages and no chunk IDs. The file hash will change, so treat results as a new baseline. Re-evaluate retriever, generator and pipeline, and run the judge more than once to see its noise.
+- **Failure attribution:** a rule that says which stage failed for each bad answer (needed information not retrieved; retrieved but dropped by the token budget; included but answered wrongly or unfaithfully), using what `RAGResult` records.
+- **Citation correctness:** `cited_chunk_ids` and `invalid_citations` are available in the result; whether a cited chunk supports the claim still needs a check against the relevant chunks.
+- **Refusal behavior:** count refusals on answerable questions (one wrongful refusal was seen in a manual check, see Feature 8) and check refusals on unanswerable ones.
+- **End-to-end correctness** against the golden `ideal_answer`, with a decision on the metric and judge.
+- **Run records for the pipeline evaluation:** one saved JSON per run (config with `top_k`, models and prompt hash, file hashes, per-question answers, scores and judge reasons, incomplete-run flag), errors caught per question, and an output name built from `TOP_K` (the pattern already exists in `evals/eval_retriever.py`).
+- **Generator reliability:** `Generator._call_llm` has no retry for 429/503, and a bad JSON reply raises `RuntimeError`; decide where retry belongs (close to the network call, transient errors only; `max_retries` on the OpenAI client is the simplest option).
+- **ContextBuilder decision still open:** skip-and-continue versus stop-at-first-miss, and a test for the empty-context case (see Feature 7 review notes). With `top_k=2` the budget never triggers.
+
+### After that, in this order
+
+1. **Chunk size experiment** (only if more Contextual Relevancy is wanted): one smaller size (for example 512) written to new file names (new chunk file and index, so the 1024 baseline stays reproducible); rebuild chunks, index and evaluations; test `top_k` 3 and 4 with it, because halving the chunk size halves the text per slot. Judge on all three pipeline metrics plus retriever recall on the expanded set.
 2. **Self-evaluation / corrective behavior:** for example, flag or refuse an answer when the faithfulness check fails or invalid citations appear.
 3. **Test prompt rule 6** (an instruction hidden inside the retrieved context).
 4. **Optional ablations** to explain the Qwen improvement: Qwen at 350-token chunks; Qwen without the query prompt. Only informative once the golden set can discriminate.
-5. **Ingestion/chunking fixes, one at a time, each followed by re-evaluation:** page metadata at chunk boundaries; merge tiny chunks; embed the heading with the text; NFKC normalization for ligatures; decide about excluding exercise and chapter-summary sections; mid-sentence splits and the separator inconsistency; re-count final chunk tokens.
+5. **Ingestion/chunking fixes, one at a time, each followed by re-evaluation:** page metadata at chunk boundaries; merge tiny chunks; embed the heading with the text; NFKC normalization for ligatures; decide about excluding exercise and chapter-summary sections (they fill ranks 2 to 5 for most golden questions); mid-sentence splits and the separator inconsistency; re-count final chunk tokens.
 6. **Generalize ingestion and chunking** (see the decisions under Chunking Strategy: second-book diagnostic first, bookmarks then font size then a recursive fallback, LangChain splitter as a baseline only; Document schema with source, page, section, url; text/Markdown, Word, then web URLs), then add the second book with per-document golden questions and re-run the evaluation per document to check for regressions.
 7. **FastAPI service, Docker, deployment.** Plan for: a CPU-only torch build in the deployed image (the CUDA wheels in `pyproject.toml` are for local use); Qwen3-0.6B memory needs versus the host's RAM (build the index offline and ship it); rate limits, a maximum question length, and a daily cap, because a public endpoint spends the API keys; retry for 429/503; and checking the book's license before hosting excerpts (or use documents that may be published).
-8. **README with the results tables and an honest limitations section, a short demo, and a LinkedIn post.** Consider posting a first version after Feature 11 (evaluation plus a live API on the current corpus) and treating generalization as version 2.
+8. **README with the results tables and an honest limitations section, a short demo, and a LinkedIn post.** Consider posting a first version once the expanded dataset is evaluated and treating generalization as version 2.
 
 ## Housekeeping
 
@@ -585,7 +678,15 @@ Done (Feature 10):
 
 - Generator evaluation script added; generator changed to JSON output on Groq; new 20-question answerable textbook dataset built, hand-checked and used for three finished runs (100% pass on both metrics). The older dataset and results were set aside.
 
+Done (Feature 11):
+
+- Pipeline evaluation script added (`evals/eval_rag_pipeline.py`); retriever evaluation moved to the `gpt-4o-mini` judge; baseline repeated twice; `top_k` tested at 5, 3 and 2 with the retriever recall check at each value; decision `top_k = 2` recorded with its limits.
+
 Still to do:
+
+- Make `top_k = 2` the project default everywhere: the default in `RAGPipeline.run`, `run_rag_demo.py`, and the `TOP_K` constants in `evals/eval_rag_pipeline.py` and `evals/eval_retriever.py` (the evaluation runs themselves were done with the values listed in Feature 11).
+- Build the pipeline evaluation output name from `TOP_K` so a run never overwrites an earlier summary (result files were renamed by hand so far).
+- Label in the README which results come from the Gemini judge (until 2026-10-14) and which from `gpt-4o-mini` (from 2026-10-23).
 
 - Rewrite `tests/test_generator.py` for the JSON format (cases: normal, invented ID, duplicate IDs, refusal, partial, broken JSON, missing field, empty context with the model call faked), then run `uv run pytest`.
 - Check `run_rag_demo.py`: it may still name a Gemini model and `GOOGLE_API_KEY`; update it to the Groq model and key, then run it once.

@@ -1,11 +1,12 @@
 import re
 import os 
 import json
-import time
+# import time
 from types import SimpleNamespace
 from dotenv import load_dotenv
 
 from deepeval import evaluate
+from deepeval.evaluate import AsyncConfig
 from deepeval.test_case import LLMTestCase
 from deepeval.metrics import FaithfulnessMetric, AnswerRelevancyMetric
 
@@ -40,7 +41,7 @@ def run():
         
         # Generate response using the ideal context chunks
         result = generator.generate(query, build_golden_context(chunks))
-        time.sleep(3)
+        # time.sleep(3)
 
         answer = result.answer
 
@@ -56,7 +57,13 @@ def run():
         FaithfulnessMetric(threshold=THRESHOLD, model=JUDGE_MODEL, include_reason=True),
         AnswerRelevancyMetric(threshold=THRESHOLD, model=JUDGE_MODEL, include_reason=True),
     ]
-    return summarize_by_metric(evaluate(test_cases=test_cases, metrics=metrics))
+    return summarize_by_metric(
+        evaluate(
+            test_cases=test_cases, 
+            metrics=metrics,
+            async_config=AsyncConfig(run_async=False)
+            )
+        )
 
 
 if __name__ == "__main__":

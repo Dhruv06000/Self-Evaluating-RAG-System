@@ -1,0 +1,23 @@
+{
+    "Contextual Relevancy": {
+        "n": 20,
+        "pass_rate": 10.0,
+        "avg_score": 0.34968427946392294,
+        "min_score": 0.07142857142857142,
+        "max_score": 0.9649122807017544
+    },
+    "Faithfulness": {
+        "n": 20,
+        "pass_rate": 100.0,
+        "avg_score": 0.9441666666666666,
+        "min_score": 0.75,
+        "max_score": 1.0
+    },
+    "Answer Relevancy": {
+        "n": 20,
+        "pass_rate": 100.0,
+        "avg_score": 1.0,
+        "min_score": 1.0,
+        "max_score": 1.0
+    }
+}

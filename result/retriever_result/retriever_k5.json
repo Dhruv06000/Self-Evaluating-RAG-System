@@ -1,5 +1,5 @@
 {
-  "timestamp": "20261014_054455",
+  "timestamp": "20261023_144521",
   "complete": true,
   "errored_metrics": 0,
   "golden_sha256": "e3b21b212ac4",
@@ -10,23 +10,23 @@
     "chunk_size": 1024,
     "chunk_overlap": 0,
     "top_k": 5,
-    "judge_model": "gemini-3.5-flash-lite",
+    "judge_model": "gpt-4o-mini",
     "golden_set": "golden/retriever_golden.json",
     "num_goldens": 15
   },
   "summary": {
     "Contextual Recall": {
       "n": 15,
-      "pass_rate": 100.0,
-      "avg_score": 1.0,
-      "min_score": 1.0,
+      "pass_rate": 93.33333333333333,
+      "avg_score": 0.95,
+      "min_score": 0.5,
       "max_score": 1.0
     },
     "Contextual Precision": {
       "n": 15,
       "pass_rate": 100.0,
-      "avg_score": 0.9744444444444444,
-      "min_score": 0.8333333333333333,
+      "avg_score": 0.9466666666666667,
+      "min_score": 0.75,
       "max_score": 1.0
     }
   },
@@ -94,12 +94,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all statements in the expected output are fully supported by node 1 in the retrieval context, successfully capturing McCarthy's definition of AI and its limitations.",
+          "reason": "The score is 1.00 because every sentence in the expected output directly corresponds to the information provided in the node(s) in retrieval context, clearly reflecting John McCarthy's definition of AI and its limitations.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because the first retrieval context node perfectly answers the input by stating that 'John McCarthy at the 1956 Dartmouth Conference ... outlined that artificial intelligence is about letting a machine simulate the intelligent behavior of humans' and mentions that 'this definition seemingly ignores the possibility of strong artificial intelligence', and all irrelevant nodes are correctly ranked lower.",
+          "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node provides a clear definition from John McCarthy, stating that 'artificial intelligence is about letting a machine simulate the intelligent behavior of humans as precisely as it can be.' The second node addresses the limitation by mentioning that 'this definition seemingly ignores the possibility of strong artificial intelligence.' The irrelevant nodes, starting from the third, do not contribute to the question as they fail to mention McCarthy's definition or its limitations, ensuring that the relevant information is prioritized.",
           "error": null
         }
       }
@@ -166,12 +166,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all statements in the expected output are fully supported by the information provided in the 1st node in the retrieval context.",
+          "reason": "The score is 1.00 because every sentence in the expected output is directly supported by the information in the first node of the retrieval context, clearly linking machine learning and deep learning to AI.",
           "error": null
         },
         "Contextual Precision": {
           "score": 0.8333333333333333,
-          "reason": "The score is 0.83 because while the first node correctly explains the relationship, stating 'machine learning is an approach or a subset of AI, and deep learning is one of ML's special forms' and that 'Artiﬁcial intelli- gence is the target and result while deep learning and machine learning are methods and tools.', and the third node mentions that 'Machine learning (ML) is apparently one of the major focuses' and that it is 'an important sub-field of AI.', the second node which only lists chapter exercises and licensing information, containing no content about the relationship between AI, machine learning, and deep learning should have been ranked lower than the relevant nodes.",
+          "reason": "The score is 0.83 because while the relevant nodes are ranked higher, there are still several irrelevant nodes that dilute the overall precision. The first node provides a clear explanation of the relationship between AI, machine learning, and deep learning, which is essential for the query. However, the second node ranks next and states that it 'does not provide any relevant information,' which detracts from the score. Additionally, the third node also contributes positively by defining machine learning, but the presence of two more irrelevant nodes that focus on unrelated aspects of AI further lowers the score.",
           "error": null
         }
       }
@@ -236,12 +236,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all information in the expected output is fully supported and attributed to node(s) in retrieval context, specifically the 1st node which accurately details the three main schools of AI and their respective core principles.",
+          "reason": "The score is 1.00 because every sentence in the expected output is directly supported by the corresponding nodes in the retrieval context, clearly aligning with the definitions and core concepts of each school of thought.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because the first node is relevant, stating that 'symbolism, connectionism, and behaviorism constitute the three main schools of AI' along with their respective views and cores. It correctly ranks above the second node, which is irrelevant because 'This document contains exercises and license information about a chapter on AI, which is completely irrelevant to the three schools and their cores.' It also correctly ranks above the third node, which is irrelevant because 'This document discusses 'strong artificial intelligence and weak artificial intelligence', which is unrelated to symbolism, connectionism, or behaviorism.' Additionally, it correctly ranks above the fourth node, which is irrelevant because 'This text focuses on machine learning and deep learning, rather than detailing the three main schools of AI and their cores.' Finally, it correctly ranks above the fifth node, which is irrelevant because 'The text only mentions that 'the AI development has undergone three stages and now AI is still in the stage of perceptual intelligence,' which is unrelated to the three schools requested.' Perfect execution!",
+          "reason": "The score is 1.00 because the first node provides a comprehensive explanation of the three main schools of AI: 'symbolism, connectionism, and behaviorism' and their respective cores, making it highly relevant. The subsequent nodes, ranked lower, do not address the input question, with the second node focusing on different interpretations of AI, the third discussing strong and weak AI, the fourth explaining relationships with machine learning, and the fifth covering stages of AI development, all of which are irrelevant to the core inquiry.",
           "error": null
         }
       }
@@ -308,12 +308,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by the 1st node in the retrieval context. Fantastic job!",
+          "reason": "The score is 1.00 because every sentence in the expected output is directly supported by the information in the node(s) in retrieval context, clearly linking the concepts of full-stack and all-scenario solutions to the Atlas AI computing solution.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because the first node in the retrieval contexts is the only relevant one, correctly positioned at the top by directly defining 'Full-stack' and 'All-scenario' and mentioning the Atlas AI computing solution based on the Ascend AI processor as the bedrock. All irrelevant nodes are properly ranked below it: the second node because 'It only introduces the chapter topics generally without explaining the specific meanings of 'full-stack' and 'all-scenario'.', the third node because 'It focuses on the HUAWEI HiAI platform and developer activities, which is unrelated to the definitions requested in the input.', the fourth node because 'It introduces the HUAWEI HiAI open AI capability platform, but does not explain Huawei's full-stack and all-scenario strategy definitions.', and the fifth node because 'It discusses ModelArts, MindSpore, and CANN architecture, providing broad context on Huawei's AI tools rather than the explicit definitions of 'full-stack' and 'all-scenario' requested.'.",
+          "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node defines 'full-stack' in Huawei's AI strategy, stating that 'Full-stack refers to a full-stack solution including chip, chip enable, training and reasoning framework and application enable.' The second node defines 'all-scenario,' explaining that 'All-scenario refers to an all-scenario deployment environment including public cloud, private cloud, all kinds of edge computing, IoT terminals and consumer terminals.' The irrelevant nodes, ranked third to fifth, focus on the HUAWEI HiAI platform and ModelArts, which do not address the meanings of 'full-stack' or 'all-scenario,' thus justifying their lower ranking.",
           "error": null
         }
       }
@@ -381,12 +381,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all information regarding regression and classification models in the expected output is fully supported by the 1st node in the retrieval context. Outstanding job!",
+          "reason": "The score is 1.00 because all sentences in the expected output are directly supported by the relevant nodes in the retrieval context, clearly linking the definitions of regression and classification models to their respective target variable types.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all relevant nodes containing the definitions and output comparisons for regression and classification are perfectly ranked above the irrelevant nodes.",
+          "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node provides a clear explanation of regression models, stating that 'when the value of the target variable is continuous, the output of the supervised learning algorithm is called a regression model,' which directly addresses the question. The second node reinforces this by stating that 'the main difference is that the output of classification is discrete serial numbers of classes... while the output of regression is continuous value,' further clarifying the distinction. The irrelevant nodes, starting from the third, do not address the question, with the third node stating it 'does not specifically address the difference between regression and classification models,' and the fourth node focusing on unrelated concepts. This clear separation of relevant and irrelevant information justifies the perfect score.",
           "error": null
         }
       }
@@ -453,12 +453,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by node(s) in retrieval context: sentence 1 is supported by the details on incomplete, noisy, and inconsistent data, sentence 2 is supported by the definition of data cleaning, and sentence 3 is supported by the statistic on data scientists' time!",
+          "reason": "The score is 1.00 because every sentence in the expected output is directly supported by the information in the 1st node of the retrieval context, demonstrating a perfect alignment between the content.",
           "error": null
         },
         "Contextual Precision": {
-          "score": 1.0,
-          "reason": "The score is 1.00 because the first node in the retrieval contexts is ranked at the very top and directly answers both parts of the question by defining dirty data quality problems as '1. Incomplete... 2. Noisy... 3. Inconsistent...' and defining data cleaning as the process of 'filling in missing values, finding and eliminating data abnormalities', alongside mentioning that data scientists spend '60% of their time on cleaning'. Meanwhile, all subsequent irrelevant nodes correctly appear lower in the ranking; for example, the second node discusses deep learning training problems, which is irrelevant to data quality problems and data cleaning, the third node discusses imbalanced data and sampling techniques like SMOTE, which does not address the general data quality problems or the definition of data cleaning, the fourth node provides a high-level overview of a machine learning project process without detailing the specific data quality problems or data cleaning definition, and the fifth node is a chapter summary mentioning machine learning steps generally, without providing the detailed breakdown of data quality issues or data cleaning.",
+          "score": 0.75,
+          "reason": "The score is 0.75 because while there are relevant nodes that provide clear definitions and explanations about 'dirty' data and data cleaning, there are also several irrelevant nodes that discuss unrelated topics such as deep learning training procedures and imbalanced data. Specifically, the first node ranks highest as it directly addresses typical data quality problems, while the second and third nodes rank lower as they do not pertain to the question at all. This mix of relevant and irrelevant nodes affects the overall score, preventing it from being higher.",
           "error": null
         }
       }
@@ -524,12 +524,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by node 2 in the retrieval context, demonstrating perfect contextual recall!",
+          "reason": "The score is 1.00 because all sentences in the expected output are directly supported by the information in the first node of the retrieval context, providing a clear and accurate explanation of underfitting and overfitting.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all the relevant nodes containing information about underfitting, overfitting, and reduction techniques are perfectly ranked at the top, specifically node 1 which discusses \"overfitting causes and mentions that 'If the model is too complex to cause overﬁtting, there are many ways to suppress it.'\" and node 2 which \"directly defines underfitting and overfitting, stating 'A mathematical model that is too simple, or the training time is too short, will cause an increasing training error for the model. This phenomenon is called underﬁtting' and lists ways to reduce overfitting: 'appropriately simplifying the model, ending training before the over-ﬁtting occurs, and using dropout and weight decay.'\", while the irrelevant nodes that discuss extra details, general regularization, dataset expansion, and noise injection are correctly ranked lower.",
+          "reason": "The score is 1.00 because all nodes in the retrieval contexts provide relevant information about underfitting and overfitting, with the first node explaining overfitting in detail and discussing reduction methods. Each subsequent node builds on this by defining the concepts and offering various strategies, ensuring that there are no irrelevant nodes to detract from the relevance of the content.",
           "error": null
         }
       }
@@ -596,12 +596,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all information regarding the image counts, model predictions, and performance metrics in the expected output is fully supported by node(s) in retrieval context.",
+          "reason": "The score is 1.00 because every aspect of the expected output is directly supported by the relevant node(s) in the retrieval context, demonstrating a perfect alignment in the data presented.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because the first node in the retrieval contexts is directly relevant as it 'contains the exact details of the cat-image classifier example, stating: 'Assuming that a classifier can identify whether there is a cat in an image and 200 images are now used to verify the performance of this model. Among them, 170 are labeled as images with cats and 30 are labeled not... precision of the model is 140/160 = 87.5%, the recall is 140/170 = 82.4%, and the accuracy is (140 + 10)/ 200 = 75%.'', while all irrelevant nodes (the second node which 'discusses a picture classification tagging API and does not mention the cat-image classifier example or its performance metrics.', the third node which 'only mentions a figure caption for the confusion matrix and contains no relevant data for the cat-image classifier example.', the fourth node which 'covers a tutorial using the MindSpore AI framework and the MNIST dataset, which is unrelated to the specific cat-image classifier example.', and the fifth node which 'provides general definitions about datasets, training sets, and test sets, but does not contain the specific cat-image classifier example and its precision, recall, and accuracy.') are correctly ranked lower.",
+          "reason": "The score is 1.00 because the first node provides a comprehensive answer to the question about precision, recall, and accuracy, stating specific calculations. The subsequent nodes, ranked from second to fifth, discuss unrelated topics such as model complexity, APIs, tutorials, and datasets, which do not address the question at all. This clear distinction in relevance ensures that the relevant node is ranked highest, leading to a perfect score.",
           "error": null
         }
       }
@@ -669,12 +669,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by the information found in node(s) in retrieval context 1.",
+          "reason": "The score is 1.00 because all sentences in the expected output are directly supported by node(s) in retrieval context, demonstrating a perfect alignment between the content and the source.",
           "error": null
         },
         "Contextual Precision": {
-          "score": 0.8333333333333333,
-          "reason": "The score is 0.83 because the first node in the retrieval contexts is relevant as 'It explicitly explains the three variants: Batch Gradient Descent (BGD), Stochastic Gradient Descent (SGD), and Mini-batch Gradient Descent (MBGD), and notes that BGD is the most stable at runtime... consumes a lot of computing resources and SGD... improves the computational efficiency, it also brings instability'. However, the score is not higher because the second node in the retrieval contexts is irrelevant since 'It discusses optimizer names and convergence speed rather than detailing the three core variants of gradient descent and their differences', and thus should have been ranked lower than the subsequent relevant nodes.",
+          "score": 0.75,
+          "reason": "The score is 0.75 because while the relevant nodes are present and provide valuable information about the variants of gradient descent, there are also several irrelevant nodes that rank higher than some relevant ones. For instance, the first node is highly relevant, explaining all three variants in detail, while the second node ranks next but does not address the specific variants, stating, 'While this document discusses various optimizers, it does not specifically address the three variants of gradient descent or their differences.' This placement of irrelevant nodes affects the overall score, as it indicates that not all relevant information is prioritized.",
           "error": null
         }
       }
@@ -743,13 +743,13 @@
       ],
       "metrics": {
         "Contextual Recall": {
-          "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by the 1st node in the retrieval context, successfully capturing all the key stages, purity indicators, and algorithms for decision trees!",
+          "score": 0.75,
+          "reason": "The score is 0.75 because while several sentences in the expected output align well with the information provided in node 1 of the retrieval context, there are also elements that are not directly supported by the context, leading to a slightly lower recall.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because the first node in the retrieval contexts correctly and comprehensively answers the input as it explicitly outlines the three stages of building a decision tree: '1. Feature selection', '2. Decision tree generation', and '3. Pruning', and mentions indicators of purity like 'information entropy and Gini coefficient'. Meanwhile, all the irrelevant nodes are properly ranked lower, such as the second node which discusses regression and classification model performance indicators such as MAE, MSE, and confusion matrices, the third node which is about general supervised learning model construction and testing sets, the fourth node which is a chapter summary that only briefly lists decision trees among other algorithms without detailing the three stages or purity indicators, and the fifth node which explains basic dataset definitions and training-test splits. Fantastic retrieval performance!",
+          "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node provides a clear outline of the three stages of building a decision tree, stating that they are 'Feature selection', 'Decision tree generation', and 'Pruning'. The second node complements this by mentioning the indicators for measuring purity, specifically 'information entropy and the Gini coefficient'. In contrast, the irrelevant nodes, starting from the third node, focus on unrelated topics such as model performance metrics and general machine learning processes, which do not pertain to decision trees.",
           "error": null
         }
       }
@@ -813,13 +813,13 @@
       ],
       "metrics": {
         "Contextual Recall": {
-          "score": 1.0,
-          "reason": "The score is 1.00 because all statements in the expected output are fully supported by node(s) in retrieval context 1 and 2, which detail the mechanisms and risks of both dropout and early stopping.",
+          "score": 0.5,
+          "reason": "The score is 0.50 because while the first node in the retrieval context supports the explanation of dropout and early stopping in sentences 1 and 2 of the expected output, the lack of mention of regularization techniques and methods for increasing training set size in the retrieval context limits the overall relevance.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all relevant nodes explaining dropout and early stopping are perfectly ranked at the top, outperforming the irrelevant nodes that discuss general regularization, L1 and L2 penalties, and dataset expansion.",
+          "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node explains that 'Dropout is to randomly discard a part of the output of neurons during the training phase' and directly addresses how dropout works as a regularization method. The second node mentions that 'when the loss function of the validation dataset starts to rise, the training can be stopped in advance to avoid overfitting,' which directly answers the question about early stopping. The irrelevant nodes, starting from the third, do not specifically mention dropout or early stopping, making them less relevant and appropriately ranked lower.",
           "error": null
         }
       }
@@ -884,12 +884,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully attributed to node(s) in retrieval context, accurately capturing both the mechanism of the Adam optimizer and its default hyperparameter values.",
+          "reason": "The score is 1.00 because every sentence in the expected output is directly supported by the information in node 1 of the retrieval context, confirming the accuracy and relevance of the details provided.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because the first node in the retrieval contexts is ranked highest while correctly explaining that 'It explicitly explains what the Adam optimizer is and provides the default values, stating that 'the default value of a and b is 0.9 and 0.999 respectively, and that of the learning rate is 0.0001'.' Meanwhile, the irrelevant nodes correctly appear lower in the ranking: the second node states that 'It only lists Adam alongside other optimizers without explaining what it is or providing its hyperparameter default values.', the third node states that 'It discusses the RMSprop optimizer, which is not the Adam optimizer or its hyperparameters requested in the output.', the fourth node states that 'It explains the Adagrad optimizer rather than the Adam optimizer and its hyperparameters.', and the fifth node states that 'It discusses general model parameters and hyperparameters rather than the specific definition and default values of the Adam optimizer.'",
+          "reason": "The score is 1.00 because the first node provides a comprehensive explanation of the Adam optimizer, stating that it 'is currently the most widely used optimizer that evolved from Adagrad and Adadelta' and details its function and purpose. The subsequent nodes, ranked lower, are irrelevant as they discuss other optimizers or general concepts without mentioning the Adam optimizer or its hyperparameters.",
           "error": null
         }
       }
@@ -953,12 +953,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by node(s) in the retrieval context, ensuring complete contextual recall!",
+          "reason": "The score is 1.00 because all sentences in the expected output are directly supported by the corresponding nodes in the retrieval context, demonstrating a perfect alignment of information.",
           "error": null
         },
         "Contextual Precision": {
-          "score": 0.95,
-          "reason": "The score is 0.95 because the first, second, and third nodes in the retrieval contexts are correctly ranked higher since the first node explains TensorFlow 1.0's static graph mechanism which 'separates the deﬁnition of computations from their execution via graph' and notes its advantages and disadvantages regarding debugging, the second node describes TensorFlow 2.0's core function of eager execution as 'a dynamic graph mechanism which allows users to write and debug models just as the normal programming does', and the third node states that 'eager execution is enabled by default' and introduces AutoGraph via '@tf.function decorator', which 'can convert the TensorFlow operation function into a graph'. However, the fourth node in the retrieval contexts is incorrectly ranked higher than the fifth relevant node because it contains chapter exercises and licensing information, which are not relevant to comparing TensorFlow 1.0, 2.0, and AutoGraph, preventing a perfect score.",
+          "score": 1.0,
+          "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first three nodes provide direct explanations of the differences between TensorFlow 1.0 and 2.0, with the first node stating that 'TensorFlow 1.0 adopts a static graph mechanism which separates the definition of computations from their execution', the second node highlighting that 'The core function of TensorFlow 2.0 is eager execution', and the third node mentioning that 'In TensorFlow 2.0, eager execution is enabled by default'. The irrelevant nodes, ranked fourth and fifth, do not address the differences, with the fourth node stating it 'does not provide relevant information' and the fifth node noting it 'does not specifically address the differences', which justifies their lower ranking.",
           "error": null
         }
       }
@@ -1026,12 +1026,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by information found within the 1st node in the retrieval context.",
+          "reason": "The score is 1.00 because all elements of the expected output are directly supported by the information in node 1 of the retrieval context, confirming a perfect alignment.",
           "error": null
         },
         "Contextual Precision": {
           "score": 1.0,
-          "reason": "The score is 1.00 because the first node in the retrieval contexts is directly relevant as \"It explicitly states that 'Da Vinci Architecture is mainly composed of three parts: computing unit, memory system and control unit' and details the computing units as 'Cube Unit, Vector Unit and Scalar Unit'.\", successfully outranking the subsequent irrelevant nodes such as the second node which \"It focuses on the overall logic architecture of the Ascend AI processor hardware modules and does not provide the specific details of the Da Vinci architecture parts.\" and the third node which \"It only lists exercise questions about the Da Vinci Architecture without providing the answers or required details.\".",
+          "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node provides a clear answer about the three main parts of the Da Vinci architecture, stating that 'Da Vinci Architecture is mainly composed of three parts: computing unit, memory system and control unit.' The second node elaborates on the basic computing units, mentioning 'Cube Unit, Vector Unit and Scalar Unit,' which directly addresses the input. The irrelevant nodes, starting from the third, discuss topics unrelated to the Da Vinci architecture, such as logic architecture and NPUs, ensuring they are ranked lower.",
           "error": null
         }
       }
@@ -1098,12 +1098,12 @@
       "metrics": {
         "Contextual Recall": {
           "score": 1.0,
-          "reason": "The score is 1.00 because all sentences in the expected output are fully supported by node(s) in retrieval context, specifically the second node which details the HiAI three-layer ecosystem.",
+          "reason": "The score is 1.00 because every sentence in the expected output is directly supported by corresponding nodes in the retrieval context, demonstrating a perfect alignment and comprehensive coverage of the content.",
           "error": null
         },
         "Contextual Precision": {
-          "score": 1.0,
-          "reason": "The score is 1.00 because the first node correctly states that It mentions the 'three-layer open architecture based on Service, Engine and Foundation'. and the second node properly details that It explicitly lists the features: '1. Service: Create once, reuse many times. 2. Engine: Distributed, full scenario. 3. Foundation: Greater computing power, more operators; more frames, smaller models.'. Both relevant nodes are ranked at the very top, perfectly preceding the irrelevant nodes which discuss offline communication activities, review questions, or only single components like the HUAWEI HiAI Engine.",
+          "score": 0.8666666666666667,
+          "reason": "The score is 0.87 because the relevant nodes are well-ranked, with the first two nodes providing clear and detailed information about the three-layer architecture of HUAWEI HiAI, emphasizing its components and functionalities. However, the presence of two lower-ranked nodes that focus on unrelated aspects of HUAWEI HiAI, such as ecological structure and events, slightly lowers the score, as they do not contribute to understanding the architecture.",
           "error": null
         }
       }

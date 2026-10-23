@@ -12,5 +12,12 @@
         "avg_score": 1.0,
         "min_score": 1.0,
         "max_score": 1.0
+    },
+    "config": {
+        "Generator_model": "gpt-oss-120",
+        "judge_model": "gpt-4o-mini",
+        "prompt" : "Best and comlex",
+        "golden_set": "golden/faithfulness_dataset.json",
+        "num_goldens": 20
     }
 }

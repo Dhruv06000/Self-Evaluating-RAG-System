@@ -3,7 +3,7 @@
 
 Run from the project root:
     uv run python -m evals.eval_retriever
-Needs GOOGLE_API_KEY in .env (the judge is a Gemini model).
+Needs OPENAI_API_KEY in .env (the judge is an OpenAI model).
 """
 import hashlib
 import json
@@ -16,7 +16,6 @@ from dotenv import load_dotenv
 from deepeval import evaluate
 from deepeval.evaluate import AsyncConfig, ErrorConfig
 from deepeval.metrics import ContextualPrecisionMetric, ContextualRecallMetric
-from deepeval.models import GeminiModel
 from deepeval.test_case import LLMTestCase
 
 from src.retriever import Retrieval
@@ -26,10 +25,10 @@ load_dotenv()
 
 GOLDEN_PATH = "golden/retriever_golden.json"
 CHUNKS_PATH = "data/1024_chunks.json"
-RUNS_DIR = "result/runs"
+RUNS_DIR = "result/retriever_result"
 
-JUDGE_MODEL = "gemini-3.5-flash-lite"
-TOP_K = 5
+JUDGE_MODEL = "gpt-4o-mini"
+TOP_K = 2                     # change to 5 for the new baseline run
 EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-0.6B"
 CHUNK_SIZE = 1024
 CHUNK_OVERLAP = 0
@@ -37,19 +36,16 @@ THRESHOLD = 0.7
 LIMIT = None           # set to 1 for a smoke test, None for every golden
 
 MAX_ATTEMPTS = 3         # tries per question when a metric comes back without a score
-RETRY_WAIT_SECONDS = 65  # Gemini's quota window is one minute
-PAUSE_SECONDS = 5        # pause between questions
+RETRY_WAIT_SECONDS = 20  # wait before retrying a question that came back unscored
+PAUSE_SECONDS = 1        # pause between questions
 
 PLACEHOLDER_OUTPUT = "(generator not evaluated in this run)"
 N_METRICS = 2
 
 
 def make_judge():
-    return GeminiModel(
-        model=JUDGE_MODEL,
-        api_key=os.environ["GOOGLE_API_KEY"],
-        temperature=0,
-    )
+    """DeepEval accepts an OpenAI model name as a string; the key comes from .env."""
+    return JUDGE_MODEL
 
 
 def make_metrics(judge):
@@ -82,7 +78,7 @@ def describe_retrieved(retrieved):
 
 
 def case_is_complete(test_result):
-    """True only if every metric produced a score (a 429 leaves score None)."""
+    """True only if every metric produced a score (an API error leaves score None)."""
     metrics = getattr(test_result, "metrics_data", None) or []
     return len(metrics) == N_METRICS and all(
         getattr(m, "score", None) is not None for m in metrics
@@ -104,7 +100,7 @@ def evaluate_case(test_case, judge, config):
         if case_is_complete(test_result):
             return test_result
         print(f"  attempt {attempt}/{MAX_ATTEMPTS}: a metric has no score "
-              f"(likely a rate limit)")
+              f"(likely an API error or rate limit)")
         if attempt < MAX_ATTEMPTS:
             print(f"  waiting {RETRY_WAIT_SECONDS}s before retrying...")
             time.sleep(RETRY_WAIT_SECONDS)
