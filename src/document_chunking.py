@@ -2,11 +2,13 @@
 import re
 import io
 import json
+import sys  # CHANGED: needed to read the optional chunk size from the command line
 
 from contextlib import redirect_stdout
 from transformers import AutoTokenizer
 
 from src.document_ingestion import open_and_read_pdf
+from src.config import DEFAULT_CHUNK_SIZE, chunks_path  # CHANGED: chunk size and output path come from config
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -40,7 +42,9 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 
-def create_chunks(pages_and_texts, chunk_size=1024):
+# CHANGED: removed the chunk_size parameter. It was never used inside this
+# function, and its caller never passed it.
+def create_chunks(pages_and_texts):
 
     chunks = []
 
@@ -100,7 +104,8 @@ def split_into_words(text):
     return text.split()
 
 
-def build_paragraph_chunks(heading_data, chunk_size=1024, start_index = 0):
+# CHANGED: default chunk size now comes from config instead of the literal 1024
+def build_paragraph_chunks(heading_data, chunk_size=DEFAULT_CHUNK_SIZE, start_index = 0):
 
     chunks = []
 
@@ -245,7 +250,8 @@ def build_paragraph_chunks(heading_data, chunk_size=1024, start_index = 0):
     return chunks
 
 
-def generate_chunks():
+# CHANGED: generate_chunks now accepts the chunk size (default = config default)
+def generate_chunks(chunk_size=DEFAULT_CHUNK_SIZE):
 
     with redirect_stdout(io.StringIO()):
 
@@ -265,6 +271,7 @@ def generate_chunks():
 
         result = build_paragraph_chunks(
             heading_data,
+            chunk_size = chunk_size,  # CHANGED: pass the size down (before, the default was silently used)
             start_index = len(all_final_chunks))
 
         all_final_chunks.extend(result)
@@ -274,9 +281,14 @@ def generate_chunks():
 
 if __name__ == "__main__":
 
-    all_final_chunks = generate_chunks()
+    # CHANGED: optional command-line size, e.g. `python -m src.document_chunking 512`.
+    # With no argument it uses the default, so the old command behaves as before.
+    chunk_size = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_CHUNK_SIZE
 
-    with open("data/1024_chunks.json", "w", encoding="utf-8") as file:
+    all_final_chunks = generate_chunks(chunk_size)
+
+    # CHANGED: output path comes from config instead of the literal "data/1024_chunks.json"
+    with open(chunks_path(chunk_size), "w", encoding="utf-8") as file:
 
         json.dump(
             all_final_chunks,

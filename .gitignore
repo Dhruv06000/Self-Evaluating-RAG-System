@@ -14,3 +14,4 @@ main.ipynb
 /result/old_dataset_generator_result
 /result/old_retriever_result
 tests/
+data/faiss_*.index

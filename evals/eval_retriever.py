@@ -3,11 +3,13 @@
 
 Run from the project root:
     uv run python -m evals.eval_retriever
+    uv run python -m evals.eval_retriever 512 4      # CHANGED: optional <chunk_size> <top_k>
 Needs OPENAI_API_KEY in .env (the judge is an OpenAI model).
 """
 import hashlib
 import json
 import os
+import sys  # CHANGED: needed to read the optional chunk size and top_k from the command line
 import time
 from datetime import datetime
 
@@ -19,18 +21,19 @@ from deepeval.metrics import ContextualPrecisionMetric, ContextualRecallMetric
 from deepeval.test_case import LLMTestCase
 
 from src.retriever import Retrieval
+from src.config import DEFAULT_CHUNK_SIZE, chunks_path  # CHANGED: chunk size and chunk file path come from config
 from evals.harness import load_goldens, print_summary, summarize_by_metric
 
 load_dotenv()
 
 GOLDEN_PATH = "golden/retriever_golden.json"
-CHUNKS_PATH = "data/1024_chunks.json"
+# CHANGED: removed CHUNKS_PATH and CHUNK_SIZE. Both are now derived from the retriever's
+# chunk size (see run() and save_run()), so they can never disagree with what was evaluated.
 RUNS_DIR = "result/retriever_result"
 
 JUDGE_MODEL = "gpt-4o-mini"
 TOP_K = 2                     # change to 5 for the new baseline run
 EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-0.6B"
-CHUNK_SIZE = 1024
 CHUNK_OVERLAP = 0
 THRESHOLD = 0.7
 LIMIT = None           # set to 1 for a smoke test, None for every golden
@@ -139,29 +142,31 @@ def save_run(test_results, goldens, retrieved_info, summary, config):
         "complete": complete,
         "errored_metrics": errored + missing,
         "golden_sha256": file_hash(GOLDEN_PATH),
-        "chunks_sha256": file_hash(CHUNKS_PATH),
+        "chunks_sha256": file_hash(chunks_path(config["chunk_size"])),  # CHANGED: hash the chunk file that was actually used (was CHUNKS_PATH)
         "config": config,
         "summary": summary,
         "details": details,
     }
 
-    name = f"retriever_{stamp}.json" if complete else f"INCOMPLETE_retriever_{stamp}.json"
+    # CHANGED: chunk size and top_k are in the file name, so runs are easy to tell apart.
+    prefix = f"retriever_{config['chunk_size']}_k{config['top_k']}_{stamp}.json"
+    name = prefix if complete else f"INCOMPLETE_{prefix}"
     path = os.path.join(RUNS_DIR, name)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(record, f, indent=2, ensure_ascii=False)
     return path, complete, errored + missing
 
 
-def run(retriever, judge):
+def run(retriever, judge, top_k=TOP_K):  # CHANGED: top_k is now a parameter (default = TOP_K, same as before)
     goldens = load_goldens(GOLDEN_PATH)[:LIMIT]
 
     # One config dict, used for DeepEval's hyperparameters AND the saved record.
     config = {
         "retriever": type(retriever).__name__,
         "embedding_model": EMBEDDING_MODEL,
-        "chunk_size": CHUNK_SIZE,
+        "chunk_size": retriever.chunk_size,  # CHANGED: read from the retriever (was the CHUNK_SIZE constant)
         "chunk_overlap": CHUNK_OVERLAP,
-        "top_k": TOP_K,
+        "top_k": top_k,  # CHANGED: the value actually used (was TOP_K)
         "judge_model": JUDGE_MODEL,
         "golden_set": GOLDEN_PATH,
         "num_goldens": len(goldens),
@@ -173,7 +178,7 @@ def run(retriever, judge):
         print(f"\n=== [{i}/{len(goldens)}] {g['question']}")
 
         # RUN THE INJECTED RETRIEVER, then build the test case
-        retrieved = retriever.retrieve(g["question"], top_k=TOP_K)
+        retrieved = retriever.retrieve(g["question"], top_k=top_k)  # CHANGED: uses the top_k parameter
         retrieved_info.append(describe_retrieved(retrieved))
 
         test_case = LLMTestCase(
@@ -198,10 +203,14 @@ def run(retriever, judge):
     return summary
 
 
-def run_local():
+# CHANGED: run_local accepts the chunk size and top_k; with no arguments it behaves as before.
+def run_local(chunk_size=DEFAULT_CHUNK_SIZE, top_k=TOP_K):
     """Standalone convenience: build the retriever and the judge, then run."""
-    return run(Retrieval(), make_judge())
+    return run(Retrieval(chunk_size=chunk_size), make_judge(), top_k)
 
 
 if __name__ == "__main__":
-    print_summary("retriever", run_local())
+    # CHANGED: optional command-line arguments: <chunk_size> <top_k>
+    size = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_CHUNK_SIZE
+    k = int(sys.argv[2]) if len(sys.argv) > 2 else TOP_K
+    print_summary("retriever", run_local(size, k))

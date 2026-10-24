@@ -1,14 +1,14 @@
 from sentence_transformers import SentenceTransformer
 import json
 from dotenv import load_dotenv
+from src.config import DEFAULT_CHUNK_SIZE, chunks_path  
 load_dotenv()
 
-
-def generate_embeddings():
+def generate_embeddings(chunk_size=DEFAULT_CHUNK_SIZE):
 
     model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
 
-    with open("data/1024_chunks.json", "r", encoding="utf-8") as f:
+    with open(chunks_path(chunk_size), "r", encoding="utf-8") as f:
         data = json.load(f)
 
     embeddings = model.encode(

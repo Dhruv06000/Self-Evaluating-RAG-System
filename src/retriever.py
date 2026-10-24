@@ -1,12 +1,14 @@
 import faiss
 import json
 from sentence_transformers import SentenceTransformer
+from src.config import DEFAULT_CHUNK_SIZE, chunks_path, index_path  # CHANGED: sizes and paths come from config
 
 class Retrieval:
 
-  def __init__(self):
-    self.faiss_index = faiss.read_index("data/faiss_1024.index")
-    with open("data/1024_chunks.json", "r", encoding="utf-8") as f:
+  def __init__(self, chunk_size=DEFAULT_CHUNK_SIZE):
+    self.chunk_size = chunk_size  
+    self.faiss_index = faiss.read_index(index_path(chunk_size))  
+    with open(chunks_path(chunk_size), "r", encoding="utf-8") as f:  
       self.chunks = json.load(f)
     self.model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
   def retrieve(self , query : str, top_k : int = 2):

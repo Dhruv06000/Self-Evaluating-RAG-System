@@ -1,0 +1,33 @@
+{
+    "config": {
+        "chunk_size": 1024,
+        "top_k": 2,
+        "max_context_tokens": 6000,
+        "generator_model": "openai/gpt-oss-120b",
+        "judge_model": "gpt-4o-mini",
+        "golden_set": "golden/faithfulness_dataset.json"
+    },
+    "summary": {
+        "Contextual Relevancy": {
+            "n": 20,
+            "pass_rate": 30.0,
+            "avg_score": 0.5570998196009133,
+            "min_score": 0.17391304347826086,
+            "max_score": 1.0
+        },
+        "Faithfulness": {
+            "n": 20,
+            "pass_rate": 95.0,
+            "avg_score": 0.9166071428571427,
+            "min_score": 0.6666666666666666,
+            "max_score": 1.0
+        },
+        "Answer Relevancy": {
+            "n": 20,
+            "pass_rate": 100.0,
+            "avg_score": 0.9866666666666667,
+            "min_score": 0.8333333333333334,
+            "max_score": 1.0
+        }
+    }
+}
