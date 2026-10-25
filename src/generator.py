@@ -68,6 +68,7 @@ class Generator:
         self.client = OpenAI(
             api_key=os.environ["GROQ_API_KEY"],
             base_url=GROQ_BASE_URL,
+            max_retries=6,
         )
 
     def generate(self, question: str, built_context: BuildingContext) -> GenerationResult:
