@@ -1,54 +1,30 @@
-from transformers import AutoTokenizer
-from dataclasses import dataclass 
+"""Step 6 - Augmentation: build the context and the final prompt."""
 
-@dataclass(frozen = True)
-class BuildingContext:
-    context             : str
-    included_chunk_ids  : tuple
+from langchain_core.prompts import PromptTemplate
 
 
-class ContextBuilder:
-    def __init__(self, max_context_tokens: int):
-        if max_context_tokens <= 0:
-            raise ValueError("max_context_tokens must be greater than zero.")
-        self.max_context_tokens = max_context_tokens
-        self.tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-Embedding-0.6B")
+def format_docs(retrieved_docs) -> str:
+    """Join retrieved chunks into one context string."""
+    return "\n\n".join(doc.page_content for doc in retrieved_docs)
 
-    def build(self, retrieved_chunks: list) -> BuildingContext:
-        """Build a context string from retrieved chunks without exceeding max_context_tokens."""
-        selected_chunks = []
-        included_chunk_ids = []
-        separator = "\n\n"
 
-        for chunk in retrieved_chunks:
-            formatted_chunk = self._format_chunk(chunk)
-            
-            # Construct candidate context string including double newlines
-            candidate_chunks = selected_chunks + [formatted_chunk]
-            candidate_context = separator.join(candidate_chunks)
+def get_prompt_template() -> PromptTemplate:
+    return PromptTemplate(
+        template="""
+      You are a helpful assistant.
+      Answer ONLY from the provided transcript context.
+      If the context is insufficient, just say you don't know.
 
-            # Check exact token size of the combined candidate string
-            if self._count_tokens(candidate_context) <= self.max_context_tokens:
-                selected_chunks.append(formatted_chunk)
-                included_chunk_ids.append(chunk["chunk_id"])
+      {context}
+      Question: {question}
+    """,
+        input_variables=["context", "question"],
+    )
 
-        return BuildingContext(
-            context = separator.join(selected_chunks),
-            included_chunk_ids = tuple(included_chunk_ids)
-        )
 
-    def _format_chunk(self, chunk: dict) -> str:
-        return f"""[CHUNK]\n
-Chunk ID: {chunk["chunk_id"]}\n
-Source: {chunk["metadata"]["source"]}\n
-Pages: {', '.join(str(p["page_label"]) for p in chunk["metadata"]["pages"])}\n
-Heading: {chunk["heading"]}\n
-
-Content:\n{chunk["text"]}\n
-
-[END CHUNK]"""
-
-    def _count_tokens(self, text: str) -> int:
-        """Count tokens using tokenizer without adding special tokens like [CLS]/[SEP]."""
-        return len(self.tokenizer.encode(text, add_special_tokens=False))
+def build_final_prompt(prompt, retriever, question: str):
+    """Retrieve -> build context -> fill the prompt (manual, step-by-step)."""
+    retrieved_docs = retriever.invoke(question)
+    context_text = format_docs(retrieved_docs)
+    return prompt.invoke({"context": context_text, "question": question})
 

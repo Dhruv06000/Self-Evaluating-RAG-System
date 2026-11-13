@@ -1,0 +1,583 @@
+{
+    "config": {
+        "embedding_model": "text-embedding-3-small",
+        "chunk_size": 1000,
+        "chunk_overlap": 200,
+        "top_k": 4,
+        "judge_model": "gpt-4o-mini",
+        "golden_set": "goldens/retriever_goldens.json"
+    },
+    "summary": {
+        "Contextual Recall": {
+            "n": 15,
+            "pass_rate": 86.66666666666667,
+            "avg_score": 0.8911111111111112,
+            "min_score": 0.0,
+            "max_score": 1.0
+        },
+        "Contextual Precision": {
+            "n": 15,
+            "pass_rate": 86.66666666666667,
+            "avg_score": 0.8703703703703703,
+            "min_score": 0.0,
+            "max_score": 1.0
+        }
+    },
+    "details": [
+        {
+            "id": "g001",
+            "query": "What is online eval and how is it different from offline eval?",
+            "source": "Session 4",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "preview": "setup. And you cannot evaluate those risks, With the help of offline eval. We have given this statement till now. And th"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "In that sense, online evals are super important. So, on the basis of the discussion till now, If I quickly lay out a dif"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "preview": "Between offline and online eval. The most important thing you have to understand here, Is that these two are not rivals,"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "preview": "we are going to discuss a very important topic. The topic is Offline Eval vs Online Eval. First, I will tell you what is"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output is fully supported by the corresponding node(s) in the retrieval context, demonstrating a perfect alignment between the two."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node provides a clear definition of online eval, stating that 'Online eval is evaluating your system on live production traffic after deployment, as real users interact with it.' The second node explains the key differences between online and offline eval, noting that 'the work of offline eval is to check if your application is working correctly or not, whereas, the work of online eval is to tell if your application is normally running or not.' The irrelevant nodes, ranked third and fourth, do not contribute relevant information, with the third node stating it mainly discusses the session agenda and the fourth focusing solely on offline eval."
+                }
+            }
+        },
+        {
+            "id": "g002",
+            "query": "faithfulness vs groundedness kya hota hai?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "preview": "will understand it now. I will give an example. For example, the Rack chart is a chatbot. You can find many things in th"
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "preview": "will learn two or three metrics one will be faithfulness which basically tells whether the answer is generated in the gi"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "preview": "tokens, thumbs up thumbs down, all these things we will capture and all that we will see in one place in a dashboard whi"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "preview": "I haven't shown anything practically. I just gave you an overview of why it happens, how it happens. What is the flow of"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every aspect of the expected output is directly supported by the node(s) in retrieval context, demonstrating a perfect alignment between the concepts of faithfulness and groundedness as described."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node explains that 'Faithfulness means whether the answer has been generated from the context of the retrieval,' which is directly related to the input. The second node further clarifies that 'faithfulness basically tells whether the answer is generated in the given context or the model hallucinated by itself,' enhancing the understanding of the concepts. In contrast, the third node states, 'I haven't shown anything practically,' and the fourth node asks, 'Is the bot good?' which do not provide relevant information about faithfulness or groundedness, thus justifying their lower ranking."
+                }
+            }
+        },
+        {
+            "id": "g003",
+            "query": "how do i know if my eval is reference based or reference free?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "preview": "it online reference based evaluation and reference free evaluation what is it both are defined I will tell you first ref"
+                },
+                {
+                    "rank": 2,
+                    "session": "2",
+                    "preview": "So this type of evaluation is called Reference free evaluation See here it is written In our case, there was a rubric Wh"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "preview": "2 what you have to do is you have to set up an evaluator. You have to create an evaluator. Okay. Now this evaluator is a"
+                },
+                {
+                    "rank": 4,
+                    "session": "2",
+                    "preview": "engineer who is figuring out that will our application work properly and then deploying it can you sense this change ins"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output directly corresponds to concepts defined in the retrieval context, such as 'reference-based evaluation' and 'reference-free evaluation', ensuring a perfect alignment with node(s) in retrieval context."
+                },
+                "Contextual Precision": {
+                    "score": 0.9166666666666666,
+                    "reason": "The score is 0.92 because the relevant nodes are well-ranked, with the first two nodes providing direct answers to the question about identifying evaluation types. However, the third node is ranked lower despite being irrelevant, as it discusses application functionality rather than evaluation methods. This placement slightly lowers the score, but the presence of multiple relevant nodes ensures a high contextual precision."
+                }
+            }
+        },
+        {
+            "id": "g004",
+            "query": "why can't we test llm apps the same way we test normal software?",
+            "source": "Session 1",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "preview": "your LLM based applications. One more question should come to your mind at this point. Because it came to my mind too. A"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "eval? Why do we need an offline eval? Why don't we make an LLM based software and deploy it directly? What is the proble"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "how exactly do LLM evals work? Before discussing this, I want to tell you a very important distinction. It is very impor"
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "preview": "testing is straight forward. Whereas LLM's evaluation is very very tricky. So is this point clear? Is the discussion goi"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output is well-supported by the node(s) in retrieval context, clearly illustrating the complexities of LLM application testing."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than any irrelevant nodes, demonstrating a perfect alignment with the input question. Each of the four nodes provides valuable insights into the complexities of testing LLM applications, such as the statement that 'evaluating LLM based applications is not straightforward,' which directly addresses the input's concern."
+                }
+            }
+        },
+        {
+            "id": "g005",
+            "query": "why can't we just compare the generated sql query with the correct one character by character?",
+            "source": "Session 8",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "7",
+                    "preview": "So let's say we are testing the first one 5.6 Tera So what we did We picked up question 1 And sent it to 5.6 Tera What d"
+                },
+                {
+                    "rank": 2,
+                    "session": "7",
+                    "preview": "strategy? No, because for a single result Multiple queries can be written Achieving a single result Through multiple que"
+                },
+                {
+                    "rank": 3,
+                    "session": "7",
+                    "preview": "the golden query on database And when did he get the generated Data frame When we ran the generated query on database We"
+                },
+                {
+                    "rank": 4,
+                    "session": "7",
+                    "preview": "there is another one Called Live SQL Bench Now When I went to Live SQL Bench There is a leader board But It is not updat"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.7,
+                    "reason": "The score is 0.70 because while the expected output effectively discusses comparing SQL queries and result sets, which aligns well with the retrieval context (notably in node 1), it also introduces elements like specific models and coding leaderboards that are not present in the retrieval context, leading to some disconnect."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node discusses the process of comparing SQL queries, which is directly related to the input question, while the second node emphasizes that multiple queries can yield the same results, further supporting the input's context. In contrast, the third node, ranked third, discusses 'Live SQL Bench' and is unrelated to the comparison of SQL queries, and the fourth node, ranked fourth, does not address the comparison at all, making it irrelevant."
+                }
+            }
+        },
+        {
+            "id": "g006",
+            "query": "if a model tops all the benchmarks, why wouldn't i just pick it for my project?",
+            "source": "Session 5",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "4",
+                    "preview": "table logically which model would you choose? would you go for model A which is a bigger powerful model or B? it is very"
+                },
+                {
+                    "rank": 2,
+                    "session": "6",
+                    "preview": "you don't have to trust it you have to read the star mark below like you will see the key definitions here so you will r"
+                },
+                {
+                    "rank": 3,
+                    "session": "6",
+                    "preview": "evals yourself you want to make a chart board which has the capabilities of maths your students are like this so obvious"
+                },
+                {
+                    "rank": 4,
+                    "session": "4",
+                    "preview": "or Opus type model and you can think of it as a minmax or quen or a model with less than a billion parameters so what do"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every aspect of the expected output is well-supported by the information in node 1 of the retrieval context, demonstrating a perfect alignment between the model selection discussion and the specific task evaluation."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than any irrelevant nodes, ensuring that the most pertinent information is prioritized. This is evident as the first node discusses the comparison between models, emphasizing that 'for our task model B is a much better value proposition' despite model A's superior benchmarks, which directly addresses the input question. The subsequent nodes continue to reinforce the importance of custom evaluation and the limitations of relying solely on benchmarks, further solidifying the relevance of the information presented."
+                }
+            }
+        },
+        {
+            "id": "g007",
+            "query": "what are the different ways an eval can actually be run?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "preview": "evals assess the behavior and performance of an LLM-powered application, whether at the level of the entire system or a "
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "behind this. First, I told you that because there are multiple failure points. We talked about the failure at the compon"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "both types of evals do. First, let's talk about model evals. Here, a definition is written, model evals evaluate the mod"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "preview": "setup. And you cannot evaluate those risks, With the help of offline eval. We have given this statement till now. And th"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output directly corresponds to the relevant node(s) in the retrieval context, clearly illustrating the different methods of executing evaluations without any discrepancies."
+                },
+                "Contextual Precision": {
+                    "score": 0.5,
+                    "reason": "The score is 0.50 because while there is one relevant node that directly addresses the input by mentioning 'different eval methods through which we perform evaluations' (the second node), there are three irrelevant nodes that do not provide the necessary information. The first node discusses evals in a general sense without specifying methods, the third node focuses on benchmarks rather than methods, and the fourth node explains online evals without addressing the question of how to run an eval. This distribution of relevant and irrelevant nodes affects the overall score, as the relevant node is not ranked higher than all irrelevant nodes."
+                }
+            }
+        },
+        {
+            "id": "g008",
+            "query": "can i just pick the top model from a leaderboard for my app?",
+            "source": "Session 7",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "6",
+                    "preview": "you don't have to trust it you have to read the star mark below like you will see the key definitions here so you will r"
+                },
+                {
+                    "rank": 2,
+                    "session": "6",
+                    "preview": "leaderboard ranking so that is also a problem and lastly leaderboard scores are stale, incomplete and self-reported now "
+                },
+                {
+                    "rank": 3,
+                    "session": "7",
+                    "preview": "to this leader board is GPT 5.6 Then Fable 5, MyTos Preview 5.6 Terra, Kimi K3 And then News 2-3 days ago It has made a "
+                },
+                {
+                    "rank": 4,
+                    "session": "6",
+                    "preview": "last thing that we have to discuss if you are an AI engineer and you are building an LLM based application and your firs"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every aspect of the expected output is fully supported by the relevant nodes in the retrieval context, demonstrating a clear alignment in discussing the use of leaderboards for model selection and evaluation."
+                },
+                "Contextual Precision": {
+                    "score": 0.9166666666666666,
+                    "reason": "The score is 0.92 because the relevant nodes are well-ranked, with the first two nodes providing strong support against selecting a model solely based on leaderboard rankings. However, the third node, which is irrelevant, ranks third and introduces some noise, slightly lowering the score. The fourth node reinforces the importance of evaluating models based on application needs, further solidifying the relevance of the top nodes."
+                }
+            }
+        },
+        {
+            "id": "g009",
+            "query": "where can a rag chatbot go wrong?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "preview": "to the retriever Retriever on the basis of query from the vector database fetches the relevant documents and then we que"
+                },
+                {
+                    "rank": 2,
+                    "session": "2",
+                    "preview": "in the risk what are the specific risk categories agent specific risk categories what are the risk categories in multi t"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "means that whatever your chatbot says, you will have to take its responsibility. Which means you will have to refund. So"
+                },
+                {
+                    "rank": 4,
+                    "session": "2",
+                    "preview": "able to complete the task properly or is the failure rate high error recovery if my agent starts doing something wrong w"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output directly corresponds to the first node in the retrieval context, clearly outlining the failure points of the RAG chatbot's components."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the first node directly addresses the input by discussing the architecture of a RAG chatbot and identifying 'two failure points that can be easily seen', making it highly relevant. The subsequent nodes, ranked lower, focus on general LLM applications or specific incidents without addressing the failure points of RAG chatbots, which justifies their lower ranking."
+                }
+            }
+        },
+        {
+            "id": "g010",
+            "query": "what exactly does recall at k tell me about my retriever?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "preview": "retriever which documents he took so now what I will do on per row basis or per question basis I will calculate recall f"
+                },
+                {
+                    "rank": 2,
+                    "session": "2",
+                    "preview": "is in the RAC? What is K in the retriever? Anyone quickly tell me. What does K equal to 5 mean? Anyone quickly tell me, "
+                },
+                {
+                    "rank": 3,
+                    "session": "2",
+                    "preview": "my retrieved documents so can you calculate the recall read this definition so of all the correct relevant items that ex"
+                },
+                {
+                    "rank": 4,
+                    "session": "2",
+                    "preview": "and 67% of our recall came now what we will do we will go and study those cases where our recall is very bad and after a"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every aspect of the expected output is fully supported by the relevant nodes in the retrieval context, demonstrating a perfect alignment between the concepts discussed."
+                },
+                "Contextual Precision": {
+                    "score": 0.8055555555555555,
+                    "reason": "The score is 0.81 because while the relevant nodes are well-ranked, there are still some irrelevant nodes that slightly affect the overall precision. Specifically, the second node ranks second but discusses unrelated documents, which detracts from the focus on recall at k. In contrast, the first, third, and fourth nodes provide valuable insights directly related to the input, explaining the calculation and significance of recall at k, thus justifying their higher ranks."
+                }
+            }
+        },
+        {
+            "id": "g011",
+            "query": "What is the RAG triad?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "8",
+                    "preview": "our rag pipeline rag pipeline means that we will connect our retriever and generator very simple code connected, after t"
+                },
+                {
+                    "rank": 2,
+                    "session": "2",
+                    "preview": "length or not these are your core risk categories which we will explore in this course if we talk about rag then the mos"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "preview": "this is what I have thought for you that we will make a rag application and we will make it at this level the whole page"
+                },
+                {
+                    "rank": 4,
+                    "session": "8",
+                    "preview": "which tells that for a given question the context which has been fetched from retriever is it relevant or not with the q"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every aspect of the expected output is directly supported by the relevant nodes in the retrieval context, ensuring a perfect alignment between the metrics discussed and their definitions."
+                },
+                "Contextual Precision": {
+                    "score": 0.9166666666666666,
+                    "reason": "The score is 0.92 because the relevant nodes are well-ranked, with the first two nodes providing direct explanations of the RAG triad and its components. However, the presence of an irrelevant node in the third position slightly lowers the score, as it does not contribute to the understanding of the RAG triad, focusing instead on unrelated aspects."
+                }
+            }
+        },
+        {
+            "id": "g012",
+            "query": "What is regression testing in LLM evaluation?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "preview": "testing is straight forward. Whereas LLM's evaluation is very very tricky. So is this point clear? Is the discussion goi"
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "preview": "this discussion. Then just understand that whenever someone tells you what LLM evals are. Then you have to say that LLM "
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "So we can define LLM evals as. That LLM evals are systematic repeatable tests. Used to judge an LLM or LLM powered syste"
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "preview": "how exactly do LLM evals work? Before discussing this, I want to tell you a very important distinction. It is very impor"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.0,
+                    "reason": "The score is 0.00 because the expected output discusses regression testing and related processes that are not mentioned in any node(s) in the retrieval context, leading to a complete lack of relevant support."
+                },
+                "Contextual Precision": {
+                    "score": 0.0,
+                    "reason": "The score is 0.00 because all nodes in the retrieval contexts are irrelevant to the question about regression testing in LLM evaluation. Specifically, the first node discusses LLM evaluations without mentioning regression testing, stating that it is 'irrelevant to the question.' Similarly, the second node focuses on broader concepts of LLM evaluations, which does not address regression testing, as noted in its reason. The third node defines LLM evaluations but fails to provide any information on regression testing, and the fourth node explains distinctions between model and application evaluations without relating to regression testing. Since all nodes are irrelevant, the score reflects a complete lack of relevant information."
+                }
+            }
+        },
+        {
+            "id": "g013",
+            "query": "Why does this course use DeepEval instead of RAGAS?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "8",
+                    "preview": "use a library which is called deep eval in deep eval if you go then you will see that from the discussions there are man"
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "preview": "will make you feel at home so we are going to use this library we are not going to use ragas because you can use both yo"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "preview": "or any doubt are we going to generate golden data sets yes Amar there are many evals for which you will have to generate"
+                },
+                {
+                    "rank": 4,
+                    "session": "2",
+                    "preview": "one course covering context engineering, harness engineering and loop engineering? There is not a single course. A cours"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output is directly supported by the node(s) in the retrieval context, clearly linking DeepEval's features and its foundation on pytest to the provided information."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node provides a clear explanation for preferring DeepEval over RAGAS, stating, \"we are not going to use ragas because you can use both... I am selecting deep eval particularly because of two reasons...\" The second node further supports this by highlighting the broader scope of DeepEval, stating, \"second deep eval is a broader library its scope is even more like agents...\" In contrast, the third and fourth nodes are irrelevant as they discuss topics unrelated to the comparison, such as generating datasets and course coverage, which do not contribute to answering the question."
+                }
+            }
+        },
+        {
+            "id": "g014",
+            "query": "What is an eval suite?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "preview": "evals assess the behavior and performance of an LLM-powered application, whether at the level of the entire system or a "
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "preview": "both types of evals do. First, let's talk about model evals. Here, a definition is written, model evals evaluate the mod"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "preview": "level evaluation so these are some quality related metrics apart from this, if you talk about application level then you"
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "preview": "this discussion. Then just understand that whenever someone tells you what LLM evals are. Then you have to say that LLM "
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the expected output perfectly aligns with the retrieval context, specifically mentioning the eval suite and the comprehensive testing approach, which are directly supported by the context provided."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the first node provides a clear and direct explanation of what an eval suite is, stating that it encompasses components, pipelines, and applications in a combined form. The subsequent nodes, ranked lower, focus on unrelated topics such as model evaluations, quality metrics, and general discussions about LLM evaluations, which do not define or explain eval suites. This clear distinction in relevance justifies the perfect score."
+                }
+            }
+        },
+        {
+            "id": "g015",
+            "query": "Which metrics are used to evaluate the retriever?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "preview": "have to do is check if this retriever is working or not I have to make a pipeline for this and we will make that pipelin"
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "preview": "both of them so this pipeline you call it a rack so our strategy will be that on step one first of all we will build the"
+                },
+                {
+                    "rank": 3,
+                    "session": "2",
+                    "preview": "retriever which documents he took so now what I will do on per row basis or per question basis I will calculate recall f"
+                },
+                {
+                    "rank": 4,
+                    "session": "2",
+                    "preview": "failure points, one is retrieval and one is generator. We have put an evaluation pipeline on both of them, both the eval"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.6666666666666666,
+                    "reason": "The score is 0.67 because while the sentences effectively connect to the evaluation of the retriever's performance through recall and precision (as seen in sentence 1 and 2), there is a lack of direct relevance to the specific context of the retrieval node, which affects the overall alignment."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant nodes. The first node provides a clear explanation of the metrics used for evaluation, stating that 'we will use two metrics for evaluation one will be recall,' which directly answers the question. The second node further supports this by explaining the evaluation process, mentioning that 'this quantity is telling us how successful our retriever is in fetching relevant documents.' In contrast, the third node discusses 'Failure points,' which does not relate to the metrics, and the fourth node asks a question about 'K equal to 5,' failing to provide any relevant information. Thus, the relevant nodes effectively address the query, justifying the perfect score."
+                }
+            }
+        }
+    ]
+}

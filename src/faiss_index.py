@@ -1,25 +1,30 @@
-import sys  
-import faiss
+"""Step 4 - Vector store: build, save, load and reuse a FAISS index."""
 
-from src.embedding import generate_embeddings
-from src.config import DEFAULT_CHUNK_SIZE, index_path  
+import os
 
-def build_index(chunk_size: int = DEFAULT_CHUNK_SIZE) -> None:
-    _, embeddings = generate_embeddings(chunk_size)  
-
-    faiss_index = faiss.IndexFlatIP(embeddings.shape[1])
-    faiss_index.add(embeddings)
-    print("FAISS index created and embeddings added.")
-
-    assert faiss_index.ntotal == len(embeddings)
-    assert faiss_index.d == embeddings.shape[1]
-
-    path = index_path(chunk_size)  
-    faiss.write_index(faiss_index, path)
-    print(f"FAISS index saved to '{path}'.")
+from langchain_community.vectorstores import FAISS
 
 
-if __name__ == "__main__":
+def build_vector_store(chunks, embeddings):
+    return FAISS.from_documents(chunks, embeddings)
 
-    size = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_CHUNK_SIZE
-    build_index(size)
+
+def save_vector_store(vector_store, path: str = "data/faiss_index"):
+    vector_store.save_local(path)
+
+
+def load_vector_store(embeddings, path: str = "data/faiss_index"):
+    return FAISS.load_local(path, embeddings, allow_dangerous_deserialization=True)
+
+
+def get_or_create_vector_store(embeddings, load_chunks, path: str = "data/faiss_index"):
+    """Load the saved index if it exists, otherwise build it from chunks and save it."""
+    if os.path.exists(os.path.join(path, "index.faiss")):
+        print(f"Loading saved index from {path}")
+        return load_vector_store(embeddings, path)
+
+    print(f"No index found, building it at {path}")
+    chunks = load_chunks()  # only runs when the index is missing
+    vector_store = build_vector_store(chunks, embeddings)
+    save_vector_store(vector_store, path)
+    return vector_store

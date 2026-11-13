@@ -14,8 +14,8 @@ from deepeval.metrics import (
 
 from src.retriever import Retrieval
 from src.context_builder import ContextBuilder
-from src.generator import Generator
-from src.rag_pipeline import RAGPipeline
+from src.generation import Generator
+from src.chains import RAGPipeline
 from src.config import DEFAULT_CHUNK_SIZE  
 from evals.harness import load_goldens, summarize_by_metric, print_summary
 

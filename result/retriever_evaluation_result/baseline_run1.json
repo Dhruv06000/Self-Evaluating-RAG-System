@@ -1,0 +1,26 @@
+{
+    "config": {
+        "embedding_model": "text-embedding-3-small",
+        "chunk_size": 1000,
+        "chunk_overlap": 200,
+        "top_k": 4,
+        "judge_model": "gpt-4o-mini",
+        "golden_set": "goldens/retriever_goldens.json"
+    },
+    "summary": {
+        "Contextual Recall": {
+            "n": 15,
+            "pass_rate": 86.66666666666667,
+            "avg_score": 0.9037037037037037,
+            "min_score": 0.0,
+            "max_score": 1.0
+        },
+        "Contextual Precision": {
+            "n": 15,
+            "pass_rate": 86.66666666666667,
+            "avg_score": 0.8925925925925926,
+            "min_score": 0.25,
+            "max_score": 1.0
+        }
+    }
+}

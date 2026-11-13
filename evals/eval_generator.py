@@ -10,7 +10,7 @@ from deepeval.evaluate import AsyncConfig
 from deepeval.test_case import LLMTestCase
 from deepeval.metrics import FaithfulnessMetric, AnswerRelevancyMetric
 
-from src.generator import Generator
+from src.generation import Generator
 from evals.harness import load_goldens, summarize_by_metric, print_summary
 
 load_dotenv()

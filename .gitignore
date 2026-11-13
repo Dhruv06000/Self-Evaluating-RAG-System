@@ -1,17 +1,37 @@
+# environment / secrets
+.env
+.env.*
+!.env.example
+
+# python
 .venv/
 __pycache__/
 *.py[cod]
-.env
+*.egg-info/
+build/
+dist/
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
 .coverage
 htmlcov/
-# Ignore the RAG knowledge base files (DO NOT UPLOAD)
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# RAG data (DO NOT UPLOAD)
 knowledge_base/
-faiss_test.py
+data/
 *.index
-main.ipynb
+*.faiss
+*.pkl
+src/transcript.txt
+
+# eval tooling
 .deepeval/
-/result/old_dataset_generator_result
-/result/old_retriever_result
-tests/
-data/faiss_*.index
+.deepeval_telemetry.txt
+
+# scratch
+main.ipynb
