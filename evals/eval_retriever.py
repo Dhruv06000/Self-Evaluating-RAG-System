@@ -30,7 +30,7 @@ CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
 TOP_K = 4
 THRESHOLD = 0.7
-LIMIT = None  # set to 3 for a smoke test, None for every golden
+LIMIT = None # set to 3 for a smoke test, None for every golden
 
 
 def load_kb_chunks():

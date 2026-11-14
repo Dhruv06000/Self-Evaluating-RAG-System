@@ -9,7 +9,7 @@ from src.embedding import get_embedding_model
 from src.faiss_index import get_or_create_vector_store
 from src.retriever import get_retriever
 from src.context_builder import get_prompt_template
-from src.generation import get_llm
+from src.generator import get_llm
 from src.chains import build_chain
 
 load_dotenv()  # loads OPENAI_API_KEY from .env
