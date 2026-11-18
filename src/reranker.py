@@ -26,7 +26,7 @@ def get_reranking_retriever(
     base = vector_store.as_retriever(
         search_type="similarity", search_kwargs={"k": fetch_k}
     )
-    ranker = Ranker(model_name=model_name, cache_dir=cache_dir)
+    ranker = Ranker(model_name=model_name, cache_dir=cache_dir, log_level="WARNING")
 
     def retrieve(question: str):
         docs = base.invoke(question)
