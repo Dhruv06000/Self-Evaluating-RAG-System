@@ -47,6 +47,22 @@ def load_transcripts(folder="knowledge_base"):
                              metadata={"session": session}))
     return docs
 
+def ingest_transcript_timed(video_id: str, languages=ENGLISH_CODES):
+    """Return (text, cues).
+    cues = [(char_offset, start_seconds), ...]: where each caption line begins
+    inside `text`, and the moment it is spoken in the video."""
+    fetched = YouTubeTranscriptApi().fetch(video_id, languages=list(languages))
+    parts, cues, pos = [], [], 0
+    for s in fetched:
+        t = " ".join(s.text.split())        # collapse stray whitespace/newlines
+        if not t:
+            continue
+        cues.append((pos, s.start))
+        parts.append(t)
+        pos += len(t) + 1                   # +1 for the space used to join
+    return " ".join(parts), cues
+
+
 if __name__ == "__main__":
     # Run from the project root:
     #   uv run python rag/ingestion.py                 (default video)
