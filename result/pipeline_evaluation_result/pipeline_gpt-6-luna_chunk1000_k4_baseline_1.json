@@ -1,0 +1,653 @@
+{
+    "complete": true,
+    "config": {
+        "generator_model": "gpt-6-luna",
+        "judge_model": "gpt-4o-mini",
+        "embedding_model": "text-embedding-3-small",
+        "chunk_size": 1000,
+        "chunk_overlap": 200,
+        "top_k": 4,
+        "golden_set": "goldens/faithfulness_dataset.json",
+        "num_goldens": 15
+    },
+    "summary": {
+        "Contextual Relevancy": {
+            "n": 15,
+            "pass_rate": 13.333333333333334,
+            "avg_score": 0.4288235669442078,
+            "min_score": 0.0,
+            "max_score": 0.8636363636363636
+        },
+        "Faithfulness": {
+            "n": 15,
+            "pass_rate": 100.0,
+            "avg_score": 0.9533333333333334,
+            "min_score": 0.75,
+            "max_score": 1.0
+        },
+        "Answer Relevancy": {
+            "n": 15,
+            "pass_rate": 86.66666666666667,
+            "avg_score": 0.87,
+            "min_score": 0.0,
+            "max_score": 1.0
+        }
+    },
+    "details": [
+        {
+            "id": "f001",
+            "query": "what is vibe testing and why isn't it enough for deploying an llm app?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "preview": "Look, I have written it here. Vibe testing means you casually trying an LLME application with a few prompts and judging "
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "preview": "you ever made an application or a chatbot? Have you ever evaluated it methodologically? So what would you say? I feel a "
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "this discussion. Then just understand that whenever someone tells you what LLM evals are. Then you have to say that LLM "
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "preview": "So we can define LLM evals as. That LLM evals are systematic repeatable tests. Used to judge an LLM or LLM powered syste"
+                }
+            ],
+            "answer": "Vibe testing is casually trying an LLM app with a few prompts and judging by feel whether the answers seem right. It isn’t enough for deployment because it’s subjective and usually not repeatable; a handful of questions may miss edge cases and can’t reliably show that the system is good enough for production.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.5789473684210527,
+                    "reason": "The score is 0.58 because while some relevant statements define vibe testing as 'casually trying an LLME application' and highlight its informal nature, many retrieval context statements do not address the inadequacies of vibe testing for deploying an LLM app, such as 'And I will tell you the results with the help of 3 case' which lacks relevance."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses the question about vibe testing and its inadequacy for deploying an LLM app without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f002",
+            "query": "what is the mmlu benchmark?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "5",
+                    "preview": "that how much knowledge these models have gained how much knowledge they have retained from the training process so basi"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "preview": "some ways to protect benchmarks during the discussion I will tell you which benchmarks are completely private, which one"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "So, I have written some example benchmarks here. We will not discuss all the benchmarks now. So, if you want to check ge"
+                },
+                {
+                    "rank": 4,
+                    "session": "5",
+                    "preview": "want to read MMLU it is written here that it comes under knowledge and its current status is that it is saturated so if "
+                }
+            ],
+            "answer": "MMLU is a benchmark for measuring an LLM’s breadth of knowledge. It contains about 14,000 multiple-choice questions across 57 subjects, including science, history, law, and medicine. Models are evaluated by how many questions they answer correctly.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.46153846153846156,
+                    "reason": "The score is 0.46 because while there are relevant statements about the MMLU benchmark, such as 'MMLU is basically a data set in which around 57 subjects there are 14,000 questions MCQ' and 'this benchmark exactly used to tell how knowledgeable a LLM is', the majority of the retrieval context discusses unrelated topics, like 'some ways to protect benchmarks' and 'For maths, there is a benchmark called GSM 8', which detracts from the overall relevance."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about the MMLU benchmark without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f003",
+            "query": "how did mmlu pro improve on the original mmlu?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "6",
+                    "preview": "time if it comes in training data then memorization is done so both the reasons are there let's move ahead in the discus"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "preview": "there were 500 questions but they were incredibly difficult like research level questions and they were such questions t"
+                },
+                {
+                    "rank": 3,
+                    "session": "5",
+                    "preview": "MMLU 14000 questions were your MCQ and every MCQ had 4 options but in MMLU Pro every question had 10 options so here you"
+                },
+                {
+                    "rank": 4,
+                    "session": "5",
+                    "preview": "LLMs MMLU Accuracy Score was used because at that time MMLU was the best benchmark around and as soon as any new LLM cam"
+                }
+            ],
+            "answer": "MMLU-Pro made the questions harder and more reasoning-focused: it increased the answer choices from four to ten, reduced the subjects from 57 to 12, and used about 12,000 questions instead of MMLU’s 14,000.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.5,
+                    "reason": "The score is 0.50 because while there are relevant statements like 'MMLU Pro is an upgrade directly on the very famous MMLU benchmark' and 'MMLU Pro tried to solve the problems that were there in MMLU,' the majority of the retrieval context contains irrelevant information such as 'Time if it comes in training data then memorization is done' which does not address the improvements made by MMLU Pro."
+                },
+                "Faithfulness": {
+                    "score": 0.75,
+                    "reason": "The score is 0.75 because the actual output inaccurately states that MMLU-Pro provided 'about' 12,000 questions, while the retrieval context specifies it provided exactly 12,000 questions, which is fewer than MMLU's 14,000 questions."
+                },
+                "Answer Relevancy": {
+                    "score": 0.75,
+                    "reason": "The score is 0.75 because while the response provided some relevant information about MMLU-Pro, it included an irrelevant statement regarding the reduction of subjects that did not directly address the improvements made over the original MMLU."
+                }
+            }
+        },
+        {
+            "id": "f004",
+            "query": "can you give a real-world example of an llm application failing badly?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "preview": "your LLM based applications. One more question should come to your mind at this point. Because it came to my mind too. A"
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "preview": "their competitors are making LLM based applications and serving better products. And that is why each and every company "
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "how exactly do LLM evals work? Before discussing this, I want to tell you a very important distinction. It is very impor"
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "preview": "exist. And then the judge simply turned this lawyer and his firm. He committed a crime of around $5,000. This guy lost t"
+                }
+            ],
+            "answer": "The video cites a lawyer’s case involving ChatGPT: the lawyer lost the case, and the incident brought negative publicity and a penalty of about $5,000 for the lawyer and firm. It uses this as an example of why LLM applications need thorough evaluation before deployment.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.0,
+                    "reason": "The score is 0.00 because there are no relevant statements in the retrieval context that address the input question about real-world examples of LLM application failures. All provided reasons indicate a lack of specific failure examples, such as 'The statement does not provide a real-world example of an LLM application failing badly.'"
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the request for a real-world example of an LLM application failing badly without including any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f005",
+            "query": "what is drift and why does it matter after deployment?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "preview": "not given the user the freedom to pull the data drift has many natures you are talking about data drift you have control"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "other types of drift can be concept drift what I have discussed is concept drift that expectation mismatch concept has c"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "preview": "our eval pipeline is still giving us good results. When we will test it offline, our application. But when we will take "
+                },
+                {
+                    "rank": 4,
+                    "session": "8",
+                    "preview": "tokens, thumbs up thumbs down, all these things we will capture and all that we will see in one place in a dashboard whi"
+                }
+            ],
+            "answer": "Drift is a change over time in the data, model, or users’ expectations and behavior. After deployment, it matters because offline evaluations can still look good while users are unhappy or performance worsens, making those evaluations outdated. The video recommends tracking online metrics such as faithfulness, detecting declines, and alerting so the system can be improved.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.5517241379310345,
+                    "reason": "The score is 0.55 because while there are some relevant statements about drift, such as 'drift basically means that over time our software performance is not getting bad' and 'we are tracking some metric for example faithfulness so suddenly in the last 8 hours the curve of faithfulness is going down so this is a kind of drift which we are detecting', the majority of the retrieval context contains irrelevant information that does not address the input question about the significance of drift after deployment."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about drift and its significance after deployment without including any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f006",
+            "query": "why do we use an llm as a judge instead of simple string matching?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "5",
+                    "preview": "doing log probabilities against the right ones and then joining the right ones, I told you three ways in the generated m"
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "preview": "your LLM based applications. One more question should come to your mind at this point. Because it came to my mind too. A"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "their competitors are making LLM based applications and serving better products. And that is why each and every company "
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "preview": "how exactly do LLM evals work? Before discussing this, I want to tell you a very important distinction. It is very impor"
+                }
+            ],
+            "answer": "We use an LLM as a judge because a model may give the correct answer in different formats—for example, “A” or “A is the answer.” The judge extracts the intended answer, whereas simple string matching may miss it.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.3333333333333333,
+                    "reason": "The score is 0.33 because while there are some relevant statements like 'you use an LLM as a judge because anything can be printed here' and 'the later LLM as a judge they are better', the majority of the retrieval context discusses unrelated topics such as 'doing log probabilities' and 'the complexity of creating LLM applications', which do not directly address the question of why LLMs are preferred over simple string matching."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses the question about using an LLM as a judge instead of simple string matching, with no irrelevant statements present."
+                }
+            }
+        },
+        {
+            "id": "f007",
+            "query": "how does sampling work in online evaluation?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "preview": "Drift detection, And how your chat bot is performing in real world, Talking about cost and speed, Offline eval is fast, "
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "can be double. So here in between there is a step where you do sampling. Basically, in 50,000 conversations a day you ra"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "preview": "In that sense, online evals are super important. So, on the basis of the discussion till now, If I quickly lay out a dif"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "preview": "evals, then tell me. Why and what? Why do we need online evals and what are online evals? If there is any question in bo"
+                }
+            ],
+            "answer": "Online evaluation randomly samples a subset of live conversations instead of evaluating every one. For example, it might select 1,000 of 50,000 daily conversations, run an evaluator on them to estimate a metric such as hallucination rate, and send that result to a dashboard—reducing evaluation cost.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.21212121212121213,
+                    "reason": "The score is 0.21 because the majority of the retrieval context focuses on offline evaluation and does not directly address how sampling works in online evaluation. However, relevant statements like 'So here, the sampling type technique is used...' and 'if you randomly select 1000 out of 50,000 conversations randomly then this random sampling is it a good' provide some insight into sampling methods, but they are overshadowed by the irrelevant content."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about how sampling works in online evaluation without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f008",
+            "query": "what are computed and captured signals in online eval?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "preview": "evals, then tell me. Why and what? Why do we need online evals and what are online evals? If there is any question in bo"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "behind this. First, I told you that because there are multiple failure points. We talked about the failure at the compon"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "preview": "setup. And you cannot evaluate those risks, With the help of offline eval. We have given this statement till now. And th"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "preview": "In that sense, online evals are super important. So, on the basis of the discussion till now, If I quickly lay out a dif"
+                }
+            ],
+            "answer": "I don't know based on this video.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.25925925925925924,
+                    "reason": "The score is 0.26 because the retrieval context largely fails to address the specifics of computed and captured signals in online evaluation. Most statements focus on unrelated topics, such as 'the inability to verify the evaluation process' and 'risk categories', which do not connect to the input. Although there are mentions of online evaluation, such as 'What are the general metrics and signals tracked via online evaluation?', they do not provide detailed information about computed and captured signals, leading to a low relevancy score."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 0.0,
+                    "reason": "The score is 0.00 because the response completely fails to address the question about computed and captured signals in online evaluation, providing no relevant information whatsoever."
+                }
+            }
+        },
+        {
+            "id": "f009",
+            "query": "what does it mean for a benchmark to get saturated?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "4",
+                    "preview": "exam then how will you know who is good and who is bad in that case the benchmark is saturated it is removed and then a "
+                },
+                {
+                    "rank": 2,
+                    "session": "4",
+                    "preview": "specially with public benchmarks so the solution is to use private benchmarks there are many private benchmarks we will "
+                },
+                {
+                    "rank": 3,
+                    "session": "4",
+                    "preview": "or 36% score all the models are doing this but over time the benchmark is static there are no changes in this but your m"
+                },
+                {
+                    "rank": 4,
+                    "session": "5",
+                    "preview": "better, they are able to extract each answer correctly so their accuracy is a little higher so in that sense there is a "
+                }
+            ],
+            "answer": "A benchmark is saturated when models improve or learn from its data until most score very highly and cluster at similar scores, making it hard to distinguish which model is better. It is then retired or replaced with a new benchmark.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.5,
+                    "reason": "The score is 0.50 because while there are relevant statements like 'this is called benchmark saturation this means that this benchmark is no longer useful' and 'the benchmark basically got saturated because its data started getting used in the alignment stage', the majority of the retrieval context discusses unrelated topics such as 'configuration gaming' and 'benchmark contamination', which detracts from the overall relevance."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about benchmark saturation without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f010",
+            "query": "how are safety issues like toxicity evaluated differently from quality issues?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "preview": "risk categories into three parts. First is the quality of the application. Second is the safety related. And third is th"
+                },
+                {
+                    "rank": 2,
+                    "session": "2",
+                    "preview": "able to complete the task properly or is the failure rate high error recovery if my agent starts doing something wrong w"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "preview": "level evaluation so these are some quality related metrics apart from this, if you talk about application level then you"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "preview": "us that our chat bot is not leaking any kind of personal information. And how does this evaluator work? Behind the scene"
+                }
+            ],
+            "answer": "Safety is evaluated by checking whether responses are toxic, harmful, biased, or expose private data, using safety-specific evaluation pipelines. Quality evaluation instead checks whether the answer does the task well—for example, whether it is correct, relevant, complete, or hallucinates.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.48717948717948717,
+                    "reason": "The score is 0.49 because while there are relevant statements such as 'In safety, you ensure that the answer that comes out should not be harmful' and 'there are 4-5 dimensions in safety toxicity', the majority of the retrieval context contains irrelevant information like 'Now, here you see multiple things' and 'So, basically in these three categories, we', which do not address the evaluation of safety issues versus quality issues."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses the evaluation of safety issues like toxicity compared to quality issues without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f011",
+            "query": "does training on more data always make an llm more knowledgeable?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "4",
+                    "preview": "first, how much factual knowledge does our LLM have which he learned during training and second is he able to connect al"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "preview": "that how much knowledge these models have gained how much knowledge they have retained from the training process so basi"
+                },
+                {
+                    "rank": 3,
+                    "session": "5",
+                    "preview": "process basically how much world knowledge is hidden in his weights and biases his parametric knowledge is a way to test"
+                },
+                {
+                    "rank": 4,
+                    "session": "5",
+                    "preview": "14000 questions we are not able to guarantee that any LLM is how truthful truthful means let me give an example you gave"
+                }
+            ],
+            "answer": "No. The video says training on more data can also teach an LLM incorrect information and misconceptions, so more data doesn’t guarantee more reliable knowledge.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.8636363636363636,
+                    "reason": "The score is 0.86 because while the retrieval context includes relevant statements about how LLMs measure factual knowledge and reasoning capabilities, such as 'we measure how much is the factual recall of our LLM on different subjects' and 'this benchmark exactly used to tell how knowledgeable a LLM is', it also contains irrelevant information like 'summarize the whole evolution of human evolution from big bang till now', which does not address the input question directly."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about whether training on more data always makes an LLM more knowledgeable, without including any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f012",
+            "query": "what information should i store when logging production conversations?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "preview": "type tool or an observability tool such as Langsmith. Where you can store all this information in a very structured way."
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "and if I am getting 50,000 conversations done with my chat bot all day, then what will I do? I will store these 50,000 c"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "preview": "is stored. So this is kept with you. Now this storage, this whole logging, it has some engineering properties. You shoul"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "preview": "chat bot gave on the basis of that context and question. Apart from that, I will store a lot of operational things such "
+                }
+            ],
+            "answer": "Store a conversation ID, turn ID, user ID, session ID, and timestamp, along with the user’s question, the RAG context used, and the chatbot’s response. Also log operational details such as latency, prompt and completion tokens, cost, errors and status codes, plus user signals like thumbs-up/down, repeated or rephrased questions, and escalations—even if they arrive later. The video mentions PII handling but doesn’t explain the specifics.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.8484848484848485,
+                    "reason": "The score is 0.85 because while there are several relevant statements regarding what to log in production conversations, such as 'You have to track all this' and 'I will give a conversation ID to every conversation,' many statements in the retrieval context are irrelevant, like 'This is very important' and 'Can someone tell me a tool to store all this?' which do not address the specifics of logging."
+                },
+                "Faithfulness": {
+                    "score": 0.8,
+                    "reason": "The score is 0.80 because the actual output incorrectly implies that RAG context is logged, while the retrieval context only mentions that the chatbot stores the context generated during the conversation."
+                },
+                "Answer Relevancy": {
+                    "score": 0.8,
+                    "reason": "The score is 0.80 because while the response addresses the general topic of logging production conversations, it lacks specific details on what information should be stored, which is crucial for a complete answer."
+                }
+            }
+        },
+        {
+            "id": "f013",
+            "query": "how can thumbs up and thumbs down signals help build a golden dataset?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "preview": "but it is a good signal. What is the use of keeping those conversations? We will not know that. What about we focus more"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "how it works. Now here you can ask one more question or I will tell you. If you think about it if you randomly select 10"
+                },
+                {
+                    "rank": 3,
+                    "session": "2",
+                    "preview": "evaluator by the way we are creating our golden data set golden data set is being created by a human evaluator and this "
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "preview": "give you. A golden data set. And. A golden data set. And. A golden data set. And. A golden data set. And. A golden data "
+                }
+            ],
+            "answer": "Use thumbs-down conversations as a signal to sample more heavily, since they may reveal problematic answers or hallucinations; sample fewer thumbs-up conversations, which are a positive signal but not proof of correctness. This stratified sampling helps select conversations for human evaluation when building the golden dataset.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.24,
+                    "reason": "The score is 0.24 because the majority of the retrieval context does not address how thumbs up and thumbs down signals contribute to building a golden dataset, as seen in statements like 'the statement discusses stratified sampling without linking it to thumbs up and thumbs down signals.' However, there are some relevant statements such as 'we can ignore those conversations where we got thumbs up' which hint at the role of these signals, but they are overshadowed by the irrelevant context."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses how thumbs up and thumbs down signals contribute to building a golden dataset without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f014",
+            "query": "how does a step-by-step prompt help an llm solve a math problem?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "preview": "means suppose answer 2.3 came after applying this formula what does it mean it means on an average my LLM while evaluati"
+                },
+                {
+                    "rank": 2,
+                    "session": "4",
+                    "preview": "now we have trained our new LLM and we want to test our LLM on this new benchmark so now I will tell you the exact proce"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "preview": "other answer is wrong. All the answers are correct. It is not the same. This is the biggest challenge of an LLM based ap"
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "preview": "leaderboard or benchmark. So, what is happening there is that some evals are kept. As soon as a new LLM comes to the mar"
+                }
+            ],
+            "answer": "The video identifies solving problems step by step as a reasoning capability, but it doesn’t explain how a step-by-step prompt helps an LLM solve math problems.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.08,
+                    "reason": "The score is 0.08 because the retrieval context primarily discusses LLM evaluation and challenges, which do not directly address how a step-by-step prompt aids in solving math problems. Relevant statements like 'Can it solve a problem step by step?' and 'Can our LLM solve maths problems or not?' are too vague and do not provide specific insights into the effectiveness of step-by-step prompts."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 0.5,
+                    "reason": "The score is 0.50 because the response fails to explain how a step-by-step prompt assists an LLM in solving math problems, which is the core of the question. While some relevant points may have been made, the lack of direct connection to the input question keeps the score from being higher."
+                }
+            }
+        },
+        {
+            "id": "f015",
+            "query": "what are computed and captured signals in online evaluation?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "preview": "evals, then tell me. Why and what? Why do we need online evals and what are online evals? If there is any question in bo"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "preview": "example is latency. To do any particular answer, how much time did my chatbot take? Whatever time it took, I have to sto"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "preview": "that will be part of our evaluation strategy regression testing not experiment tracking not CI ok now let's talk about t"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "preview": "do you have to do it? We have just discussed both the things. Did you understand? PII means personal identifiable inform"
+                }
+            ],
+            "answer": "Captured signals are logged as-is, without extra calculation—for example, latency, cost per conversation, token usage, and thumbs-up or thumbs-down feedback. Computed signals must be calculated by an evaluator, such as the chatbot’s faithfulness.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.5161290322580645,
+                    "reason": "The score is 0.52 because while there are relevant statements like 'What are the general metrics and signals tracked via online evaluation?' and 'The computed one is the signal that you have to calculate.', many other statements in the retrieval context do not directly address computed and captured signals, such as discussions about data handling and confusion about the topic."
+                },
+                "Faithfulness": {
+                    "score": 0.75,
+                    "reason": "The score is 0.75 because the actual output indicates that all captured signals are logged, while the retrieval context mentions that some signals can be stored directly without real-time calculations, suggesting a discrepancy in how signals are handled."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses the question about computed and captured signals in online evaluation without any irrelevant statements."
+                }
+            }
+        }
+    ]
+}

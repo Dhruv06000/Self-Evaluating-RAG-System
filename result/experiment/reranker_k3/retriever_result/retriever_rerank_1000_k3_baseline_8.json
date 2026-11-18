@@ -1,0 +1,510 @@
+{
+    "config": {
+        "embedding_model": "text-embedding-3-small",
+        "chunk_size": 1000,
+        "fetch_k": 20,
+        "reranker": "flashrank-MiniLM-L-12",
+        "chunk_overlap": 200,
+        "top_k": 3,
+        "judge_model": "gpt-4o-mini",
+        "golden_set": "goldens/retriever_goldens.json"
+    },
+    "summary": {
+        "Contextual Recall": {
+            "n": 15,
+            "pass_rate": 86.66666666666667,
+            "avg_score": 0.8953174603174604,
+            "min_score": 0.5714285714285714,
+            "max_score": 1.0
+        },
+        "Contextual Precision": {
+            "n": 15,
+            "pass_rate": 73.33333333333333,
+            "avg_score": 0.8444444444444444,
+            "min_score": 0.3333333333333333,
+            "max_score": 1.0
+        }
+    },
+    "details": [
+        {
+            "id": "g001",
+            "query": "What is online eval and how is it different from offline eval?",
+            "source": "Session 4",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "text": "cannot evaluate those risks, With the help of offline eval. We have given this statement till now. And that is why, who comes in the picture? Online eval. I can understand the work from the name. Online eval is evaluating your system, On live production traffic, After deployment, As real users interact with it. The simplest definition of online eval is, That it is a different type of evaluation, Which we run on production, After our software is deployed. And the biggest characteristic of it is,"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "text": "What are the things different from offline eval, We will read all that in detail, But did you understand the purpose? Both have their own purpose, It's not like, You can use online in offline cases, No, they are different. I will give you an example of this, I will give you an example of this, The statement I said, Offline eval tells correctness, Online eval tells normalcy, I will give you an example of this, Remember our UPSC grader, Who checks the paper, Remember our UPSC grader, Can you tell"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "And how your chat bot is performing in real world, Talking about cost and speed, Offline eval is fast, cheap and repeatable, Because it's basically, You are running a simple code, Or a LLM on a small data set, So it's cheap and fast, Whereas in online eval, It can be on a very large scale, That you may have to do an evaluation, Your chat bot is talking to 50,000 people in a day, So you have to monitor those 50,000 people, You have to monitor those 50,000 conversations, So it can be costly. So"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.875,
+                    "reason": "The score is 0.88 because while the expected output effectively captures the essence of online and offline evaluations, there are some elements that lack direct references to the retrieval context, particularly in the nuances of their complementary roles."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than any irrelevant nodes, ensuring that the most pertinent information is prioritized. Each of the first three nodes provides essential insights into online eval, with the first node defining it clearly, the second discussing key differences, and the third elaborating on scale and cost differences. Since there are no irrelevant nodes present, the score reflects perfect contextual precision."
+                }
+            }
+        },
+        {
+            "id": "g002",
+            "query": "faithfulness vs groundedness kya hota hai?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "text": "was generated properly Here what quality are we checking we are checking faithfulness which we sometimes call groundedness Basically we will check that whatever was given in context the relevant documents the answer was generated on that basis apart from that no facts were created For example if my question was what is the duration of machine learning course suppose this question was asked and my document was extracted and written in 3 weeks So when the answer is generated it should be printed"
+                },
+                {
+                    "rank": 2,
+                    "session": "2",
+                    "text": "if we talk about rag then the most important thing in rag is context relevance retriever work the retrieval and retrieval recall are also related groundedness and faithfulness means that the answer generated was on the basis of my context no extra information came citation accuracy you are getting to know that I am able to cite the particular line I have written or generated I extracted it from this particular document you might have seen it in chat gpt if you are making agents then what"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "it now. I will give an example. For example, the Rack chart is a chatbot. You can find many things in the Rack chart. You can see how faithfulness is. You don't need to know the right answer to check the faithfulness. Faithfulness means whether the answer has been generated from the context of the retrieval. You have the context and the answer. You can ask an LLM that the answer has been generated from the context. You can find out the faithfulness. In many cases, you can give the correct"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every aspect of the expected output is directly supported by the information in the nodes of the retrieval context, particularly the first node which clearly defines faithfulness and provides relevant examples."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than any irrelevant nodes, ensuring that the most pertinent information is prioritized. The first node explains that 'we are checking faithfulness which we sometimes call groundedness', directly addressing the input question. The second node emphasizes context relevance, stating that 'groundedness and faithfulness means that the answer generated was on the basis of my context no extra information came', further solidifying the connection to the concepts in question. Lastly, the third node provides an illustrative example of faithfulness, reinforcing the definitions effectively. Since there are no irrelevant nodes present, the score reflects perfect contextual precision."
+                }
+            }
+        },
+        {
+            "id": "g003",
+            "query": "how do i know if my eval is reference based or reference free?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "text": "you have to do is you have to set up an evaluator. You have to create an evaluator. Okay. Now this evaluator is a reference free evaluator. Does anyone remember from the last class what is the difference between reference based and reference free evaluations? Do you know? Do you remember? I told you. If you are performing an evaluation where you have an answer key in your golden data set, then what is that evaluation called? Reference based. The example of which was UPSC. If we are carrying out"
+                },
+                {
+                    "rank": 2,
+                    "session": "2",
+                    "text": "was a rubric Which I told you exactly So going forward, will you be able to classify If I show you an evaluation pipeline So will you be able to tell if it is reference free or reference based Simply you have to ask if the correct answer is given in your golden data set or not If it is not given, it is a reference free one If it is given, it is a reference based one Simple, this is the difference That is why I had to teach you this That is why I gave you the three examples that I gave you"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "text": "evals, reference free evals we discussed online evals offline evals we discussed all these concepts and the most important concept we discussed was that there are two types of LLMEval one is model evals and the other is application evals and we discussed that we will focus more on application evals but we first covered model evals which we are doing in the last two or three sessions so while studying model evals we discussed that model evals also have two types of evals one is standardized"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all sentences in the expected output are directly supported by the information provided in the nodes in retrieval context, particularly the clear definitions of reference-based and reference-free evaluations found in the first and second nodes."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the relevant nodes provide clear and direct answers to the input question, with the first node stating that reference-based evaluations involve an answer key, and the second node confirming how to determine the evaluation type. The third node, ranked lower, is irrelevant as it discusses various evaluations without addressing the specific distinction needed, thus justifying its lower rank."
+                }
+            }
+        },
+        {
+            "id": "g004",
+            "query": "why can't we test llm apps the same way we test normal software?",
+            "source": "Session 1",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "text": "What are the key differences in software testing and LLM evaluations. Okay. There are two major differences. I discuss both one by one. The first difference is. That the software. The software you create and use. By nature, it is deterministic. What is deterministic? That if you give the same input. Then every time you will get the same output. I guess you would agree. Let's say you made a calculator. Now in that calculator, you will give the input of 2 and 2. 2 plus 2. So the output will"
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "text": "software based testing is straight forward. Whereas LLM's evaluation is very very tricky. So is this point clear? Is the discussion going on right? Is everything clear? Okay. Okay. So till this point, the class was very similar. As you did in the previous session or in the YouTube video. Now going forward, the class will feel different. We will teach the same thing but you will feel a little different. Okay. So now that we understand why LLM evaluations are important. And how LLM evaluations"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "offline eval? Why do we need an offline eval? Why don't we make an LLM based software and deploy it directly? What is the problem? You have to tell me this. Actually, it's a very simple question. One very straightforward answer is that if we deploy it without testing, then how will the software behave in the production? We don't know. And anything can be risky. I had told you about two or three case studies in the beginning. Air Canada, Chart GPT. So, you remember, right? You cannot deploy an"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.8,
+                    "reason": "The score is 0.80 because while several sentences in the expected output effectively connect to node(s) in retrieval context, particularly regarding deterministic logic and the complexity of LLM evaluations, there is a slight disconnect with the overall focus on LLM application testing, which is not fully addressed in the retrieval context."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant node. The first node discusses the deterministic nature of traditional software compared to LLM evaluations, making it directly relevant to the question. The second node highlights the complexity of LLM evaluation, further supporting the inquiry. The third node, ranked lower, focuses on offline evaluation and deployment risks, which does not pertain to the testing methodologies, justifying its lower rank."
+                }
+            }
+        },
+        {
+            "id": "g005",
+            "query": "why can't we just compare the generated sql query with the correct one character by character?",
+            "source": "Session 8",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "7",
+                    "text": "data set And one from LLM We will run both of them Now think and tell us What will be the criteria? How would we check that the generated query Is correct? Can we Match the string? Tell us quickly Can we directly Compare this generated query Character by character With this query If character by character is same Then the correct query is generated But is it a good strategy? Is it a good strategy? No, because for a single result Multiple queries can be written Achieving a single result Through"
+                },
+                {
+                    "rank": 2,
+                    "session": "7",
+                    "text": "a table This will be table 1 This will be table 2 And what you do You compare these two tables That are they both Same? If they are both same Then it means that Your generated query is correct This is how you check That generated query Is correct or not Same thing you will do for question 2 Question 2, question 3, question 5 Question 50 And against every Question you will get to know That is it correct Or wrong And once you Will do for 50 questions Then you simply get accuracy So you get to"
+                },
+                {
+                    "rank": 3,
+                    "session": "7",
+                    "text": "query on database And when did he get the generated Data frame When we ran the generated query on database We compare both In this function And I have written a lot of logic Of comparison Like I will tell you quickly what is the logic Like if you have This is table 1 And this is table 2 You have to compare both That are they same or not So first of all you will test That are their numbers of rows Same or not Think and tell me If the number of rows of two tables are different Then can they be"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every aspect of the expected output is well-supported by the relevant nodes in the retrieval context, demonstrating a clear and accurate alignment between the sentences and the nodes."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the relevant nodes are ranked higher than the irrelevant node. The first node provides a clear explanation of why character-by-character comparison is inadequate, stating 'No, because for a single result Multiple queries can be written Achieving a single result Through', which directly addresses the input. The second node further supports this by explaining the correctness check with tables: 'If they are both same Then it means that Your generated query is correct'. In contrast, the third node is ranked lower as it lacks specific reasoning against character-by-character comparison, stating only that it mentions comparing tables without relevant logic, making it less useful for the expected output."
+                }
+            }
+        },
+        {
+            "id": "g006",
+            "query": "if a model tops all the benchmarks, why wouldn't i just pick it for my project?",
+            "source": "Session 5",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "6",
+                    "text": "take a lot of time and effort if someone else is doing it for you, then its easy for you so you can simply go to the leaderboard and pick your top 10 and pick your model so this is the second benefit third, with the help of this we get to know that has any benchmark saturated if a lot of top models start to cluster around the same score there is a benchmark that tests knowledge capability there the score of top 10 LLMs and its score is between 92-94 so as soon as the clustering started to"
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "text": "never do model evaluations. But, you should know, you should know how to read them. You should know about the top benchmark. Because, as a project developer, one important thing is that when you are starting a project, you should decide whether you want LLM of OpenAI, or of Anthropic, or any open source LLM will also work for you. And this decision making comes from model evals. So, is it clear, the discussion till now? LLM evals, two types, model evals, application evals. We have just"
+                },
+                {
+                    "rank": 3,
+                    "session": "6",
+                    "text": "engineers in the future and most of the times when you go to make an application then step one is model selection and in model selection also step one is to go to the leaderboards and see which model is at the top so we get the bias that if it is on the leaderboard then it will be right but it is not, you cannot blindly trust leaderboards what are the reasons we are discussing the first reason is that benchmark performance may not transfer to real applications this is very important if a model"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.8333333333333334,
+                    "reason": "The score is 0.83 because most sentences in the expected output effectively connect to the relevant nodes in the retrieval context, particularly regarding model comparisons and evaluations, as seen in sentences discussing model A and B (2nd node) and the importance of custom evaluations (2nd node). However, the mention of model selection based solely on benchmarks lacks direct reference in the context, slightly lowering the score."
+                },
+                "Contextual Precision": {
+                    "score": 0.3333333333333333,
+                    "reason": "The score is 0.33 because while the relevant node (third node) provides a clear explanation that 'benchmark performance may not transfer to real applications,' the first (first node) and second nodes do not address the specific concerns of model selection, discussing instead generalities about model evaluations and leaderboards. This results in the relevant node being ranked higher, but the presence of two irrelevant nodes above it lowers the overall score."
+                }
+            }
+        },
+        {
+            "id": "g007",
+            "query": "what are the different ways an eval can actually be run?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "4",
+                    "text": "that model B is better for our work so I guess you are understanding what is model eval? it is a process of testing the capabilities of a model but you can test it in two ways either you run standardized benchmarks through which you will get to know the generic capabilities of the model or you can run specific custom evals according to your application and data so that you can get to know which model is more suitable for your kind of work so is this entire discussion clear? what are model evals"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "text": "Basically, evals are different for Latency and all types of metrics. In the last video, we discussed what are the different eval methods through which we perform evaluations. We discussed three things in this video. Programmatic methods, LLMEvalse-based as a judge, and how to perform eval with humans. In nutshell, this is the summary of whatever we have covered in this course till now. In today's video, we are going to discuss a very important topic. The topic is Offline Eval vs Online Eval."
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "text": "you are running one evaluation to check the performance of the embedding model you are running one eval to test the whole rag workflow you are running one eval to check the latency of the system so generally one LLM based application always runs more than one eval now I have given you an example I have told you about one eval but generally you will get to see that on one single application multiple evals are run this is an important point you have to remember rest you will see later so guys"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.5714285714285714,
+                    "reason": "The score is 0.57 because while the expected output effectively references programmatic, human, and LLM-graded evaluations (sentence 1), it lacks a direct connection to specific methods outlined in the retrieval context, leading to some ambiguity in attribution."
+                },
+                "Contextual Precision": {
+                    "score": 0.5,
+                    "reason": "The score is 0.50 because the relevant nodes are not consistently ranked higher than the irrelevant nodes. The second node, which is relevant, ranks second and provides specific methods for running evaluations, while the first node ranks first but discusses model evaluation without detailing methods, stating, 'The context discusses model evaluation but does not specify the different ways an eval can be run.' Similarly, the third node ranks third and also fails to clarify methods, stating, 'While this context mentions running evaluations, it does not clarify the different methods of running an eval.' This arrangement leads to a moderate score, reflecting that while there is relevant information, it is not prioritized effectively."
+                }
+            }
+        },
+        {
+            "id": "g008",
+            "query": "can i just pick the top model from a leaderboard for my app?",
+            "source": "Session 7",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "6",
+                    "text": "take a lot of time and effort if someone else is doing it for you, then its easy for you so you can simply go to the leaderboard and pick your top 10 and pick your model so this is the second benefit third, with the help of this we get to know that has any benchmark saturated if a lot of top models start to cluster around the same score there is a benchmark that tests knowledge capability there the score of top 10 LLMs and its score is between 92-94 so as soon as the clustering started to"
+                },
+                {
+                    "rank": 2,
+                    "session": "6",
+                    "text": "no that is a wrong strategy you shortlist 4 to 5 top models with the help of leaderboards and then you run custom evals on all of them and pick one model and then you pick one model for your application I hope you are understanding and we will do that in the next session, as I said that the next classes will be practical so next session is all about how do you run your custom evaluation on a given LLM that we will learn in the next class so whatever flow I have told you, you will practically do"
+                },
+                {
+                    "rank": 3,
+                    "session": "6",
+                    "text": "engineers in the future and most of the times when you go to make an application then step one is model selection and in model selection also step one is to go to the leaderboards and see which model is at the top so we get the bias that if it is on the leaderboard then it will be right but it is not, you cannot blindly trust leaderboards what are the reasons we are discussing the first reason is that benchmark performance may not transfer to real applications this is very important if a model"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.6,
+                    "reason": "The score is 0.60 because while the expected output effectively discusses the process of using leaderboards for model selection, as seen in sentence 1 and supported by nodes 2 and 3, it also includes points that are not directly addressed in the retrieval context, such as the caution against selecting a model directly from a leaderboard. This indicates a partial alignment with the context."
+                },
+                "Contextual Precision": {
+                    "score": 0.5,
+                    "reason": "The score is 0.50 because while there are relevant nodes that emphasize the importance of evaluating multiple models rather than just selecting the top one, there are also irrelevant nodes that do not clearly oppose the idea of picking a single model. Specifically, the first node ranks highest but states that 'you shortlist 4 to 5 top models,' which contradicts the input's suggestion of simply picking one. The second node, which supports the need for further evaluation, ranks second, but the presence of the irrelevant nodes at the top affects the overall score."
+                }
+            }
+        },
+        {
+            "id": "g009",
+            "query": "where can a rag chatbot go wrong?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "text": "failure points I mean to say that your LLM based application can be broken from many places and there can be failures at many places Like if you can type in the chat and tell me that the rag chatbot basic architecture I have made what are the failure points in it where can there be mistakes, where the code can be broken where there is a chance of wrong responses Can you tell me what are the failure points in this rag architecture Exactly You got it right If we look at it directly we can see"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "text": "down in your chatbot? If you suddenly start seeing that in the last one hour, the rating of thumbs down is coming in a lot of conversations, then what will you understand from this? That something or the other has gone wrong. Something or the other is giving the wrong answer to our chatbot. So again, this is a tricky way to find out that is the correctness working properly or not? Yes, basically the user's feedback has been done. So here the correctness has been alternated by the user's"
+                },
+                {
+                    "rank": 3,
+                    "session": "2",
+                    "text": "our company or our school or college whatever, we have a rag chatbot What are the components in the rag chatbot you must have missed So what happens is there is a retriever which is connected with a vector database and this retriever retrieves the documents and gives it to a generator which generates the answer So roughly this is the flow Okay, query comes to the retriever Retriever on the basis of query from the vector database fetches the relevant documents and then we query and retrieve both"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output directly correlates with the relevant nodes in the retrieval context, effectively addressing the failure points of a RAG chatbot."
+                },
+                "Contextual Precision": {
+                    "score": 0.3333333333333333,
+                    "reason": "The score is 0.33 because while there is one relevant node that directly addresses the failure points of a RAG chatbot, the first and second nodes are irrelevant as they discuss general failure points and user feedback without specificity. The first node ranks highest but fails to meet the specific query, and the second node also lacks relevance, leading to a lower overall score."
+                }
+            }
+        },
+        {
+            "id": "g010",
+            "query": "what exactly does recall at k tell me about my retriever?",
+            "source": "Session 3",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "text": "recall for the first question if you see my retriever found 101 so total was 101 and we found 101 so in this case our recall is 100% 1 second one if you see 101 and 103 he also found 101 and couldn't find 103 so in this case it is 0.5 and we will calculate for every question and in the end we will average this whole quantity and by averaging we will get our recall at the rate k on our whole data set on our whole data set ok now this quantity is telling us how successful our retriever is in"
+                },
+                {
+                    "rank": 2,
+                    "session": "2",
+                    "text": "K is equal to 5 documents so he fetched these documents 101, 102 104, 105 105, 106 now you tell me that in this particular scenario how much is the recall can someone tell me what is the recall based on this definition you can tell me very easily these are my correct documents and these are my retrieved documents so can you calculate the recall read this definition so of all the correct relevant items that exist how many correct documents are there 2, how many did the system retrieve in its top"
+                },
+                {
+                    "rank": 3,
+                    "session": "2",
+                    "text": "working properly working properly with a retriever so I told you how do we quantify it let me tell you the answer is this metric written here recall at K here a definition is written let's read it out of all the correct items that exist how many did the system retrieve in its top K results can you understand this line see suppose this is the question what are the prerequisites for ML course and how long it is now what we have done is we have chunked all our campus X documents and put all the"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every aspect of the expected output aligns perfectly with the node(s) in retrieval context, demonstrating a comprehensive understanding of recall@k and its application."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than any irrelevant nodes, ensuring that the most pertinent information is prioritized. Each of the first three nodes provides valuable insights into recall at K, with the first node explaining its calculation and examples, the second discussing its basis on retrieved documents, and the third directly defining recall at K. Since there are no irrelevant nodes present, the score reflects perfect contextual precision."
+                }
+            }
+        },
+        {
+            "id": "g011",
+            "query": "What is the RAG triad?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "8",
+                    "text": "pipeline we will build our rag pipeline rag pipeline means that we will connect our retriever and generator very simple code connected, after this comes step six where we will check that when these two are connected and a pipeline is formed is this pipeline working properly or not and here the evaluation is a very famous term we call it rag triad so basically what you do here as soon as you make rag pipeline you check three metrics and we call these three metrics rag triad why I tell you so"
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "text": "rag pipeline you check three metrics and we call these three metrics rag triad why I tell you so three things are existing here first of all the user's question the context we have got from vector database which has brought the retriever and the answer generated by generator these three things exist so in these three pairs three metrics exist like for question and context a metric exists which we call context relevance which tells that for a given question the context which has been fetched"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "text": "and then teach you to test the retriever then I will make a generator and then I will teach you to test the generator and in the same process you will do deep eval for the first time after that in the next session we will build a rag pipeline and we will run this rag triad three metrics after that third session or maybe it can be a little early I don't really know because I don't know how it will turn out in the future we will run the entire evaluation at the application level and fourth, the"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 0.75,
+                    "reason": "The score is 0.75 because while the sentence effectively connects to the RAG triad metrics discussed in node 1 and context relevance in node 2, the mention of faithfulness lacks direct support from the retrieval context, which slightly lowers the overall alignment."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant node. The first node provides a clear explanation of the RAG pipeline and the term 'rag triad,' which is directly relevant to the question. The second node elaborates on the three metrics of the RAG triad, further aligning with the expected output. In contrast, the third node, ranked lower, discusses unrelated topics about testing the retriever and generator, making it less useful for answering the question."
+                }
+            }
+        },
+        {
+            "id": "g012",
+            "query": "What is regression testing in LLM evaluation?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "8",
+                    "text": "is too difficult here now now I want to explain one more thing here the discussion we will do now will be more in the LLM ops domain rather than just evaluation but I want to tell you because it is related so regression testing is very kind of advanced method what I told you is a very basic method that you just run this file what this file did compared all your metrics compared to the previous version and told whether the new version is better or not but in this many more things can be done"
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "text": "point. So we can define LLM evals as. That LLM evals are systematic repeatable tests. Used to judge an LLM or LLM powered system against a clear criteria. Okay. Basically LLM evaluations are tests. Which we apply on LLM or LLM based applications. And there are three main aspects of it. First is that these tests are systematic. Second, these tests are repeatable. And these tests have very clear criteria. These three are very important pointers. Very important characteristics of LLM evals. Let's"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "an LLM application which evaluates the Mock Test of the mains paper like a human. We discussed step by step how we will do this evaluation. We made a golden dataset, we used the LLM as a judge method and we performed the evaluation. Now, this evaluation is taking place after the creation of the software but before deployment. Which means that this is an example of an offline eval. In simple words, whenever you have an LLM based application and you want to test it before deploying it, whether it"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the expected output directly aligns with the retrieval context, specifically discussing regression testing and the process of running a suite and comparing metrics, as highlighted in node(s) in retrieval context."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the first node provides a clear and relevant explanation of regression testing in LLM evaluation, stating that 'regression testing is very kind of advanced method' and detailing its purpose in comparing metrics. The subsequent nodes, ranked second and third, discuss LLM evaluations but fail to mention regression testing, making them less relevant and appropriately ranked lower."
+                }
+            }
+        },
+        {
+            "id": "g013",
+            "query": "Why does this course use DeepEval instead of RAGAS?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "8",
+                    "text": "then this library will make you feel at home so we are going to use this library we are not going to use ragas because you can use both you can do all this in ragas and deep eval I am selecting deep eval particularly because of two reasons first is ragas we have already studied in the advanced rag course second deep eval is a broader library its scope is even more like agents where you can see here agents, multi turn chat bots non LLM applications image based applications for all kinds of"
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "text": "exist so instead of writing custom code to evaluate our rag application we will instead use this great library called deep eval which is the state of the art library most of the big companies use this library to do LLM based evaluations and the best part about this library is that it is based on the main library of python for software testing so if you have ever done software testing using PITest then this library will make you feel at home so we are going to use this library we are not going"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "text": "we will do is we will use a library which is called deep eval in deep eval if you go then you will see that from the discussions there are many metrics already exist like here if you go to rag then you will see answer relevancy, faithfulness contextual precision recall contextual relevancy all these things already exist then if you go to safety then toxicity PII leakage all these things already exist so instead of writing custom code to evaluate our rag application we will instead use this"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output is directly supported by the relevant nodes in the retrieval context, specifically the first node discussing RAGAS and DeepEval's broader scope, and the second node highlighting its foundation on pytest."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all relevant nodes are ranked higher than the irrelevant node. The first node provides a clear explanation for choosing DeepEval, stating that it is selected due to prior knowledge of RAGAS and its broader capabilities. The second node reinforces this by highlighting DeepEval's status as a leading library used by major companies, which is pertinent to the course's rationale. The third node, ranked last, is irrelevant as it does not address the reasons for the choice, focusing instead on unrelated metrics."
+                }
+            }
+        },
+        {
+            "id": "g014",
+            "query": "What is an eval suite?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "8",
+                    "text": "pipeline and application these three levels that we are evaluating our whole application we call this in combined form eval suite this is like our entire testing suite whenever we want to test our application then we don't run just one test we run all these tests together then we get to know from every aspect is our application working right or not so we are going to do so many tests so many evaluations this will be our evaluation strategy so at this point I will take a break and I will take"
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "text": "which we call regression testing after that we do regression testing what is regression testing? regression testing is basically the act of running your eval suite on your application till now what we are doing we are building our eval suite we are writing different evaluation codes for different different components and pipelines and applications once everything is done then when you run it on the whole application we call this regression testing the simple foundation of regression testing is"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "text": "similarly you can understand a rag pipeline will have a different file an application will have a different file to test a different file for safety a different file for operations so basically all these files in the eval folder where we have written all our tests we call this our eval suite and then what will happen outside all the folders we will have a file which we will call run evals.py and what code will be written in this as soon as we trigger this file then what will this file do one by"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the expected output perfectly aligns with the retrieval context, specifically detailing the eval suite and the process of running tests together, as directly referenced in the context."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because all nodes in the retrieval contexts are relevant and provide comprehensive insights into what an eval suite is. Each node ranks higher than any irrelevant nodes, as there are no irrelevant nodes present, ensuring that the relevant information is prioritized."
+                }
+            }
+        },
+        {
+            "id": "g015",
+            "query": "Which metrics are used to evaluate the retriever?",
+            "source": "Session 9",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "8",
+                    "text": "my retriever able to fetch the right documents from the vector database or not so here we will use two metrics for evaluation one will be recall which tells how many of the right documents I was able to bring and the second is precision which means how many of the documents I brought were of use so we will evaluate our retriever on both of them and once this evaluation is done and we are satisfied that our retriever is working properly then we will move to step three and in step three we will"
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "text": "rag pipeline you check three metrics and we call these three metrics rag triad why I tell you so three things are existing here first of all the user's question the context we have got from vector database which has brought the retriever and the answer generated by generator these three things exist so in these three pairs three metrics exist like for question and context a metric exists which we call context relevance which tells that for a given question the context which has been fetched"
+                },
+                {
+                    "rank": 3,
+                    "session": "8",
+                    "text": "for example your retriever recall came to 0.82 and precision came to 0.68 so in this way every metric will have some numbers so what you will do is the run you have done to your software and all the configuration numbers and the metrics numbers you will go and log them where? on ML flow like software so basically experiment 1 these were the configuration values around that we got these metric values and what you will call this you will call this your baseline that when we run the software for"
+                }
+            ],
+            "metrics": {
+                "Contextual Recall": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because every sentence in the expected output directly aligns with the information provided in node(s) in retrieval context, clearly explaining the concepts of recall and precision as mentioned in the first node."
+                },
+                "Contextual Precision": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the first node directly addresses the question about metrics used to evaluate the retriever, stating that 'we will use two metrics for evaluation one will be recall which tells how many of the right documents I was able to bring and the second is precision which means how many of the documents I brought were of use'. The subsequent nodes, ranked lower, discuss related topics but do not provide a clear answer, with one mentioning the 'rag pipeline' and the other giving examples without explanations. This clear distinction in relevance supports the perfect score."
+                }
+            }
+        }
+    ]
+}

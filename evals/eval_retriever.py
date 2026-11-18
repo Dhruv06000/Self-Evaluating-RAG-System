@@ -15,7 +15,7 @@ from src.ingestion import load_transcripts
 from src.chunking import chunk_text
 from src.embedding import get_embedding_model
 from src.faiss_index import get_or_create_vector_store
-from src.retriever import get_retriever
+from src.reranker import get_reranking_retriever
 from evals.harness import load_goldens, summarize_by_metric, print_summary
 
 load_dotenv()
@@ -28,7 +28,8 @@ JUDGE_MODEL = "gpt-4o-mini"
 EMBEDDING_MODEL = "text-embedding-3-small"   # must match src/embedding.py
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
-TOP_K = 4
+FETCH_K = 20
+TOP_K = 3
 THRESHOLD = 0.7
 LIMIT = None # set to 3 for a smoke test, None for every golden
 
@@ -55,7 +56,7 @@ def run(retriever):
                 {
                     "rank": i + 1,
                     "session": doc.metadata.get("session"),
-                    "preview": doc.page_content[:120],
+                    "text": doc.page_content,
                 }
                 for i, doc in enumerate(retrieved)
             ],
@@ -79,11 +80,12 @@ def run(retriever):
         test_cases=test_cases,
         metrics=metrics,
         hyperparameters={
-            "retriever": "faiss_similarity",
+            "retriever": "faiss_flashrank",
             "embedding_model": EMBEDDING_MODEL,
             "chunk_size": CHUNK_SIZE,
             "chunk_overlap": CHUNK_OVERLAP,
             "top_k": TOP_K,
+            "fetch_k": FETCH_K,
             "judge_model": JUDGE_MODEL,
             "golden_set": GOLDEN_PATH,
             "num_goldens": len(goldens),
@@ -106,7 +108,7 @@ def run_local():
     store = get_or_create_vector_store(
         get_embedding_model(), load_kb_chunks, KB_INDEX_PATH
     )
-    return run(get_retriever(store, k=TOP_K))                 # returns (summary, details)
+    return run(get_reranking_retriever(store, k=TOP_K, fetch_k=FETCH_K))                 # returns (summary, details)
 
 
 if __name__ == "__main__":
@@ -119,12 +121,19 @@ if __name__ == "__main__":
         stamp = datetime.now().strftime("%Y%m%d_%H%M%S")      # NEW: no more overwriting
         out_dir = "result/retriever_evaluation_result"
         os.makedirs(out_dir, exist_ok=True)
-        path = os.path.join(out_dir, f"retriever_chunk{CHUNK_SIZE}_k{TOP_K}_{stamp}.json")
+        path = os.path.join(out_dir, f"retriever_rerank_{CHUNK_SIZE}_k{TOP_K}_{stamp}.json")
         with open(path, "w", encoding="utf-8") as f:
             json.dump({
-                "config": {"embedding_model": EMBEDDING_MODEL, "chunk_size": CHUNK_SIZE,
-                           "chunk_overlap": CHUNK_OVERLAP, "top_k": TOP_K,
-                           "judge_model": JUDGE_MODEL, "golden_set": GOLDEN_PATH},
+                "config": {
+                    "embedding_model": EMBEDDING_MODEL, 
+                    "chunk_size": CHUNK_SIZE,
+                    "fetch_k": FETCH_K,
+                    "reranker": "flashrank-MiniLM-L-12",
+                    "chunk_overlap": CHUNK_OVERLAP, 
+                    "top_k": TOP_K,
+                    "judge_model": JUDGE_MODEL, 
+                    "golden_set": GOLDEN_PATH
+                    },
                 "summary": summary,
                 "details": details,                           # NEW
             }, f, indent=4, ensure_ascii=False)
