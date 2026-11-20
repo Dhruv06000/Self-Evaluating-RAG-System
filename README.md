@@ -13,7 +13,7 @@ Most RAG demos stop at "it answered my question". This one asks whether the answ
 
 ```mermaid
 flowchart LR
-    A[YouTube video ID] --> B[Fetch transcript]
+    A[YouTube link] --> B[Fetch transcript]
     B --> C[Chunk<br/>1000 chars, 200 overlap]
     C --> D[Embed<br/>text-embedding-3-small]
     D --> E[(FAISS index<br/>saved to disk)]
@@ -30,7 +30,7 @@ flowchart LR
 
 | Step | Module | What it does |
 |---|---|---|
-| 1. Ingestion | `src/ingestion.py` | Fetches a video's transcript (any English variant), or loads `.vtt` files for evaluation |
+| 1. Ingestion | `src/ingestion.py` | Accepts a YouTube link (watch, youtu.be, Shorts) or a bare video ID, fetches the English transcript with caption timings, and caches it. Gives a clear message for missing captions, private videos, bad links, and transcripts over 150,000 characters. Also loads `.vtt` files for evaluation |
 | 2. Chunking | `src/chunking.py` | Recursive character splitting with overlap |
 | 3. Embedding | `src/embedding.py` | OpenAI `text-embedding-3-small` for chunks and queries |
 | 4. Vector store | `src/faiss_index.py` | Builds, saves and reloads a FAISS index, so each video is indexed once |
@@ -85,7 +85,7 @@ What each result taught:
 - **Smaller chunks (500) hurt.** Contextual Relevancy didn't improve, and precision fell by 0.14. With k=4 the generator saw half as much text, and one question went from answered to "I don't know".
 - **The reranker fixed specific failures without moving the average.** The "regression testing" question went from recall 0 and precision 0 to 1.0 and 1.0, because its right chunks sat at ranks 7, 15 and 26 and now reach the top 4. A step-by-step prompting question went from a flat refusal to a real answer. Contextual Relevancy stayed near 0.4, because 1000-character chunks of lecture speech contain off-topic sentences whichever chunks are picked. FlashRank was chosen over an LLM reranker because the judge is also `gpt-4o-mini`, and a reranker built on the judge would inflate the score.
 - **k=3 raised the target and broke a guardrail.** Contextual Relevancy rose by 0.06, but the 4th chunk often held the answer, so Faithfulness fell by 0.13.
-- **A stronger reranker improved the retriever but not the answers.** Swapping FlashRank for the multilingual BGE cross-encoder (2.2 GB, run on a GPU) raised retriever recall by 0.03 and precision by 0.05. The retrieved chunks were identical across both runs, so the retriever side is stable. But pipeline Contextual Relevancy moved only 0.04 (a tie), Faithfulness held at 0.94, and Answer Relevancy fell by 0.04. The real-world-failure question lost its supporting chunks and was answered poorly in both runs. Looking at the retriever eval alone would have suggested adopting BGE; the pipeline eval is what showed it doesn't pay for its size.
+- **A stronger reranker improved the retriever but not the answers.** Swapping FlashRank for the multilingual BGE cross-encoder (2.2 GB, run on a GPU) raised retriever recall by 0.03 and precision by 0.05. The retrieved chunks were identical across both runs, so the retriever side is stable. But pipeline Contextual Relevancy moved only 0.04 (a tie), Faithfulness held at 0.94, and Answer Relevancy fell by 0.03 to 0.04. The step-by-step prompting question, which FlashRank answers well, stayed weak under BGE in both runs. Looking at the retriever eval alone would have suggested adopting BGE; the pipeline eval is what showed it doesn't pay for its size.
 
 The final setup is chunk 1000/200, top-20 candidates, FlashRank reranking, k=4. The rejected runs are kept in `result/experiments/`.
 
@@ -96,6 +96,8 @@ The final setup is chunk 1000/200, top-20 candidates, FlashRank reranking, k=4. 
 - Contextual Relevancy stays low (about 0.4), partly because of how spoken-word chunks are written, and Answer Relevancy penalizes a correct "I don't know".
 - Vague questions can retrieve poorly. For example, "what are the components of FastAPI?" returns "I don't know" because the video never lists components.
 - The summary route works for transcripts that fit in the model's context, and has no eval of its own.
+- Videos whose transcript is over 150,000 characters (roughly 3 hours of speech) are refused, to keep indexing cost bounded.
+- The source timestamps shown with answers are approximate (each points to the caption at or just before the start of a retrieved chunk) and have no eval of their own.
 - Reranker comparisons used one candidate pool size (top-20). A wider pool was not tested.
 
 ## Getting started
@@ -114,13 +116,15 @@ Create a `.env` file in the project root:
 OPENAI_API_KEY=your_key_here
 ```
 
-**Chat with a video.** Set `VIDEO_ID` in `main.py` (the ID only, e.g. `foGklduxhM0` from `youtube.com/watch?v=foGklduxhM0`), then:
+**Chat with a video.**
 
 ```bash
 uv run python main.py
 ```
 
-The first run downloads the reranker model (about 22 MB), fetches the transcript, and builds and saves the index under `data/<VIDEO_ID>`. Later runs load it instantly.
+Paste any YouTube link when asked (`youtube.com/watch?v=...`, `youtu.be/...` or a Shorts link). A bad link, a video without English captions, a private video or a very long one gives a short message and asks again. Type `exit` to quit.
+
+The first run downloads the reranker model (about 22 MB), fetches the transcript, and builds and saves the index under `data/<VIDEO_ID>`. Asking about the same video again loads it instantly.
 
 **Run the evals** (they call the OpenAI API and cost money):
 
@@ -149,10 +153,9 @@ The retriever and pipeline evals read `.vtt` transcript files from `knowledge_ba
 
 ## Roadmap
 
-Planned, not built yet:
+Answers already come with timestamped source links, and videos are chosen by pasting a link. Planned, not built yet:
 
-- **Cited answers:** show the supporting excerpts with every answer, then link them to timestamps in the video.
-- **Easier input:** accept full YouTube URLs, take the video at startup, and handle missing captions and API errors cleanly.
+- **Cited answers, further:** show the supporting excerpts themselves with every answer.
 - **Chat memory** with history-aware query rewriting, so follow-up questions work.
 - **Wider input:** Hindi transcripts via translation, a Whisper fallback for videos without captions, and the same pipeline for PDF, Word, Markdown and web pages with a common metadata schema.
 - **Browser extension:** a side panel on the YouTube page that chats with the video you're watching, backed by a FastAPI service.

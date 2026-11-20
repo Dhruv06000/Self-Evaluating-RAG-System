@@ -1,11 +1,8 @@
-"""Entry point: index a YouTube video (once), then chat with it, with cited sources."""
-
-import json
-import os
+"""Entry point: paste a YouTube link, index the video (once), then chat with it, with cited sources."""
 
 from dotenv import load_dotenv
 
-from src.ingestion import ingest_transcript_timed
+from src.ingestion import parse_video_id, get_transcript_data, VideoError
 from src.chunking import chunk_transcript
 from src.embedding import get_embedding_model
 from src.faiss_index import get_or_create_vector_store
@@ -17,36 +14,35 @@ from src.summarizer import needs_summary, build_summary_chain
 
 load_dotenv()  # loads OPENAI_API_KEY from .env
 
-VIDEO_ID = "foGklduxhM0"  # only the ID, not the full URL
-INDEX_PATH = f"data/{VIDEO_ID}"  # one saved index per video
-TRANSCRIPT_PATH = f"data/{VIDEO_ID}_transcript.json"  # cached text + caption timings
-
-
-def get_transcript_data():
-    """Fetch once, cache on disk. Returns (text, cues)."""
-    if os.path.exists(TRANSCRIPT_PATH):
-        with open(TRANSCRIPT_PATH, encoding="utf-8") as f:
-            d = json.load(f)
-        return d["text"], d["cues"]
-    text, cues = ingest_transcript_timed(VIDEO_ID)
-    os.makedirs("data", exist_ok=True)
-    with open(TRANSCRIPT_PATH, "w", encoding="utf-8") as f:
-        json.dump({"text": text, "cues": cues}, f, ensure_ascii=False)
-    return text, cues
-
-
-def load_chunks():
-    text, cues = get_transcript_data()
-    return chunk_transcript(text, cues, VIDEO_ID)
-
 
 def is_refusal(answer: str) -> bool:
     return answer.replace("’", "'").lower().startswith("i don't know")
 
 
+def ask_for_video():
+    """Keep asking until we get a usable video. Returns (video_id, text, cues)."""
+    while True:
+        link = input("Paste a YouTube link (or 'exit'): ").strip()
+        if link.lower() in ("exit", "quit", "q"):
+            raise SystemExit
+        try:
+            video_id = parse_video_id(link)
+            print("Fetching transcript...")
+            text, cues = get_transcript_data(video_id)
+            return video_id, text, cues
+        except VideoError as e:
+            print(f"  {e}\n")
+
+
 def main():
+    video_id, text, cues = ask_for_video()
+
     embeddings = get_embedding_model()
-    vector_store = get_or_create_vector_store(embeddings, load_chunks, INDEX_PATH)
+    vector_store = get_or_create_vector_store(
+        embeddings,
+        lambda: chunk_transcript(text, cues, video_id),  # only runs if no saved index
+        f"data/{video_id}",                              # one saved index per video
+    )
 
     retriever = get_reranking_retriever(vector_store, k=4, fetch_k=20)
     prompt = get_prompt_template()
@@ -64,7 +60,6 @@ def main():
             break
 
         if needs_summary(question):
-            text, _ = get_transcript_data()
             answer = summary_chain.invoke({"transcript": text, "question": question})
         else:
             result = run_rag(retriever, prompt, llm, question)
