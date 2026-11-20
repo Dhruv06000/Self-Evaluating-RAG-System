@@ -34,7 +34,7 @@ flowchart LR
 | 2. Chunking | `src/chunking.py` | Recursive character splitting with overlap |
 | 3. Embedding | `src/embedding.py` | OpenAI `text-embedding-3-small` for chunks and queries |
 | 4. Vector store | `src/faiss_index.py` | Builds, saves and reloads a FAISS index, so each video is indexed once |
-| 5. Retrieval | `src/retriever.py` | Top-20 similarity search, then a FlashRank cross-encoder keeps the best 4 |
+| 5. Retrieval | `src/reranker.py` | Top-20 similarity search, then a FlashRank cross-encoder keeps the best 4 |
 | 6. Augmentation | `src/context_builder.py` | Joins chunks and fills the prompt template |
 | 7. Generation | `src/generator.py` | Calls the LLM with the augmented prompt |
 | 8. Pipeline | `src/pipeline.py` | `run_rag`: retrieve, build context, generate. Used by both the app and the end-to-end eval, so they can't drift apart |
@@ -78,12 +78,14 @@ Each retrieval change was tested alone against a baseline, run twice, and judged
 | Chunk 500/100, k=4 | 0.88 | 0.75 | 0.40 | 0.92 | 0.83 | **Rejected**: worse everywhere |
 | **Chunk 1000/200, top-20 + reranker, k=4** | 0.91 | 0.84 | 0.42 | 0.95 | 0.90 | **Kept**: fixes real failures |
 | Chunk 1000/200, top-20 + reranker, k=3 | 0.90 | 0.85 | 0.47 (1 run) | 0.82 (1 run) | 0.86 (1 run) | **Rejected**: Faithfulness dropped 0.13 |
+| Chunk 1000/200, top-20 + BGE reranker (`BAAI/bge-reranker-v2-m3`), k=4 | 0.94 | 0.89 | 0.46 | 0.94 | 0.86 | **Rejected**: better retriever, no better answers |
 
 What each result taught:
 
 - **Smaller chunks (500) hurt.** Contextual Relevancy didn't improve, and precision fell by 0.14. With k=4 the generator saw half as much text, and one question went from answered to "I don't know".
 - **The reranker fixed specific failures without moving the average.** The "regression testing" question went from recall 0 and precision 0 to 1.0 and 1.0, because its right chunks sat at ranks 7, 15 and 26 and now reach the top 4. A step-by-step prompting question went from a flat refusal to a real answer. Contextual Relevancy stayed near 0.4, because 1000-character chunks of lecture speech contain off-topic sentences whichever chunks are picked. FlashRank was chosen over an LLM reranker because the judge is also `gpt-4o-mini`, and a reranker built on the judge would inflate the score.
 - **k=3 raised the target and broke a guardrail.** Contextual Relevancy rose by 0.06, but the 4th chunk often held the answer, so Faithfulness fell by 0.13.
+- **A stronger reranker improved the retriever but not the answers.** Swapping FlashRank for the multilingual BGE cross-encoder (2.2 GB, run on a GPU) raised retriever recall by 0.03 and precision by 0.05. The retrieved chunks were identical across both runs, so the retriever side is stable. But pipeline Contextual Relevancy moved only 0.04 (a tie), Faithfulness held at 0.94, and Answer Relevancy fell by 0.04. The real-world-failure question lost its supporting chunks and was answered poorly in both runs. Looking at the retriever eval alone would have suggested adopting BGE; the pipeline eval is what showed it doesn't pay for its size.
 
 The final setup is chunk 1000/200, top-20 candidates, FlashRank reranking, k=4. The rejected runs are kept in `result/experiments/`.
 
@@ -94,6 +96,7 @@ The final setup is chunk 1000/200, top-20 candidates, FlashRank reranking, k=4. 
 - Contextual Relevancy stays low (about 0.4), partly because of how spoken-word chunks are written, and Answer Relevancy penalizes a correct "I don't know".
 - Vague questions can retrieve poorly. For example, "what are the components of FastAPI?" returns "I don't know" because the video never lists components.
 - The summary route works for transcripts that fit in the model's context, and has no eval of its own.
+- Reranker comparisons used one candidate pool size (top-20). A wider pool was not tested.
 
 ## Getting started
 
@@ -153,7 +156,7 @@ Planned, not built yet:
 - **Chat memory** with history-aware query rewriting, so follow-up questions work.
 - **Wider input:** Hindi transcripts via translation, a Whisper fallback for videos without captions, and the same pipeline for PDF, Word, Markdown and web pages with a common metadata schema.
 - **Browser extension:** a side panel on the YouTube page that chats with the video you're watching, backed by a FastAPI service.
-- **Further retrieval work (low priority):** hybrid BM25 and MMR. The reranker already fixed the keyword-style miss that motivated BM25.
+- **Further retrieval work (low priority):** hybrid BM25 and MMR. The reranker already fixed the keyword-style miss that motivated BM25. A wider candidate pool (top-30) is only worth testing if a rank check shows the missed chunks sit just outside the top 20.
 
 ## Tech stack
 

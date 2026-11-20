@@ -1,0 +1,655 @@
+{
+    "complete": true,
+    "config": {
+        "generator_model": "gpt-6-luna",
+        "judge_model": "gpt-4o-mini",
+        "embedding_model": "text-embedding-3-small",
+        "chunk_size": 1000,
+        "chunk_overlap": 200,
+        "top_k": 4,
+        "fetch_k": 20,
+        "reranker": "flashrank-MiniLM-L-12",
+        "golden_set": "goldens/faithfulness_dataset.json",
+        "num_goldens": 15
+    },
+    "summary": {
+        "Contextual Relevancy": {
+            "n": 15,
+            "pass_rate": 6.666666666666667,
+            "avg_score": 0.4065412082113971,
+            "min_score": 0.0,
+            "max_score": 0.7391304347826086
+        },
+        "Faithfulness": {
+            "n": 15,
+            "pass_rate": 80.0,
+            "avg_score": 0.9222222222222223,
+            "min_score": 0.6666666666666666,
+            "max_score": 1.0
+        },
+        "Answer Relevancy": {
+            "n": 15,
+            "pass_rate": 86.66666666666667,
+            "avg_score": 0.8944444444444444,
+            "min_score": 0.3333333333333333,
+            "max_score": 1.0
+        }
+    },
+    "details": [
+        {
+            "id": "f001",
+            "query": "what is vibe testing and why isn't it enough for deploying an llm app?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "text": "here also did vibe testing. They did not properly test the chatbot and deployed it. So you can see how much loss can be reached on the scale of a big company if you launch an LLM based application without testing it. Similarly, there is one more incident which became very popular 2-3 years ago. There was a car dealership, an American brand called Chevrolet. They had a dealer. The dealer made a chatbot so that they could deal with customers. So a person went and started chatting with the"
+                },
+                {
+                    "rank": 2,
+                    "session": "1",
+                    "text": "Look, I have written it here. Vibe testing means you casually trying an LLME application with a few prompts and judging it by feel. You asked 5 questions and read the answers. And judge based on the feel whether it is right or not. This is called vibe testing. So basically what you do is you ask 5-10 questions, the answer is right, you feel that it is working. It is informal, it is subjective, and it is usually not repeatable. Because today you asked 5 questions, after 10 days you won't ask the"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "text": "it is usually not repeatable. Because today you asked 5 questions, after 10 days you won't ask the same 5 questions, you will ask something else. So it is not even repeatable. Now you must be understanding even after listening to vibe testing that it works only at the personal project level. By doing vibe testing, you don't make production grade software in the industry. Obviously. Right? Now I will tell you some instances, some case studies where teams made a mistake that they deployed a LLME"
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "text": "it, before sharing it with someone, we ask the 4-5 questions that come to our mind at that point. And that's it. If the right responses come there, then we accept that our application is working properly. Actually, this whole phenomenon, this way of testing, this term has been given in the industry. It is called vibe testing. Just like vibe coding, it is vibe testing. What is vibe testing? Look, I have written it here. Vibe testing means you casually trying an LLME application with a few"
+                }
+            ],
+            "answer": "Vibe testing is casually checking an LLM app with a few prompts and judging by feel whether its answers seem right. It isn’t enough for deployment because it’s informal, subjective, and usually not repeatable; passing a handful of questions doesn’t provide proper testing for production software.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.7391304347826086,
+                    "reason": "The score is 0.74 because while some relevant statements about vibe testing are present, such as 'Vibe testing means you casually trying an LLME application with a few prompts and judging it by feel,' many other statements are irrelevant, like 'There was a car dealership, an American brand called Chevrolet,' which do not address the core question about vibe testing's sufficiency for deploying an LLM app."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about vibe testing and its sufficiency for deploying an LLM app without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f002",
+            "query": "what is the mmlu benchmark?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "text": "here. We will not discuss all the benchmarks now. So, if you want to check general knowledge and reasoning of any model, then there is a famous benchmark called MMLU. Which asks questions on many subjects from you. Science, history, law, medicine. It will ask questions on you. It will ask questions from your LLM and record it and evaluate it. For maths, there is a benchmark called GSM 8. Which asks questions of grade school maths and evaluates the answers on basis. For coding, SWE bench. You"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "text": "used to tell how knowledgeable a LLM is how much world knowledge is hidden in it what is MMLU? MMLU is basically a data set in which around 57 subjects there are 14,000 questions MCQ, multiple choice questions so what happened in 2020 when this benchmark came to the surface this paper people started using this data set to test the knowledge of any LLM basically they sent these 14,000 questions to LLM and tried to find out how many questions my LLM answered correctly out of these 14,000"
+                },
+                {
+                    "rank": 3,
+                    "session": "5",
+                    "text": "MMLU this is the mother of all benchmarks we moved from there in four directions, first we started with the help of truthfull QA after that we thought that it is better to make new benchmarks than converting existing exams into a dataset so AGI eval came then when MMLU was saturated people thought that we should test it with breadth of knowledge so then GPQA came and people thought that MMLU is a good benchmark we should repair it so in the process of repairing MMLU Pro came then slowly AGI"
+                },
+                {
+                    "rank": 4,
+                    "session": "5",
+                    "text": "direction some work was done in the direction of depth of knowledge another direction was some more people thought that MMLU is a good benchmark even if it is saturated so let's do one thing so what they did was they made a new benchmark called MMLU Pro Pro is also from 2024 and what they did here they solved the problems of MMLU and made a new data set for example all the questions in MMLU 14000 questions were your MCQ and every MCQ had 4 options but in MMLU Pro every question had 10 options"
+                }
+            ],
+            "answer": "MMLU is a benchmark for testing an LLM’s knowledge and reasoning across many subjects. It contains about 14,000 multiple-choice questions spanning 57 subjects, including science, history, law, and medicine. Models are evaluated by how many questions they answer correctly.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.6111111111111112,
+                    "reason": "The score is 0.61 because while there are relevant statements about MMLU, such as 'there is a famous benchmark called MMLU' and 'MMLU is basically a data set in which around 57 subjects there are 14,000 questions MCQ,' the retrieval context also includes irrelevant information like 'We will not discuss all the benchmarks now,' which detracts from the overall relevance."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses the question about the MMLU benchmark without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f003",
+            "query": "how did mmlu pro improve on the original mmlu?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "5",
+                    "text": "questions were your MCQ and every MCQ had 4 options but in MMLU Pro every question had 10 options so here you have to find the right answer but in 10 given options so you can see that the difficulty level increased after this what they did is they reduced the number of subjects from 57 they came down if I remember correctly they came down to 12 subjects and in 12 subjects they got 12k questions so per subject 1000 questions and they added some such questions which will give some reasoning so"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "text": "so per subject 1000 questions and they added some such questions which will give some reasoning so overall they made MMLU a little difficult so this for the next 1-2 years it was a good benchmark on which people kept testing their models basically MMLU Pro replaced MMLU but as it always happens that every next generation model beats the previous benchmark so over time what happened AGI eval also kind of saturated in GPQA also kind of near saturation and finally in 2025 a new benchmark came"
+                },
+                {
+                    "rank": 3,
+                    "session": "5",
+                    "text": "direction some work was done in the direction of depth of knowledge another direction was some more people thought that MMLU is a good benchmark even if it is saturated so let's do one thing so what they did was they made a new benchmark called MMLU Pro Pro is also from 2024 and what they did here they solved the problems of MMLU and made a new data set for example all the questions in MMLU 14000 questions were your MCQ and every MCQ had 4 options but in MMLU Pro every question had 10 options"
+                },
+                {
+                    "rank": 4,
+                    "session": "6",
+                    "text": "they use existing exams as benchmarks so some researchers said that MM LU is a good benchmark if it is saturated then what if we improve it or its problems and from this thought process MM LU PRO came so basically whatever problems were there in MM LU MM LU PRO tried to solve them they basically said that if a product is good then the next iteration of that product should be good that's the main thinking behind this benchmark so the tagline of this MM LU PRO is simply MM LU Rebuilt to fix its"
+                }
+            ],
+            "answer": "MMLU Pro made MMLU harder: it increased each multiple-choice question from 4 options to 10, reduced the number of subjects from 57 to 12, and added questions requiring more reasoning. The video says it had 12,000 questions total, or 1,000 per subject.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.6875,
+                    "reason": "The score is 0.69 because while there are relevant statements like 'MMLU Pro replaced MMLU and added some questions which will give some reasoning' and 'MMLU Pro is a new benchmark that solved the problems of MMLU', much of the retrieval context discusses unrelated topics such as AGI evaluation saturation and future benchmarks, which detracts from the focus on how MMLU Pro improved on MMLU."
+                },
+                "Faithfulness": {
+                    "score": 0.8333333333333334,
+                    "reason": "The score is 0.83 because the actual output incorrectly states that MMLU Pro reduced the number of subjects, while the retrieval context clarifies that the reduction occurred in MMLU, not MMLU Pro."
+                },
+                "Answer Relevancy": {
+                    "score": 0.8333333333333334,
+                    "reason": "The score is 0.83 because while the response provided some relevant information about MMLU Pro, it included an irrelevant statement regarding the reduction of subjects, which does not directly address the improvements made over the original MMLU."
+                }
+            }
+        },
+        {
+            "id": "f004",
+            "query": "can you give a real-world example of an llm application failing badly?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "2",
+                    "text": "basically there are three levels where failure points exist. I have written that down here. What are the three levels? First is component level. Any component of any LLM application can fail. If you have written system prompt, then system prompt can make a mistake. In rag application, retriever, reranker, query rewriter, embedding model, vector database, if you are making a structured output based application, then your output parser, agent, tool selector, memory, guardrails, any of these"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "text": "14000 questions we are not able to guarantee that any LLM is how truthful truthful means let me give an example you gave internet data to LLM and your LLM learned from that data and now it is able to answer 14000 questions of 57 subjects but think about it there is bad data on the internet bad data means non-informative data or incorrect data which basically means that if you train a big LLM on a big data then not only will it learn all the right things but it can also learn the misconceptions"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "text": "course. So what we are going to learn is that you have an LLM based application. And you have to evaluate it. And we will move forward with the simplest possible example. I will tell you what application we have made. So we are, let's say, working for a company. We are AI engineers. And this company is Zomato. And their problem is that they get a lot of mails daily. Because it's a big company with a lot of customers. And what they want is that it is difficult to reply to these mails manually."
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "text": "you at a theoretical level. But don't worry. After some time we will understand this whole workflow through a proper example. But at this point if I would like to summarize. LLM evals are basically tests. With the help of which you test LLM or LLM based applications for some given clear criteria. And usually these tests are repeatable and very systematic. We have read this till now. Now here I would like to clarify one more thing. Because this is doubtful to many people. I also had this doubt"
+                }
+            ],
+            "answer": "The video sets up a Zomato application for replying to customer emails, but the excerpts don’t describe it failing badly. They only note that components such as the prompt, retriever, or output parser can fail.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.0,
+                    "reason": "The score is 0.00 because there are no relevant statements in the retrieval context that address the input question about real-world examples of LLM applications failing badly. All provided reasons indicate a lack of specific examples, such as 'The statement does not provide a real-world example of an LLM application failing badly' and 'This statement describes a level of failure but does not give a specific example of an LLM application failure.'"
+                },
+                "Faithfulness": {
+                    "score": 0.6666666666666666,
+                    "reason": "The score is 0.67 because the actual output claims that the Zomato application does not fail badly, which contradicts the retrieval context that does not mention any specific failures, indicating a lack of evidence for such a claim."
+                },
+                "Answer Relevancy": {
+                    "score": 0.3333333333333333,
+                    "reason": "The score is 0.33 because the output included irrelevant statements about a Zomato application and the lack of examples of failure, which did not address the request for a real-world example of an LLM application failing badly."
+                }
+            }
+        },
+        {
+            "id": "f005",
+            "query": "what is drift and why does it matter after deployment?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "text": "of the drift that is happening. So is this point clear? This was the most technical point among the three. Is the point clear? That if the drift starts occurring in some system, Then its eval setup, The offline eval setup, Will become obsolete and its results will not matter. Is this point clear? We are right now discussing, What kind of risks are there after deployment? There are three types of risks. First, the user will ask any kind of question. There is no control over it. Second, there can"
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "text": "so suddenly in the last 8 hours the curve of faithfulness is going down so this is a kind of drift which we are detecting and with that we do alerting and after alerting we improve it so you have to do this whole thing once the software is deployed after that we will do this and lastly there will be a self improving loop which basically means that sometime there will be a chat with a student where our software will misbehave our application will misbehave so we will pick up those specific"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "in production which we call drift. Drift means that basically, Your offline eval, The testing and deployment you did with the help of which, It starts to get obsolete. How? I will tell you. So let's say we made a chart bot of CampusX. So now we have put all our documents, all pricing structure, The course pages, curriculum pages, Our lectures transcripts, Put all this. This is today's thing. Now what are we doing over the years? What are we doing over the years? We are making changes. Like we"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "text": "it runs consistently after deployment. Talking about input, In offline eval, you only give the same things in input, Which you anticipate. You have created golden data set, What all things you put in golden data set, Which you have anticipated. Here, you cannot anticipate what may come. Anything can come. Catches, offline eval generally helps in catching regression. Here, you can catch drift, You can catch any kind of surprise, You can catch any kind of emergent bug, Which we have discussed."
+                }
+            ],
+            "answer": "Drift is when a deployed system changes in production so that its offline tests and evaluation results become outdated. It matters because performance can decline or unexpected bugs can appear, so the system needs ongoing monitoring, alerts, and improvement after deployment.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.375,
+                    "reason": "The score is 0.38 because while there are some relevant statements about drift, such as 'if the drift starts occurring in some system, Then its eval setup... will become obsolete', the majority of the context focuses on unrelated topics like 'three types of risks' and 'chat with a student', which do not address the significance of drift after deployment."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about drift and its significance after deployment without including any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f006",
+            "query": "why do we use an llm as a judge instead of simple string matching?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "5",
+                    "text": "is you are doing log probabilities against the right ones and then joining the right ones, I told you three ways in the generated model you are getting A, B, C, D which is available to analyze this answer you use an LLM as a judge because anything can be printed here this can also be the answer is A or it can be printed as A is the answer so you have to extract A from all kinds of scenarios so to do this you use an LLM so when this benchmark was released in the beginning they used a version of"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "text": "do this you use an LLM so when this benchmark was released in the beginning they used a version of GPT-4 as a LLM as a judge now what happened is new models came forward and people started using LLM as a judge so there was an issue in performance that the previous generation might have made a mistake in extracting A in some questions so due to that the accuracy came down but the later LLM as a judge they are better, they are able to extract each answer correctly so their accuracy is a little"
+                },
+                {
+                    "rank": 3,
+                    "session": "5",
+                    "text": "judge they are better, they are able to extract each answer correctly so their accuracy is a little higher so in that sense there is a problem here, you will see this pattern whenever you are using LLM as a judge so over time since LLM's performance is improving so is the performance of LLM as a judge so due to that there is a little discrepancy today the measurement you are taking you can't compare it to the measurement of two years ago because the capability of the LLM as a judge has"
+                },
+                {
+                    "rank": 4,
+                    "session": "4",
+                    "text": "which extracts open ended answers this is a closed ended answer 72 but if it is open ended then to evaluate it you have to use LLM as a judge I will give you an example in the future we will discuss a benchmark where answer is not as straight forward as 72 so there is a proper paragraph as answer we have to evaluate that so we use LLM as a judge there so either the comparison is done straight forward or LLM as a judge or through human so this is the point of scoring and the last is aggregation"
+                }
+            ],
+            "answer": "We use an LLM as a judge because the answer may be expressed in different formats—for example, “A” or “A is the answer”—so simple string matching may miss it. The judge extracts the intended answer.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.6666666666666666,
+                    "reason": "The score is 0.67 because while there are relevant statements like 'you use an LLM as a judge because anything can be printed here' and 'new models came forward and people started using LLM as a judge', many other statements discuss unrelated topics such as 'log probabilities' and 'discrepancy today', which detracts from the overall relevance."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses the question about using an LLM as a judge instead of simple string matching, with no irrelevant statements present."
+                }
+            }
+        },
+        {
+            "id": "f007",
+            "query": "how does sampling work in online evaluation?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "text": "those 50,000 people, You have to monitor those 50,000 conversations, So it can be costly. So here, the sampling type technique is used, Rather than monitoring each of the conversations, Each of the 50,000 conversations, You sample around, And you are monitoring 1,000 of those conversations, Randomly. So you bring down the cost a little. So these are the main differences, Between offline and online eval. The most important thing you have to understand here, Is that these two are not rivals, It's"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "text": "one has thumbs down, which one is talking like this. So this is technicality. I just wanted to tell you that you don't do normal sampling you do stratified sampling. So is the point clear guys? So far the flow I have told you is correct. We have locked it. After that we did sampling. After that we set up our evaluator. Evaluator performs the evaluation on those sampled conversations and gives us the metric. We are aggregating that metric over a time period and showing it on the dashboard. And"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "it right. If you run it on tracing or logging then this evaluator will become an online evaluator. And if you run it on a data set then where are the data sets? They are in the offline setup then it will become an offline evaluator. So Lansmith is an overall evaluation platform. Here you can do online evaluation and offline as well. So if you select one in tracing then it will become an online evaluator. And if I have made a data set here then you can also make data sets here. Go to data sets"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "text": "evaluation pipeline looks. Okay. Look, the first step in an online evaluation pipeline is very important. The first step is very important. And that step is called logging. So the basic idea is this, that your chat bot is live on production and people are talking to it. Now, if you want to evaluate anything, then the most important thing for that is that you first record all the things that are happening right now, all the conversations that are happening right now. Obviously, if you don't"
+                }
+            ],
+            "answer": "Online evaluation samples conversations instead of monitoring all of them—for example, about 1,000 out of 50,000—to reduce cost. The video clarifies that it should use **stratified sampling**, rather than ordinary sampling.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.2631578947368421,
+                    "reason": "The score is 0.26 because while there are some relevant statements like 'the sampling type technique is used' and 'you sample around', the majority of the retrieval context contains irrelevant information such as 'those 50,000 people' and 'So you bring down the cost a little', which do not explain how sampling works in online evaluation."
+                },
+                "Faithfulness": {
+                    "score": 0.6666666666666666,
+                    "reason": "The score is 0.67 because the actual output incorrectly refers to 'ordinary sampling' instead of the 'stratified sampling' mentioned in the context, indicating a misalignment with the provided information."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about how sampling works in online evaluation without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f008",
+            "query": "what are computed and captured signals in online eval?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "text": "attention to? What things will you understand that whether your chatbot is working properly or not? Okay? So there are actually two types of signals which you have to focus on. The first one is computed and the second one is captured signals. Okay? So computed signals are those that you have to calculate or figure out. And captured signals are those that are already present and you have to store them somewhere. I will give you both the examples. For example, captured signal is thumbs up, thumbs"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "text": "You can ask. Yes, sure. Computed and captured logins work together. As I said, you make multiple pipelines. So we are discussing captured eval pipelines. This is not exactly a pipeline, to be honest. There is no pipeline here. There are a series of steps. You will see a pipeline in the computed one because you will have to set up an evaluator there. So you will understand from that. Is there any other question at this point? Okay. Okay. So now let's discuss the main part, the most interesting"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "have to do a real-time calculation for that. Token usage, simply counting. We don't need to do that. So these are the examples or signals that you only capture and store in the langsmith. You don't need to calculate anything in this. Now let's talk about the computed one. The computed one is the signal that you have to calculate. You have to figure out. For example, you want to see in the online production setup how much is the faithfulness of your chatbot. Now this is something that you won't"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "text": "Why and what? Why do we need online evals and what are online evals? If there is any question in both of these, then you can ask. What are the general metrics and signals tracked via online evaluation? Look, again, this is also a question that we will discuss now. Look, just the one that is written on the screen in front of you. Now I am going to discuss that what kind of signals you work on online, what you see, where can there be a problem. We will discuss that now. So don't worry, we are"
+                }
+            ],
+            "answer": "Captured signals are already available and are stored, such as thumbs-up feedback or token usage. Computed signals must be calculated, typically using an evaluator—for example, measuring a chatbot’s faithfulness in production.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.2222222222222222,
+                    "reason": "The score is 0.22 because while there are some relevant statements like 'there are actually two types of signals which you have to focus on' and definitions of 'computed signals' and 'captured signals', the majority of the context fails to provide clear and direct information about these concepts, as highlighted by reasons such as 'The statement does not provide relevant information about computed and captured signals' and 'The statement is vague and does not provide specific information about computed and captured signals'."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about computed and captured signals in online evaluation without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f009",
+            "query": "what does it mean for a benchmark to get saturated?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "5",
+                    "text": "compare it to the measurement of two years ago because the capability of the LLM as a judge has increased in the last two years I hope I understood what this means so this is the benchmark basically got saturated because its data started getting used in the alignment stage due to that all LLM's started performing well over time due to which it got saturated this is the story of this particular but very important benchmark because this is the first time we were told that having more capability"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "text": "in 2023 onwards the bigger the model the less truthfull it will be this thing started to decrease and as it started to decrease in 2024 this benchmark kind of saturated and in 2024 all the frontier models their score started to rise so as the score starts to rise you can understand that benchmark is getting saturated and in 2024-25 two new benchmarks were released one was simple QA and one was mask so today we will discuss one of them simple QA and mask we will discuss an alignment capability"
+                },
+                {
+                    "rank": 3,
+                    "session": "4",
+                    "text": "will you know who is good and who is bad in that case the benchmark is saturated it is removed and then a new benchmark is brought and then the industry starts working on that so this example of gsm 8k this is a saturated benchmark it is not used now everyone gets 94-97% I said your MMLU that is a saturated benchmark sui bench is also saturated so mostly there is a life cycle of benchmarks all the models are difficult then gradually the models improve everyone starts scoring well then your"
+                },
+                {
+                    "rank": 4,
+                    "session": "6",
+                    "text": "now think for yourself you don't think that you have been raised from HC Verma or from any similar physics book so such questions or similar questions are publicly available to you and that is one of the reasons why in 2024 this benchmark is going to be saturated so yeah, nothing new an old thing that was good, an attempt to improve it this attempt lasted for 2 years so now forward, this will also be saturated so yeah, this was the second benchmark of the day let me know if you have any doubts"
+                }
+            ],
+            "answer": "A benchmark is saturated when models score well across the board, so it no longer distinguishes their capabilities. The video says this can happen when benchmark data becomes widely used in training or alignment, and a new benchmark is then introduced.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.5882352941176471,
+                    "reason": "The score is 0.59 because while there are relevant statements like 'the benchmark basically got saturated because its data started getting used in the alignment stage' and 'all LLM's started performing well over time due to which it got saturated', the majority of the retrieval context contains irrelevant information that does not directly explain benchmark saturation."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 0.75,
+                    "reason": "The score is 0.75 because the output included an irrelevant statement about introducing a new benchmark, which does not directly address the meaning of saturation in the context of the original question. However, the rest of the response was relevant and informative, justifying the score."
+                }
+            }
+        },
+        {
+            "id": "f010",
+            "query": "how are safety issues like toxicity evaluated differently from quality issues?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "text": "us that our chat bot is not leaking any kind of personal information. And how does this evaluator work? Behind the scenes LLM as a judge is sitting. Prompt injection is different for detecting. Code injection is different for detecting. In safety it is different for toxicity. It is different for bias and fairness. Talking about quality hallucination has a different evaluation pipeline. Correctness is different. Assertions, conciseness code checker. The quality of conversation is different."
+                },
+                {
+                    "rank": 2,
+                    "session": "8",
+                    "text": "comes in application level evaluation so these are some quality related metrics apart from this, if you talk about application level then you will also test safety here you will check that your response is not toxic or you will check that your response is not giving any personally identifiable information you will check that your campusx downed solver can't be jailbreak so we will do these safety evaluations on step no.8 on step no.8 we will run safety evaluations on this application and lastly"
+                },
+                {
+                    "rank": 3,
+                    "session": "2",
+                    "text": "Second is the safety related. And third is the operations related. Here I have written the definition of all three. The application quality tells us that the answer that comes out from the system is it good or not. Whether the app does its actual job well. It gives correct relevant complete answers which the user asked. So, this is the application quality. In safety, you ensure that the answer that comes out should not be harmful. Now, here you see multiple things. You see that the answer"
+                },
+                {
+                    "rank": 4,
+                    "session": "2",
+                    "text": "is confused about something or if he is getting something ambiguous from the user's side then is he able to clarify or not this is also seen if we talk about safety there are 4-5 dimensions in safety toxicity, is the answer toxic or not harmful content, is there something that should not come such as self harm related content weapons related content illegal apps related content is our chatbot biased or not is he answering all of them with one type or based on user profile he is answering them"
+                }
+            ],
+            "answer": "Safety and quality use separate evaluation pipelines: safety checks for toxicity, harmful content, personal information, jailbreaks, and bias, while quality evaluates whether answers are correct, relevant, complete, and otherwise well-produced.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.42105263157894735,
+                    "reason": "The score is 0.42 because while there are relevant statements like 'In safety it is different for toxicity' and 'you will check that your response is not toxic', the majority of the retrieval context contains irrelevant information that does not address the evaluation of safety issues compared to quality issues."
+                },
+                "Faithfulness": {
+                    "score": 0.6666666666666666,
+                    "reason": "The score is 0.67 because the actual output incorrectly implies that safety evaluations and quality evaluations are entirely distinct, whereas the retrieval context clarifies that they assess different aspects but are not strictly separate."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no irrelevant statements in the output, and it directly addresses the evaluation of safety issues like toxicity compared to quality issues."
+                }
+            }
+        },
+        {
+            "id": "f011",
+            "query": "does training on more data always make an llm more knowledgeable?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "5",
+                    "text": "programs to us so what I am trying to say is that when the LLMs were trained for the first time the most fundamental expectation that LLMs should have was knowledge that if we are giving them so much training data then on the basis of that, are they able to retain it or not so this capability represents that now what is here the whole evolution is very interesting I will tell you the whole story 20-20 onwards because the most meaningful work has been done here so when GPT-2 and GPT-3 models"
+                },
+                {
+                    "rank": 2,
+                    "session": "5",
+                    "text": "how much world knowledge is hidden in his weights and biases his parametric knowledge is a way to test knowledge capability and this is the most important capability think about it when the LLMs were trained for the first time on this massive internet scale data then the expectation would be that if we ask about anything on the internet then it will tell us so knowledge capability is like the most fundamental capability that an LLM can have the rest of the capabilities came into the picture"
+                },
+                {
+                    "rank": 3,
+                    "session": "5",
+                    "text": "14000 questions we are not able to guarantee that any LLM is how truthful truthful means let me give an example you gave internet data to LLM and your LLM learned from that data and now it is able to answer 14000 questions of 57 subjects but think about it there is bad data on the internet bad data means non-informative data or incorrect data which basically means that if you train a big LLM on a big data then not only will it learn all the right things but it can also learn the misconceptions"
+                },
+                {
+                    "rank": 4,
+                    "session": "5",
+                    "text": "to LLM and tried to find out how many questions my LLM answered correctly out of these 14,000 questions so this accuracy, this number used to tell us how much knowledge a particular LLM has so this was 2020 then we discussed in the last class the biggest problem or disadvantage of every benchmark is that since its questions are public public means available on the internet so what happens is that these questions gradually become part of the training data for the next generation LLMs so"
+                }
+            ],
+            "answer": "No. More training data can increase an LLM’s knowledge, but it can also teach it incorrect information or misconceptions, so it does not guarantee greater knowledge or truthfulness.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.25,
+                    "reason": "The score is 0.25 because while there are statements about the expectations of LLMs regarding knowledge retention from training data, such as 'if we are giving them so much training data then on the basis of that, are they able to retain it or not', the overall context fails to directly address whether training on more data always makes an LLM more knowledgeable."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addressed the question about whether training on more data always makes an LLM more knowledgeable, without including any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f012",
+            "query": "what information should i store when logging production conversations?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "text": "together, the latency shouldn't increase. So it should be non-blocking. Means, on one side your conversation is going on normally and on the other side your logging is also going on. So it should be non-blocking. Basically, you should not increase the latency by combining both the operations. Second, the logging should be durable and curable. Queryable. Basically, you use a data warehouse type tool or an observability tool such as Langsmith. Where you can store all this information in a very"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "text": "conversation of that chat bot. Where? On Langsmith. I can show you right now. So see this. This is Langsmith. Langsmith has different projects. What can you do in those projects? All your conversations are there. These are all conversations. You can store those conversations. You store everything in it. What the user sent, what was your output, there is a lot of metadata. Everything is stored. So this is kept with you. Now this storage, this whole logging, it has some engineering properties."
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "evaluation pipeline looks. Okay. Look, the first step in an online evaluation pipeline is very important. The first step is very important. And that step is called logging. So the basic idea is this, that your chat bot is live on production and people are talking to it. Now, if you want to evaluate anything, then the most important thing for that is that you first record all the things that are happening right now, all the conversations that are happening right now. Obviously, if you don't"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "text": "or not? We have to test this in production. Okay. So how will this work? So look at this too. The pipeline looks like this. The pipeline is like this. Here also you log in first. So if you are carrying out 50,000 conversations in a day, your chatbot is doing 50,000 conversations, then you will actually log each of the conversations using a tool like LangSmith. Okay. After that, in step 2 what you have to do is you have to set up an evaluator. You have to create an evaluator. Okay. Now this"
+                }
+            ],
+            "answer": "Store each production conversation, including what the user sent, the chatbot’s response, and relevant metadata. The video also says logging should be durable and queryable.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.43478260869565216,
+                    "reason": "The score is 0.43 because while there are some relevant statements like 'you can store those conversations' and 'you will actually log each of the conversations using a tool like LangSmith,' many other statements are irrelevant, such as 'this whole logging, it has some engineering properties,' which do not specify what information should be stored."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses the input question without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f013",
+            "query": "how can thumbs up and thumbs down signals help build a golden dataset?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "7",
+                    "text": "try to keep All the possibilities On this data So this is how you create Your golden data set You create it manually most of the times Or if you are getting it done from an LLM Then you make sure That the whole thing is correct But yeah, at this point You will have two things First you will have a data set Which is obviously with Crick Info And second your data analyst team Will bat and create a golden data set Okay? Once the golden data set is created Now the evaluation work Starts from here"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "text": "somewhere. I will give you both the examples. For example, captured signal is thumbs up, thumbs down. If the user did thumbs up or thumbs down during the conversation, then this is a signal that the user is giving me. So I am directly storing it in the langsmith. Now I didn't need to calculate anything here. The user said thumbs down, I have to store it as it is. So we call this captured signal. One more example is latency. To do any particular answer, how much time did my chatbot take?"
+                },
+                {
+                    "rank": 3,
+                    "session": "1",
+                    "text": "case varies. What you are making. On the basis of that. Your golden data set will be created. There are no hard and fast rules. But there are guidelines. So our. Our third. Fourth session. Is on this topic. How do you create golden data sets. So we will learn that. According to some famous applications. Like RAG. Or Agent. We will learn according to that. Don't worry. Can we use some other classification metric. Or accuracy only in this case. No pream. It depends. It can also be. If it comes"
+                },
+                {
+                    "rank": 4,
+                    "session": "1",
+                    "text": "this labeled. So this is how you create a data set. By the way, this is called golden data set in the language of LLMEvals. So what we are doing is in this third step, we are building a data set. Which will evaluate for us. Okay. After that, next you define an evaluation method. Basically, you decide who will evaluate. There are two or three options. Either it will be done in an automated way. Or someone will do it humanly. Or you can use another LLMEval to perform the evaluation. I hope you"
+                }
+            ],
+            "answer": "Thumbs-up and thumbs-down feedback can be stored directly as captured signals. The video doesn’t explain how those signals are then used to create or label a golden dataset.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.25925925925925924,
+                    "reason": "The score is 0.26 because while there are some relevant statements like 'captured signal is thumbs up, thumbs down.' and 'If the user did thumbs up or thumbs down during the conversation, then this is a signal that the user is giving me.', the majority of the context fails to directly address how these signals contribute to building a golden dataset, as highlighted by reasons such as 'The statement discusses the creation process of a golden dataset but does not address how thumbs up and thumbs down signals specifically contribute to it.'"
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 0.5,
+                    "reason": "The score is 0.50 because the response fails to explain the specific role of thumbs up and thumbs down signals in creating a golden dataset, which is the core of the question. However, it does touch on related concepts, just not directly addressing the main inquiry."
+                }
+            }
+        },
+        {
+            "id": "f014",
+            "query": "how does a step-by-step prompt help an llm solve a math problem?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "1",
+                    "text": "Can it solve a problem step by step? The second capability is knowledge. Does our LLM have basic world knowledge? Does it have general knowledge? Right? In which we talk about the cutoff date. So, the world's knowledge of the first cutoff date should be with the LLM. So, this is the second capability. The third capability is basic maths. Can our LLM solve maths problems or not? Then the fourth capability is coding. Can our LLM code or not? The fifth capability is instruction following. Can our"
+                },
+                {
+                    "rank": 2,
+                    "session": "4",
+                    "text": "our LLM with the help of this benchmark let's see how to do it step by step so simply put model evaluation on a benchmark is basically a loop it's basically a loop you run a loop where your benchmark data set every question becomes a row so what we do is simply put we pick up a question and send it to our LLM ok and in that process we exactly define the prompt as we have been told in the benchmark we keep the settings exactly as we have been told in the benchmark and we send it to our LLM LLM"
+                },
+                {
+                    "rank": 3,
+                    "session": "4",
+                    "text": "other will give different result I guess you understood so in prompt construction you define that your system prompt will be zero shot or few shot it's simple meaning is when you are sending this question to your LLM by taking out the answer then along with that you want to show some solved examples and send it or you want to give it without any example so this is called zero shot zero shot means you simply picked up the question and gave it and few shot means you solved some questions like"
+                },
+                {
+                    "rank": 4,
+                    "session": "4",
+                    "text": "that you are getting to a solution step by step so it is a form of reasoning so there are more applications in the real world so what all you test here first of all you test whether your model can solve grade school level mathematics 7th, 8th class mathematics problem solving or not whether your model is able to solve competition level problem solving like the problems asked in Olympiarts where a little creative thinking is required whether it is able to solve problems of that level whether it"
+                }
+            ],
+            "answer": "A step-by-step prompt encourages the LLM to reason through the problem in stages before reaching an answer. The video describes this as a form of reasoning.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.3,
+                    "reason": "The score is 0.30 because while there are some relevant statements like 'Can it solve a problem step by step?' and 'our LLM with the help of this benchmark let's see how to do it step by step', the majority of the context focuses on unrelated topics such as 'basic world knowledge' and 'model evaluation on a benchmark', which do not directly address how a step-by-step prompt aids in solving math problems."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses how a step-by-step prompt aids an LLM in solving math problems without any irrelevant statements."
+                }
+            }
+        },
+        {
+            "id": "f015",
+            "query": "what are computed and captured signals in online evaluation?",
+            "retrieved": [
+                {
+                    "rank": 1,
+                    "session": "3",
+                    "text": "attention to? What things will you understand that whether your chatbot is working properly or not? Okay? So there are actually two types of signals which you have to focus on. The first one is computed and the second one is captured signals. Okay? So computed signals are those that you have to calculate or figure out. And captured signals are those that are already present and you have to store them somewhere. I will give you both the examples. For example, captured signal is thumbs up, thumbs"
+                },
+                {
+                    "rank": 2,
+                    "session": "3",
+                    "text": "have to do a real-time calculation for that. Token usage, simply counting. We don't need to do that. So these are the examples or signals that you only capture and store in the langsmith. You don't need to calculate anything in this. Now let's talk about the computed one. The computed one is the signal that you have to calculate. You have to figure out. For example, you want to see in the online production setup how much is the faithfulness of your chatbot. Now this is something that you won't"
+                },
+                {
+                    "rank": 3,
+                    "session": "3",
+                    "text": "Why and what? Why do we need online evals and what are online evals? If there is any question in both of these, then you can ask. What are the general metrics and signals tracked via online evaluation? Look, again, this is also a question that we will discuss now. Look, just the one that is written on the screen in front of you. Now I am going to discuss that what kind of signals you work on online, what you see, where can there be a problem. We will discuss that now. So don't worry, we are"
+                },
+                {
+                    "rank": 4,
+                    "session": "3",
+                    "text": "You can ask. Yes, sure. Computed and captured logins work together. As I said, you make multiple pipelines. So we are discussing captured eval pipelines. This is not exactly a pipeline, to be honest. There is no pipeline here. There are a series of steps. You will see a pipeline in the computed one because you will have to set up an evaluator there. So you will understand from that. Is there any other question at this point? Okay. Okay. So now let's discuss the main part, the most interesting"
+                }
+            ],
+            "answer": "Captured signals are already available and are stored, such as thumbs-up/down feedback or token usage. Computed signals must be calculated, such as a chatbot’s faithfulness in production.",
+            "metrics": {
+                "Contextual Relevancy": {
+                    "score": 0.28,
+                    "reason": "The score is 0.28 because while there are relevant statements like 'There are actually two types of signals which you have to focus on. The first one is computed and the second one is captured signals.' and 'Computed signals are those that you have to calculate or figure out.', the majority of the context is irrelevant, discussing unrelated topics such as 'real-time calculation' and 'faithfulness of your chatbot', which do not address the input question."
+                },
+                "Faithfulness": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because there are no contradictions present, indicating that the actual output aligns perfectly with the retrieval context."
+                },
+                "Answer Relevancy": {
+                    "score": 1.0,
+                    "reason": "The score is 1.00 because the response directly addresses the question about computed and captured signals in online evaluation without any irrelevant statements."
+                }
+            }
+        }
+    ]
+}
